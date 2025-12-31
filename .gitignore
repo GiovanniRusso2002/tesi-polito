@@ -12,7 +12,6 @@
 *.run.xml
 *.synctex.gz
 *.toc
-*.pdf
 *.dvi
 *.ps
 *.nav

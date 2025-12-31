@@ -1,0 +1,66 @@
+\documentclass[12pt,a4paper]{report}
+
+% --- Language and encoding ---
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% --- Layout ---
+\usepackage[a4paper,margin=3cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Math and symbols ---
+\usepackage{amsmath,amssymb}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\usepackage{float}
+
+% --- References and links ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black
+}
+
+% --- Quotes ---
+\usepackage{csquotes}
+
+% --- Bibliography ---
+\usepackage[
+    backend=biber,
+    style=ieee
+]{biblatex}
+\addbibresource{bibliografia.bib}
+
+% --- Custom commands ---
+\input{stile/comandi}
+
+\begin{document}
+
+% --- Front page ---
+\input{frontespizio}
+
+% --- Roman numbering ---
+\pagenumbering{roman}
+
+\input{abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+% --- Arabic numbering ---
+\pagenumbering{arabic}
+
+\input{capitoli/capitolo1}
+\input{capitoli/capitolo2}
+
+\printbibliography
+
+\end{document}

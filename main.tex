@@ -48,25 +48,39 @@
 % --- Roman numbering ---
 \pagenumbering{roman}
 
-\chapter*{Introduction}
-Between February and August 2026, I completed a six-month internship at Outsight, a company based in Sophia Antipolis, France, specializing in cloud modernization solutions. The internship provided me with the opportunity to work on real-world projects involving cloud-native development, security, and software modernization.
-
-The main objectives of my internship were:
-\begin{itemize}
-    \item To create technical diagrams for Outsight’s cloud infrastructure.
-    \item To improve the existing software stack by addressing functional and security issues.
-    \item To migrate the user management service to Keycloak OIDC.
-    \item To modernize the file sharing service, making it secure, cloud-native, and integrated with Keycloak OIDC.
-    \item To add new features, such as deployment configuration synchronization.
-    \item iaooo padova 
-    \item cioaooo padova andiamo cia
-\end{itemize}
-
 \input{abstract}
+
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+I would like to express my sincere gratitude to Outsight for providing me with the opportunity to complete this internship and work on challenging and meaningful projects. I am particularly thankful to my supervisor and the entire development team for their guidance, support, and patience throughout this journey.
+
+I would also like to thank the Politecnico di Torino for the academic foundation that made this work possible, and my thesis advisor for valuable feedback and encouragement.
+
+Finally, I am deeply grateful to my family and friends for their unwavering support during my studies.
 
 \tableofcontents
 \listoffigures
 \listoftables
+
+\chapter*{List of Acronyms}
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\begin{description}
+    \item[ABAC] Attribute-Based Access Control
+    \item[API] Application Programming Interface
+    \item[CI/CD] Continuous Integration / Continuous Deployment
+    \item[CNCF] Cloud Native Computing Foundation
+    \item[IAM] Identity and Access Management
+    \item[IDOR] Insecure Direct Object Reference
+    \item[JWT] JSON Web Token
+    \item[OIDC] OpenID Connect
+    \item[RBAC] Role-Based Access Control
+    \item[REST] Representational State Transfer
+    \item[S3] Simple Storage Service (Amazon)
+    \item[SAML] Security Assertion Markup Language
+    \item[SSO] Single Sign-On
+    \item[TLS] Transport Layer Security
+    \item[XSS] Cross-Site Scripting
+\end{description}
 \clearpage
 
 % --- Arabic numbering ---
@@ -74,6 +88,11 @@ The main objectives of my internship were:
 
 \input{capitoli/capitolo1}
 \input{capitoli/capitolo2}
+\input{capitoli/capitolo3}
+\input{capitoli/capitolo4}
+\input{capitoli/capitolo5}
+\input{capitoli/capitolo6}
+\input{capitoli/capitolo7}
 
 \printbibliography
 

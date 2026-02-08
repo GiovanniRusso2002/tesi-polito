@@ -1,22 +1,53 @@
 \chapter{Introduction}
 
-In recent years, computer engineering has played a crucial role in the development of
-complex and large-scale systems.
-This thesis focuses on ...
+\section{Context and Technological Background}
+In recent years, the rapid evolution of cloud computing has fundamentally transformed how organizations design, deploy, and manage software systems. Cloud-native architectures, containerization, and microservices have become the standard for building scalable and resilient applications. Companies across all sectors are increasingly adopting cloud modernization strategies to improve operational efficiency, reduce infrastructure costs, and enhance security postures.
 
-\section{Motivation}
-The motivation behind this work stems from the need to ...
+This thesis is based on a six-month internship (February--August 2026) at Outsight, a company based in Sophia Antipolis, France, specializing in cloud modernization solutions. Outsight provides services and tools to help organizations migrate legacy systems to modern cloud-native platforms, leveraging technologies such as Kubernetes, Keycloak, and secure file-sharing services.
 
-\section{Objectives}
-The main objectives of this thesis are:
+\section{Problem Statement}
+Despite the widespread adoption of cloud technologies, many organizations face significant challenges in modernizing their software infrastructure. Key problems include:
 \begin{itemize}
-    \item to analyze ...
-    \item to design ...
-    \item to evaluate ...
+    \item \textbf{Security concerns:} Legacy authentication and authorization systems are often not compatible with modern identity and access management (IAM) standards such as OpenID Connect (OIDC).
+    \item \textbf{Service integration:} Existing services need to be refactored to work seamlessly in a cloud-native environment.
+    \item \textbf{Configuration management:} Managing deployment configurations across distributed systems requires robust synchronization mechanisms.
+    \item \textbf{Documentation gap:} Technical infrastructure diagrams and architectural documentation are often missing or outdated, making maintenance and onboarding difficult.
+\end{itemize}
+
+\section{Research Gap}
+While existing literature addresses cloud migration strategies and security best practices independently, there is limited practical guidance on integrating modern IAM solutions like Keycloak OIDC into legacy file-sharing services while maintaining backward compatibility and ensuring cloud-native deployment readiness. Furthermore, the process of documenting and visualizing complex cloud infrastructures remains largely manual and error-prone.
+
+\section{Thesis Objectives and Contributions}
+The main objective of this thesis is to document, analyze, and evaluate the modernization of Outsight's cloud infrastructure, focusing on security enhancements and service integration. Specifically, we aim to:
+
+\begin{itemize}
+    \item Design and create comprehensive technical diagrams of Outsight's cloud infrastructure, providing clear documentation for developers and stakeholders.
+    \item Identify and resolve functional and security issues in the existing software stack through systematic code review and testing.
+    \item Migrate the user management service to Keycloak OIDC, ensuring secure authentication and authorization mechanisms compliant with industry standards.
+    \item Modernize the file-sharing service by redesigning it as a cloud-native application fully integrated with Keycloak OIDC, enhancing both security and scalability.
+    \item Implement deployment configuration synchronization features to streamline multi-environment management.
+    \item Evaluate the performance, security, and usability of the modernized system through quantitative metrics and qualitative analysis.
+\end{itemize}
+
+The key contributions of this work are:
+\begin{itemize}
+    \item A practical methodology for integrating Keycloak OIDC into legacy file-sharing services.
+    \item A cloud-native architecture design that balances security, scalability, and maintainability.
+    \item An empirical evaluation of the modernization impact on system performance and security posture.
+    \item Lessons learned and best practices for cloud modernization projects in enterprise environments.
 \end{itemize}
 
 \section{Thesis Structure}
-This thesis is organized as follows.
-Chapter~\ref{chap:background} introduces the background.
-Chapter~\ref{chap:methodology} presents the proposed methodology.
-Chapter~\ref{chap:results} discusses the experimental results.
+This thesis is organized as follows:
+
+\textbf{Chapter~\ref{chap:background}} provides background information on cloud-native architectures, identity and access management, and reviews the state of the art in cloud modernization practices.
+
+\textbf{Chapter~\ref{chap:technologies}} introduces the key technologies employed in this work, including Kubernetes, Keycloak, OIDC, and related tools.
+
+\textbf{Chapter~\ref{chap:architecture}} describes the architectural design of the modernized system, explaining design decisions and trade-offs.
+
+\textbf{Chapter~\ref{chap:implementation}} details the implementation of the proposed solution, covering authentication migration, file-sharing service modernization, and configuration synchronization.
+
+\textbf{Chapter~\ref{chap:evaluation}} presents the evaluation methodology and results, including performance benchmarks, security analysis, and comparative assessments.
+
+\textbf{Chapter~\ref{chap:conclusions}} summarizes the contributions, discusses limitations, and outlines directions for future work.

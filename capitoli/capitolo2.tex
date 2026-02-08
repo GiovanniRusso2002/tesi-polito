@@ -1,5 +1,54 @@
-\chapter{Background and Related Work}
+\chapter{Background and State of the Art}
 \label{chap:background}
 
-This chapter provides an overview of the theoretical background
-and reviews the most relevant related work.
+This chapter provides an overview of the theoretical foundations and examines the current state of the art in cloud modernization, identity and access management, and secure file-sharing systems. We analyze existing solutions, identify their limitations, and contextualize the contributions of this thesis within the broader research landscape.
+
+\section{Cloud-Native Architectures}
+Cloud-native application development has become the dominant paradigm for building modern, scalable systems. The Cloud Native Computing Foundation (CNCF) defines cloud-native as an approach that leverages containerization, microservices, orchestration, and declarative APIs to build resilient distributed systems.
+
+\subsection{Microservices and Containerization}
+Microservices architecture decomposes monolithic applications into loosely coupled, independently deployable services. Containers, particularly Docker, provide lightweight virtualization that ensures consistency across development, testing, and production environments.
+
+\subsection{Orchestration with Kubernetes}
+Kubernetes has emerged as the de facto standard for container orchestration. It automates deployment, scaling, and management of containerized applications, offering features such as service discovery, load balancing, self-healing, and declarative configuration management.
+
+\section{Identity and Access Management}
+Modern applications require robust authentication and authorization mechanisms to protect resources and user data. Traditional session-based authentication has largely been superseded by token-based approaches.
+
+\subsection{OAuth 2.0 and OpenID Connect}
+OAuth 2.0 is an industry-standard protocol for authorization, while OpenID Connect (OIDC) extends OAuth 2.0 to provide an identity layer. OIDC enables clients to verify user identity and obtain profile information through standardized token formats (JWT).
+
+\subsection{Keycloak as an IAM Solution}
+Keycloak is an open-source Identity and Access Management solution that provides single sign-on (SSO), user federation, identity brokering, and social login capabilities. It implements OIDC and SAML 2.0 protocols, making it suitable for enterprise cloud-native applications.
+
+\section{Secure File-Sharing Systems}
+File-sharing services are essential components of many enterprise systems, but they introduce significant security challenges, particularly regarding access control, data encryption, and compliance with privacy regulations.
+
+\subsection{Traditional Approaches}
+Traditional file-sharing systems often rely on custom authentication mechanisms and coarse-grained access control. Examples include FTP servers, WebDAV, and proprietary enterprise solutions. These systems typically lack integration with modern IAM standards.
+
+\subsection{Cloud-Native File-Sharing}
+Modern cloud-native file-sharing solutions leverage object storage (e.g., Amazon S3, MinIO), implement fine-grained access control through policy engines, and integrate with identity providers using standards like OIDC. However, migrating legacy systems to these architectures presents challenges in maintaining backward compatibility and ensuring data security during transition.
+
+\section{State of the Art Analysis}
+\subsection{Cloud Migration Strategies}
+Recent research has identified several patterns for cloud migration, including rehosting (lift-and-shift), replatforming, refactoring, and rebuilding. The choice of strategy depends on factors such as technical debt, business requirements, and available resources.
+
+\subsection{IAM Integration in Legacy Systems}
+Existing work on IAM modernization focuses primarily on greenfield projects. Limited research addresses the practical challenges of retrofitting OIDC-based authentication into legacy file-sharing services that were designed with different security models.
+
+\subsection{Configuration Management in Distributed Systems}
+Tools such as Helm, Kustomize, and GitOps platforms (ArgoCD, Flux) have been proposed for managing Kubernetes configurations. However, synchronization of deployment configurations across multiple environments remains an active area of research, particularly regarding conflict resolution and rollback mechanisms.
+
+\section{Gaps and Limitations}
+Despite significant progress in cloud modernization, several gaps remain:
+
+\begin{itemize}
+    \item \textbf{Integration complexity:} Practical methodologies for integrating modern IAM solutions into legacy services are not well documented in academic literature.
+    \item \textbf{Security during migration:} The security implications of gradual migration strategies, where legacy and modern authentication coexist, require further investigation.
+    \item \textbf{Performance trade-offs:} Quantitative evaluations of performance overhead introduced by token-based authentication in file-sharing contexts are scarce.
+    \item \textbf{Documentation practices:} Systematic approaches to documenting cloud infrastructure architectures for maintainability and onboarding are underexplored.
+\end{itemize}
+
+\section{Positioning of This Thesis}
+This thesis addresses these gaps by providing a comprehensive case study of cloud modernization in an enterprise context. We contribute practical design patterns, implementation strategies, and empirical evaluation of a real-world migration project involving Keycloak OIDC integration and file-sharing service modernization.

@@ -1,0 +1,409 @@
+\chapter{Implementation}
+\label{chap:implementation}
+
+This chapter describes the implementation of the proposed architecture. We detail the key development steps, technical challenges encountered, and solutions adopted. Code snippets and configuration examples are provided to illustrate critical implementation aspects.
+
+\section{Development Environment Setup}
+\subsection{Local Development Infrastructure}
+We set up a local Kubernetes cluster using \texttt{minikube} or \texttt{kind} to replicate the production environment. Key components installed include:
+\begin{itemize}
+    \item Kubernetes v1.26+
+    \item Keycloak v21+
+    \item MinIO for object storage
+    \item PostgreSQL for persistent data
+    \item Ingress controller (nginx-ingress)
+\end{itemize}
+
+\subsection{Version Control and Branching Strategy}
+All code is managed in Git repositories following the Git Flow branching model:
+\begin{itemize}
+    \item \texttt{main}: production-ready code
+    \item \texttt{develop}: integration branch
+    \item \texttt{feature/*}: feature branches
+    \item \texttt{hotfix/*}: urgent production fixes
+\end{itemize}
+
+\section{Keycloak Configuration and Setup}
+\subsection{Realm Creation}
+We create a dedicated Keycloak realm named \texttt{outsight-cloud} for the application. The realm configuration includes:
+\begin{itemize}
+    \item Token lifespan settings (access token: 5 minutes, refresh token: 30 minutes)
+    \item Required user actions (email verification, password complexity)
+    \item Login themes customization
+\end{itemize}
+
+\subsection{Client Configuration}
+Two OIDC clients are registered:
+\begin{enumerate}
+    \item \textbf{file-sharing-service}: Backend API client with confidential access type
+    \item \textbf{web-app}: Frontend application with public access type and PKCE enabled
+\end{enumerate}
+
+Configuration parameters:
+\begin{verbatim}
+Client ID: file-sharing-service
+Access Type: confidential
+Valid Redirect URIs: https://app.outsight.com/*
+Web Origins: https://app.outsight.com
+\end{verbatim}
+
+\subsection{Role Mapping}
+We define realm roles (\texttt{admin}, \texttt{user}, \texttt{guest}) and map them to user attributes. Roles are included in JWT token claims under the \texttt{realm\_access} field.
+
+\subsection{User Federation}
+If integrating with existing LDAP or Active Directory, we configure user federation providers to synchronize user accounts with Keycloak.
+
+\section{User Management Service Implementation}
+\subsection{Technology Stack}
+\begin{itemize}
+    \item \textbf{Language:} Python 3.10+
+    \item \textbf{Framework:} FastAPI
+    \item \textbf{Libraries:} \texttt{python-keycloak}, \texttt{pydantic}, \texttt{httpx}
+\end{itemize}
+
+\subsection{Service Endpoints}
+The service exposes the following RESTful endpoints:
+\begin{itemize}
+    \item \texttt{POST /users}: Register a new user
+    \item \texttt{GET /users/\{id\}}: Retrieve user profile
+    \item \texttt{PUT /users/\{id\}}: Update user profile
+    \item \texttt{DELETE /users/\{id\}}: Delete user account
+    \item \texttt{POST /users/\{id\}/roles}: Assign roles to user
+\end{itemize}
+
+\subsection{Keycloak Admin API Integration}
+User operations are implemented by calling Keycloak's Admin API. Example code snippet for user creation:
+
+\begin{verbatim}
+from keycloak import KeycloakAdmin
+
+keycloak_admin = KeycloakAdmin(
+    server_url="https://keycloak.outsight.com/auth/",
+    realm_name="outsight-cloud",
+    client_id="admin-cli",
+    client_secret_key="<secret>"
+)
+
+new_user = {
+    "username": "john.doe",
+    "email": "john.doe@example.com",
+    "enabled": True,
+    "credentials": [{"value": "password", "type": "password"}]
+}
+
+user_id = keycloak_admin.create_user(new_user)
+\end{verbatim}
+
+\subsection{Error Handling and Validation}
+Input validation is performed using Pydantic models. Errors from Keycloak API are caught and translated to appropriate HTTP status codes (400 for validation errors, 409 for conflicts, 500 for internal errors).
+
+\section{File-Sharing Service Implementation}
+\subsection{Technology Stack}
+\begin{itemize}
+    \item \textbf{Language:} Python 3.10+ / Go 1.19+ (specify as appropriate)
+    \item \textbf{Framework:} FastAPI / Gin (specify as appropriate)
+    \item \textbf{Storage Library:} \texttt{boto3} (for S3-compatible storage)
+    \item \textbf{Authentication:} \texttt{python-jose} for JWT validation
+\end{itemize}
+
+\subsection{Authentication Middleware}
+We implement an authentication middleware that:
+\begin{enumerate}
+    \item Extracts JWT token from the \texttt{Authorization} header
+    \item Validates token signature using Keycloak's public key (fetched from JWKS endpoint)
+    \item Decodes token claims and extracts user ID and roles
+    \item Attaches user context to the request object
+\end{enumerate}
+
+Example middleware implementation:
+
+\begin{verbatim}
+from fastapi import Request, HTTPException
+from jose import jwt, JWTError
+
+async def authenticate_request(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing token")
+    
+    token = auth_header.split(" ")[1]
+    try:
+        payload = jwt.decode(token, public_key, algorithms=["RS256"])
+        request.state.user = payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+\end{verbatim}
+
+\subsection{File Upload Implementation}
+File uploads use multipart form data. The upload endpoint:
+\begin{enumerate}
+    \item Validates user authentication
+    \item Generates a unique file ID (UUID)
+    \item Constructs object storage path: \texttt{/<user\_id>/<file\_id>/<filename>}
+    \item Uploads file to object storage using \texttt{boto3}
+    \item Stores metadata (filename, size, upload timestamp) in database
+\end{enumerate}
+
+\subsection{File Download Implementation}
+File downloads implement access control checks:
+\begin{enumerate}
+    \item Validate user authentication
+    \item Check if user owns the file or has been granted access
+    \item Generate pre-signed URL for object storage (valid for 5 minutes)
+    \item Redirect user to pre-signed URL or stream file content
+\end{enumerate}
+
+\subsection{Sharing Implementation}
+Sharing is implemented via a sharing permissions table in the database:
+\begin{verbatim}
+CREATE TABLE file_shares (
+    id SERIAL PRIMARY KEY,
+    file_id UUID NOT NULL,
+    owner_id VARCHAR(255) NOT NULL,
+    shared_with_user_id VARCHAR(255),
+    share_link_token VARCHAR(255),
+    expiration TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+\end{verbatim}
+
+Users can share files by specifying target user IDs or by generating shareable links with expiration times.
+
+\subsection{Integration with Object Storage}
+Configuration for MinIO (S3-compatible):
+\begin{verbatim}
+import boto3
+
+s3_client = boto3.client(
+    's3',
+    endpoint_url='https://minio.outsight.com',
+    aws_access_key_id='<access-key>',
+    aws_secret_access_key='<secret-key>',
+    region_name='us-east-1'
+)
+
+# Upload file
+s3_client.upload_fileobj(
+    file_obj,
+    bucket_name='user-files',
+    key=f'{user_id}/{file_id}/{filename}'
+)
+\end{verbatim}
+
+\section{Configuration Synchronization Service}
+\subsection{Implementation Approach}
+The synchronization service is implemented as a Kubernetes operator that watches a Git repository for configuration changes and applies them to the cluster.
+
+\subsection{Git Repository Structure}
+Configuration files are organized by environment:
+\begin{verbatim}
+config-repo/
+|-- base/
+|   |-- deployment.yaml
+|   |-- service.yaml
+|   +-- configmap.yaml
++-- overlays/
+    |-- dev/
+    |-- staging/
+    +-- production/
+\end{verbatim}
+
+\subsection{Synchronization Workflow}
+\begin{enumerate}
+    \item Service polls Git repository every 60 seconds
+    \item Detects changes via commit hash comparison
+    \item Clones updated repository
+    \item Validates YAML syntax and Kubernetes schema
+    \item Applies changes using \texttt{kubectl apply}
+    \item Records deployment in audit log
+    \item Monitors deployment status and rolls back on failure
+\end{enumerate}
+
+\subsection{Rollback Mechanism}
+If a deployment fails health checks, the service automatically rolls back to the previous configuration:
+\begin{verbatim}
+kubectl rollout undo deployment/file-sharing-service
+\end{verbatim}
+
+\section{Infrastructure Diagram Creation}
+\subsection{Diagramming Tools}
+We use the following tools to document the infrastructure:
+\begin{itemize}
+    \item \textbf{draw.io / Diagrams.net}: For high-level architecture diagrams
+    \item \textbf{PlantUML}: For sequence and component diagrams
+    \item \textbf{Kubernetes visualizers}: For cluster resource visualization
+\end{itemize}
+
+\subsection{Documentation Generated}
+\begin{itemize}
+    \item System architecture overview
+    \item Network topology and ingress routing
+    \item Authentication flow diagrams
+    \item Database schema diagrams
+    \item Deployment pipeline visualizations
+\end{itemize}
+
+\section{Containerization and Kubernetes Deployment}
+\subsection{Docker Images}
+We create optimized Docker images following best practices:
+\begin{itemize}
+    \item Multi-stage builds to minimize image size
+    \item Non-root user execution
+    \item Minimal base images (Alpine Linux or distroless)
+    \item Vulnerability scanning with Trivy
+\end{itemize}
+
+Example Dockerfile for file-sharing service:
+\begin{verbatim}
+FROM python:3.10-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+FROM python:3.10-slim
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY . .
+RUN useradd -m appuser
+USER appuser
+ENV PATH=/root/.local/bin:$PATH
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+\end{verbatim}
+
+\subsection{Kubernetes Manifests}
+We define Kubernetes resources for each service:
+\begin{itemize}
+    \item Deployment: specifies replicas, container image, resource limits
+    \item Service: exposes internal endpoints
+    \item Ingress: configures external access and TLS
+    \item ConfigMap: stores non-sensitive configuration
+    \item Secret: stores sensitive data (credentials, tokens)
+\end{itemize}
+
+Example Deployment manifest:
+\begin{verbatim}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-sharing-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: file-sharing
+  template:
+    metadata:
+      labels:
+        app: file-sharing
+    spec:
+      containers:
+      - name: app
+        image: outsight/file-sharing:v1.0
+        ports:
+        - containerPort: 8000
+        env:
+        - name: KEYCLOAK_URL
+          value: "https://keycloak.outsight.com"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+\end{verbatim}
+
+\subsection{Helm Charts}
+For easier deployment management, we package services as Helm charts with templated values for different environments.
+
+\section{CI/CD Pipeline Implementation}
+\subsection{Pipeline Stages}
+\begin{enumerate}
+    \item \textbf{Lint and Format:} Code style checks (\texttt{black}, \texttt{flake8})
+    \item \textbf{Unit Tests:} Run pytest suite
+    \item \textbf{Security Scan:} Scan dependencies for vulnerabilities
+    \item \textbf{Build:} Build Docker image
+    \item \textbf{Integration Tests:} Test against local Kubernetes cluster
+    \item \textbf{Push:} Push image to container registry
+    \item \textbf{Deploy:} Deploy to staging/production environment
+\end{enumerate}
+
+\subsection{Example CI/CD Configuration}
+GitLab CI configuration excerpt:
+\begin{verbatim}
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - pytest --cov=app tests/
+
+build:
+  stage: build
+  script:
+    - docker build -t outsight/file-sharing:$CI_COMMIT_SHA .
+    - docker push outsight/file-sharing:$CI_COMMIT_SHA
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/file-sharing-service 
+      app=outsight/file-sharing:$CI_COMMIT_SHA
+\end{verbatim}
+
+\section{Security Enhancements Implemented}
+\subsection{Bug Fixes and Patches}
+During the internship, we identified and resolved several security issues:
+\begin{itemize}
+    \item SQL injection vulnerability in user query endpoint (fixed by using parameterized queries)
+    \item Insecure direct object reference in file download API (fixed by adding authorization checks)
+    \item Missing rate limiting on authentication endpoints (implemented using Redis-based rate limiter)
+    \item Weak password policy (enforced strong passwords via Keycloak configuration)
+\end{itemize}
+
+\subsection{Security Testing}
+We performed:
+\begin{itemize}
+    \item Static code analysis with Bandit (Python) or Gosec (Go)
+    \item Dependency vulnerability scanning with Snyk
+    \item Penetration testing of authentication flows
+    \item TLS configuration testing with SSL Labs
+\end{itemize}
+
+\section{Challenges and Solutions}
+\subsection{Token Refresh in Long-Running Operations}
+\textbf{Challenge:} File uploads can take longer than access token lifetime.  
+\textbf{Solution:} Implement token refresh logic in client applications; use refresh tokens to obtain new access tokens transparently.
+
+\subsection{Backward Compatibility During Migration}
+\textbf{Challenge:} Legacy clients expect custom authentication headers.  
+\textbf{Solution:} Maintain a compatibility layer that translates legacy authentication to OIDC tokens during transition phase.
+
+\subsection{Database Migration}
+\textbf{Challenge:} Migrating user data from legacy system to Keycloak.  
+\textbf{Solution:} Develop migration scripts that export user data, hash passwords using bcrypt, and import into Keycloak via Admin API.
+
+\section{Testing Strategy}
+\subsection{Unit Tests}
+We achieve >80\% code coverage for critical business logic. Tests are written using:
+\begin{itemize}
+    \item \texttt{pytest} for Python
+    \item Mocking for external dependencies (Keycloak API, object storage)
+\end{itemize}
+
+\subsection{Integration Tests}
+Integration tests validate end-to-end workflows:
+\begin{itemize}
+    \item User registration and authentication
+    \item File upload, download, and sharing
+    \item Configuration synchronization
+\end{itemize}
+
+Tests run against a local Kubernetes cluster with all dependencies deployed.
+
+\subsection{Load Testing}
+We use \texttt{Locust} or \texttt{k6} to simulate concurrent users and measure system performance under load.
+
+\section{Summary}
+This chapter detailed the implementation of the proposed architecture. We covered Keycloak configuration, service development, containerization, deployment automation, and security enhancements. The next chapter presents the evaluation of the implemented system.

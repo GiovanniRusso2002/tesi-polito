@@ -1,0 +1,50 @@
+Alcune info pratiche sulla scrittura della tesi
+===============================================
+Fulvio Risso, 01/02/2021
+
+
+Formato
+-------
+Lo studente scelga quello che preferisce; c'e' chi preferisce Word, altri Latex. In quest'ultimo caso, il Politecnico consiglia il modello "toptesi" (e' un consiglio, non un obbligo).
+Nel caso di Latex, si tenga conto che:
+- l'impaginazione è piu' facile da fare (fa tutto lui)
+- il controllo ortografico peggiore (Word e' molto piu' evoluto; puo' essre uno svantaggio se la si scrive in Inglese)
+- inserire le immagini in formato vettoriale (es. PDF), altrimenti la qualita' della stampa puo' risultare pessima
+
+
+Dimensione
+----------
+Tendenzialmente intorno alle 60 pagine. Puo' essere un poco piu' corta se si e' scritto tanto codice, oppure piu' lunga se e' una tesi prevalentemente teorica/compilativa.
+
+
+
+Outline
+-------
+L'outline tipica per una tesi e' la seguente:
+
+- Intro dell'argomento: ad es. se stiamo lavorando su network monitoring o databases
+
+- Presentazione del problema: qual e' il problema che voglio risolvere nella tesi
+
+- Related work: chi ha provato a risolvere il problema prima di noi, cosa ha fatto? Vantaggi e limiti di questi approcci
+(oppure)
+- Stato dell'arte: cosa hanno fatto altri progetti/prodotti simili e/o correlati; da che condizioni iniziali e' partito il lavoro di tesi
+
+- Tools utilizzati (se appropriato): una presentazione degli strumenti/tecnologie che bisogna sapere per capire il contenuto della tesi (che so, se il lavoro si basa pesantemente su una certa libreria oppure un certo protocollo, bisogna presentarlo). Attenzione pero' a non eccedere nella lunghezza: non si può pensare di documentare un protocollo nella sua interezza, magari dedicando 10 pagina ad esso. Si mettano le cose fondamentali e poi si rimandi ad eventuali approfondimenti in letteratura.
+
+- soluzione del problema: questa e' la parte piu' corposa, nella quale si presenta cio' che si e' fatto per raggiungere l'obiettivo definito nel capitolo 2. Questa parte è quasi sempre divisa in due capitoli:
+  - architettura generale del sistema (cio' che e' valido sempre, indipendentemente dall'implementazione)
+  - implementazione, che tratta gli aspetti piu' pratici (linguaggi scelti, organizzazione delle classi del software, eventuali "workaround" per risolvere problemi pratici
+  
+- risultati ottenuti: e' un capitolo fondamentale, essendo noi ingegneri. Non possiamo fare nulla senza verificarlo, senza misurarle le prestazioni, caratterizzarne il comportamento. Una tesi senza misure non e' una tesi. Di preferenza è utile confrontare i risultati ottenuti dal prototipo con quelli ottenibili con tecnologie/algoritmi alternativi (o quelli esistenti), in modo da evidenziare eventuali differenze. Non è un problema se, in alcuni casi, i risultati sono peggiori rispetto al sistema utilizzato come benchmark; un sistema nuovo, con molte più funzionalità, può essere in alcuni casi più lento di uno precedente che aveva funzionalità ridotte.
+
+- conclusioni: capitolo finale con le conclusioni, cosa si e' ottenuto, un giudizio sulla bonta' dei risultati (es. se l'approccio scelto si e' rivelato una buona idea oppure e' meglio lasciare perdere), eventuali estensioni future.
+
+- bibliografia: e' un capitolo spesso trascurato dagli studenti, ma non è pensabile fare un lavoro inventando tutto da zero. Normalmente ci si basa su strumenti esistenti (es. tools), o su persone che hanno studiato quel problema o problemi simili in passato (es. articoli scientifici). In particolare, dedicare un po' di tempo a cercare cosa esiste in letteratura, magari attraverso i siti ieeexplore.ieee.com oppure Google Scholar, in modo da avere piu' chiaro il panorama scientifico sull'argomento.
+
+
+Tendenzialmente un capitolo non è più di 20 pagine. Se diventa piu' lungo bisogna iniziare a pensare a splittarlo. Ci possono poi essere capitoli molto corti  (tipo i primi due, che possono essere anche solamente 2-3 pagine).
+
+All'interno del capitolo, il testo deve essere ben strutturato. Quando una sezione diventa piu' lunga di 2 pagine, è meglio iniziare a pensare ad interrompere quella sezione e spezzarla in piu' parti. Sezioni troppo lunghe sono spesso sintomo di pensieri contorti e non chiari, che poi non vengono compresi dal lettore.
+
+

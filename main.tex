@@ -1,13 +1,11 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[12pt,a4paper,twoside,openright]{toptesi}
 
 % --- Language and encoding ---
-\usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 
 % --- Layout ---
-\usepackage[a4paper,margin=3cm]{geometry}
 \usepackage{setspace}
 \onehalfspacing
 
@@ -39,11 +37,13 @@
 
 % --- Custom commands ---
 \input{stile/comandi}
+\AtBeginDocument{\english}
 
 \begin{document}
 
 % --- Front page ---
 \input{frontespizio}
+\cleardoublepage
 
 % --- Roman numbering ---
 \pagenumbering{roman}

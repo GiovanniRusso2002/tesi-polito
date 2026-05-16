@@ -1,54 +1,44 @@
-\chapter{Background and State of the Art}
+\chapter{Background and Related Work}
 \label{chap:background}
 
-This chapter provides an overview of the theoretical foundations and examines the current state of the art in cloud modernization, identity and access management, and secure file-sharing systems. We analyze existing solutions, identify their limitations, and contextualize the contributions of this thesis within the broader research landscape.
+This chapter provides the conceptual background required to frame the migration problem and positions the thesis with respect to related work.
 
-\section{Cloud-Native Architectures}
-Cloud-native application development has become the dominant paradigm for building modern, scalable systems. The Cloud Native Computing Foundation (CNCF) defines cloud-native as an approach that leverages containerization, microservices, orchestration, and declarative APIs to build resilient distributed systems.
+\section{Cloud-Native Principles for Legacy Modernization}
+Cloud-native modernization is not limited to container adoption. In a migration context, it also requires reproducible infrastructure, explicit service boundaries, automated validation, and operational observability. These principles are especially relevant when modern and legacy components must coexist during transition.
 
-\subsection{Microservices and Containerization}
-Microservices architecture decomposes monolithic applications into loosely coupled, independently deployable services. Containers, particularly Docker, provide lightweight virtualization that ensures consistency across development, testing, and production environments.
+\subsection{Incremental Delivery and Operability}
+A recurring principle in modernization literature is incremental delivery over big-bang replacement. Incremental delivery reduces migration risk, enables early feedback, and supports rollback strategies. To be effective, it requires infrastructure automation, environment consistency, and testable interfaces between old and new components.
 
-\subsection{Orchestration with Kubernetes}
-Kubernetes has emerged as the de facto standard for container orchestration. It automates deployment, scaling, and management of containerized applications, offering features such as service discovery, load balancing, self-healing, and declarative configuration management.
+\subsection{Infrastructure as Code}
+Infrastructure as Code (IaC) is a key enabler for modernization because it turns deployment topology, security controls, and environment configuration into versioned artifacts. This supports traceability, reviewability, and reproducibility across development and production environments.
 
-\section{Identity and Access Management}
-Modern applications require robust authentication and authorization mechanisms to protect resources and user data. Traditional session-based authentication has largely been superseded by token-based approaches.
+\section{Migration Strategies and Patterns}
+Common migration strategies include rehosting, replatforming, refactoring, and selective rebuilding. In practice, many enterprise projects combine these strategies across subsystems. Decision criteria generally include coupling level, criticality, migration effort, and risk exposure.
 
-\subsection{OAuth 2.0 and OpenID Connect}
-OAuth 2.0 is an industry-standard protocol for authorization, while OpenID Connect (OIDC) extends OAuth 2.0 to provide an identity layer. OIDC enables clients to verify user identity and obtain profile information through standardized token formats (JWT).
+\subsection{Coexistence as a First-Class Requirement}
+For systems that cannot tolerate interruption, coexistence between legacy and target components becomes a design requirement. This introduces additional complexity: contract compatibility, dual-path validation, and progressive switchover mechanisms.
 
-\subsection{Keycloak as an IAM Solution}
-Keycloak is an open-source Identity and Access Management solution that provides single sign-on (SSO), user federation, identity brokering, and social login capabilities. It implements OIDC and SAML 2.0 protocols, making it suitable for enterprise cloud-native applications.
+\subsection{Decision-Driven Migration}
+Related work often describes migration patterns conceptually, but less frequently provides explicit decision frameworks that combine technical and economic rationale. This gap is relevant for industrial contexts where architecture choices must be justified beyond purely technical preference.
 
-\section{Secure File-Sharing Systems}
-File-sharing services are essential components of many enterprise systems, but they introduce significant security challenges, particularly regarding access control, data encryption, and compliance with privacy regulations.
+\section{IAM Modernization in Legacy Systems}
+Identity and Access Management (IAM) modernization is a recurrent challenge in legacy platforms. Token-based approaches and standards such as OAuth 2.0 and OpenID Connect (OIDC) provide stronger interoperability and security controls than ad-hoc authentication schemes.
 
-\subsection{Traditional Approaches}
-Traditional file-sharing systems often rely on custom authentication mechanisms and coarse-grained access control. Examples include FTP servers, WebDAV, and proprietary enterprise solutions. These systems typically lack integration with modern IAM standards.
+\subsection{From Application-Coupled Identity to Standard Protocols}
+Legacy systems frequently embed identity assumptions in application code and persistence layers. Migrating to standards-based IAM requires decoupling these assumptions, redefining authorization boundaries, and validating compatibility with existing clients and workflows.
 
-\subsection{Cloud-Native File-Sharing}
-Modern cloud-native file-sharing solutions leverage object storage (e.g., Amazon S3, MinIO), implement fine-grained access control through policy engines, and integrate with identity providers using standards like OIDC. However, migrating legacy systems to these architectures presents challenges in maintaining backward compatibility and ensuring data security during transition.
+\subsection{Open-Source and Managed IAM Trade-offs}
+The choice between open-source IAM solutions and managed identity platforms affects control, integration flexibility, and operating cost. For migration projects, this decision also impacts how quickly existing services can adopt new identity flows.
 
-\section{State of the Art Analysis}
-\subsection{Cloud Migration Strategies}
-Recent research has identified several patterns for cloud migration, including rehosting (lift-and-shift), replatforming, refactoring, and rebuilding. The choice of strategy depends on factors such as technical debt, business requirements, and available resources.
+\section{Limitations in Existing Approaches}
+The literature provides strong foundations on migration patterns and IAM technologies, but industrial guidance is often fragmented across separate dimensions.
 
-\subsection{IAM Integration in Legacy Systems}
-Existing work on IAM modernization focuses primarily on greenfield projects. Limited research addresses the practical challenges of retrofitting OIDC-based authentication into legacy file-sharing services that were designed with different security models.
+\subsection{Fragmented Treatment of Technical and Economic Criteria}
+Technical architecture decisions are frequently discussed without detailed economic framing. However, recurring infrastructure costs, operational burden, and dependency reduction are often decisive in enterprise migration roadmaps.
 
-\subsection{Configuration Management in Distributed Systems}
-Tools such as Helm, Kustomize, and GitOps platforms (ArgoCD, Flux) have been proposed for managing Kubernetes configurations. However, synchronization of deployment configurations across multiple environments remains an active area of research, particularly regarding conflict resolution and rollback mechanisms.
-
-\section{Gaps and Limitations}
-Despite significant progress in cloud modernization, several gaps remain:
-
-\begin{itemize}
-    \item \textbf{Integration complexity:} Practical methodologies for integrating modern IAM solutions into legacy services are not well documented in academic literature.
-    \item \textbf{Security during migration:} The security implications of gradual migration strategies, where legacy and modern authentication coexist, require further investigation.
-    \item \textbf{Performance trade-offs:} Quantitative evaluations of performance overhead introduced by token-based authentication in file-sharing contexts are scarce.
-    \item \textbf{Documentation practices:} Systematic approaches to documenting cloud infrastructure architectures for maintainability and onboarding are underexplored.
-\end{itemize}
+\subsection{Limited Evidence on Incremental Validation}
+Many case studies report final architectures but provide limited detail on intermediate validation mechanisms, such as dual-backend tests, migration data checks, and environment-separated verification workflows.
 
 \section{Positioning of This Thesis}
-This thesis addresses these gaps by providing a comprehensive case study of cloud modernization in an enterprise context. We contribute practical design patterns, implementation strategies, and empirical evaluation of a real-world migration project involving Keycloak OIDC integration and file-sharing service modernization.
+This thesis addresses the above limitations through a decision-oriented migration case study. The contribution is not a generic technology survey, but an end-to-end reasoning process from baseline constraints to architecture selection, incremental implementation, and migration-focused validation.
+

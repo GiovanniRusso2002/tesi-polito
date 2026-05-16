@@ -1,53 +1,42 @@
 \chapter{Introduction}
 
-\section{Context and Technological Background}
-In recent years, the rapid evolution of cloud computing has fundamentally transformed how organizations design, deploy, and manage software systems. Cloud-native architectures, containerization, and microservices have become the standard for building scalable and resilient applications. Companies across all sectors are increasingly adopting cloud modernization strategies to improve operational efficiency, reduce infrastructure costs, and enhance security postures.
+\section{Industrial Context and Legacy Constraints}
+Many software-intensive companies operate platforms that are already cloud-hosted but not truly cloud-native in design, deployment workflow, and operational governance. In these contexts, modernization is not a greenfield exercise: it requires preserving existing behavior while progressively reducing technical debt.
 
-This thesis is based on a six-month internship (February--August 2026) at Outsight, a company based in Sophia Antipolis, France, specializing in cloud modernization solutions. Outsight provides services and tools to help organizations migrate legacy systems to modern cloud-native platforms, leveraging technologies such as Kubernetes, Keycloak, and secure file-sharing services.
+This thesis focuses on Outsight Cloud, a platform used to manage LiDAR-related assets and simulations. The initial system combined a Vue frontend and a Node.js/Express backend, with a data model strongly coupled to Airtable, Redis-based sessions, containerized deployment, and reverse-proxy routing. Although functional, this setup exposed structural constraints in scalability, long-term maintainability, and cost control.
 
 \section{Problem Statement}
-Despite the widespread adoption of cloud technologies, many organizations face significant challenges in modernizing their software infrastructure. Key problems include:
+The core problem addressed in this work is the migration of a legacy platform toward a cloud-native architecture under real operational constraints. The migration had to satisfy the following conditions:
 \begin{itemize}
-    \item \textbf{Security concerns:} Legacy authentication and authorization systems are often not compatible with modern identity and access management (IAM) standards such as OpenID Connect (OIDC).
-    \item \textbf{Service integration:} Existing services need to be refactored to work seamlessly in a cloud-native environment.
-    \item \textbf{Configuration management:} Managing deployment configurations across distributed systems requires robust synchronization mechanisms.
-    \item \textbf{Documentation gap:} Technical infrastructure diagrams and architectural documentation are often missing or outdated, making maintenance and onboarding difficult.
+    \item \textbf{Continuity:} avoid disruptive replacement and preserve business-critical flows during transition.
+    \item \textbf{Security modernization:} prepare the platform for standards-based identity and access management instead of legacy authentication assumptions.
+    \item \textbf{Data evolution:} progressively decouple application logic from Airtable-centric persistence.
+    \item \textbf{Operational robustness:} improve reproducibility through Infrastructure as Code, environment separation, and automated validation.
+    \item \textbf{Economic sustainability:} justify architectural choices also in terms of recurring cost and operational effort.
 \end{itemize}
 
-\section{Research Gap}
-While existing literature addresses cloud migration strategies and security best practices independently, there is limited practical guidance on integrating modern IAM solutions like Keycloak OIDC into legacy file-sharing services while maintaining backward compatibility and ensuring cloud-native deployment readiness. Furthermore, the process of documenting and visualizing complex cloud infrastructures remains largely manual and error-prone.
-
-\section{Thesis Objectives and Contributions}
-The main objective of this thesis is to document, analyze, and evaluate the modernization of Outsight's cloud infrastructure, focusing on security enhancements and service integration. Specifically, we aim to:
-
+\section{Thesis Scope}
+The thesis focuses on designing and justifying a migration strategy for a legacy platform under real technical and economic constraints. The scope includes:
 \begin{itemize}
-    \item Design and create comprehensive technical diagrams of Outsight's cloud infrastructure, providing clear documentation for developers and stakeholders.
-    \item Identify and resolve functional and security issues in the existing software stack through systematic code review and testing.
-    \item Migrate the user management service to Keycloak OIDC, ensuring secure authentication and authorization mechanisms compliant with industry standards.
-    \item Modernize the file-sharing service by redesigning it as a cloud-native application fully integrated with Keycloak OIDC, enhancing both security and scalability.
-    \item Implement deployment configuration synchronization features to streamline multi-environment management.
-    \item Evaluate the performance, security, and usability of the modernized system through quantitative metrics and qualitative analysis.
-\end{itemize}
-
-The key contributions of this work are:
-\begin{itemize}
-    \item A practical methodology for integrating Keycloak OIDC into legacy file-sharing services.
-    \item A cloud-native architecture design that balances security, scalability, and maintainability.
-    \item An empirical evaluation of the modernization impact on system performance and security posture.
-    \item Lessons learned and best practices for cloud modernization projects in enterprise environments.
+    \item defining the problem context and migration drivers;
+    \item comparing candidate cloud migration options;
+    \item selecting and motivating a target architecture;
+    \item presenting implementation and validation foundations already supported by project evidence.
 \end{itemize}
 
 \section{Thesis Structure}
 This thesis is organized as follows:
 
-\textbf{Chapter~\ref{chap:background}} provides background information on cloud-native architectures, identity and access management, and reviews the state of the art in cloud modernization practices.
+\textbf{Chapter~\ref{chap:background}} introduces the conceptual and related-work foundations on cloud-native modernization, migration patterns, and IAM evolution in legacy systems.
 
-\textbf{Chapter~\ref{chap:technologies}} introduces the key technologies employed in this work, including Kubernetes, Keycloak, OIDC, and related tools.
+\textbf{Chapter~\ref{chap:baseline}} describes the case-study baseline (as-is architecture), including technical debt and cost-related migration drivers.
 
-\textbf{Chapter~\ref{chap:architecture}} describes the architectural design of the modernized system, explaining design decisions and trade-offs.
+\textbf{Chapter~\ref{chap:methodology}} presents the migration methodology and decision framework, including candidate options and selection rationale.
 
-\textbf{Chapter~\ref{chap:implementation}} details the implementation of the proposed solution, covering authentication migration, file-sharing service modernization, and configuration synchronization.
+\textbf{Chapter~\ref{chap:architecture}} defines the target architecture (to-be), its main components, and design trade-offs.
 
-\textbf{Chapter~\ref{chap:evaluation}} presents the evaluation methodology and results, including performance benchmarks, security analysis, and comparative assessments.
+\textbf{Chapter~\ref{chap:implementation}} details the incremental migration implementation foundations, with focus on IaC, data migration tooling, and validation pipeline.
 
-\textbf{Chapter~\ref{chap:conclusions}} summarizes the contributions, discusses limitations, and outlines directions for future work.
+\textbf{Chapter~\ref{chap:evaluation}} discusses the evaluation approach and current evidence regarding migration feasibility, quality, and impact.
+
+\textbf{Chapter~\ref{chap:conclusions}} concludes the thesis by summarizing contributions and outlining future work.

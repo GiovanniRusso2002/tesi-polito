@@ -1,282 +1,56 @@
-\chapter{Evaluation and Results}
-\label{chap:evaluation}
+\chapter{Migration Implementation}
+\label{chap:implementation}
 
-This chapter presents the evaluation of the modernized cloud infrastructure. We assess the system through quantitative performance benchmarks, security analysis, and qualitative assessments. The evaluation demonstrates the effectiveness of the proposed solution in achieving the stated objectives.
+This chapter describes the implementation foundations that were already established to execute the migration strategy in a controlled and verifiable way.
 
-\section{Evaluation Methodology}
-\subsection{Evaluation Goals}
-The evaluation aims to answer the following research questions:
-\begin{enumerate}
-    \item \textbf{RQ1:} Does the OIDC-based authentication introduce acceptable performance overhead compared to the legacy system?
-    \item \textbf{RQ2:} How does the modernized architecture perform under realistic load conditions?
-    \item \textbf{RQ3:} Does the system meet security requirements and industry best practices?
-    \item \textbf{RQ4:} What are the usability and maintainability improvements compared to the legacy system?
-\end{enumerate}
-
-\subsection{Evaluation Environment}
-Tests are conducted in a staging environment that mirrors the production setup:
+\section{Incremental Execution Plan}
+The migration was implemented incrementally, with explicit separation between foundation work and full functional cutover. The implementation sequence followed four tracks:
 \begin{itemize}
-    \item Kubernetes cluster with 3 worker nodes (8 CPU cores, 16 GB RAM each)
-    \item Keycloak instance with PostgreSQL backend
-    \item MinIO object storage cluster
-    \item Network latency simulated at 10ms (typical cloud environment)
+    \item establish cloud infrastructure foundations on AWS;
+    \item formalize reproducible provisioning with Terraform;
+    \item introduce data migration tooling from Airtable to PostgreSQL;
+    \item implement validation pipelines to check behavioral consistency during coexistence.
 \end{itemize}
 
-\subsection{Metrics Collected}
-We measure the following metrics:
+This sequencing reduced migration risk by enabling technical validation before irreversible system decisions.
+
+\section{Infrastructure as Code and Environment Separation}
+\subsection{Terraform-Driven Provisioning}
+Infrastructure provisioning was implemented using Terraform, with explicit definitions for networking, routing, compute, storage, and observability-related services. The resulting setup includes managed components such as load balancing, container runtime services, DNS/TLS integration, and cloud logging.
+
+\subsection{Environment Governance}
+A dedicated effort was made to separate development and production concerns. This included environment-specific configuration handling and controlled evolution of shared resources to avoid production side effects during migration experimentation.
+
+\section{Data Migration Tooling and Validation}
+\subsection{Relational Foundation}
+The migration path from Airtable to PostgreSQL was implemented with schema and migration tooling designed to preserve compatibility constraints. The objective was not only data transfer, but controlled evolution toward explicit schema ownership.
+
+\subsection{Replication and Validation Scripts}
+Dedicated scripts were prepared to:
 \begin{itemize}
-    \item \textbf{Latency:} Response time for API requests (p50, p95, p99)
-    \item \textbf{Throughput:} Requests per second (RPS) under load
-    \item \textbf{Resource utilization:} CPU and memory usage
-    \item \textbf{Error rate:} Percentage of failed requests
-    \item \textbf{Authentication overhead:} Time spent on token validation
+    \item replicate data from Airtable into PostgreSQL;
+    \item validate consistency through machine-readable reports;
+    \item support migration checkpoints before wider rollout.
 \end{itemize}
 
-\section{Performance Evaluation}
-\subsection{Baseline Comparison}
-We compare the modernized system against the legacy system (before OIDC migration) under identical conditions.
+These artifacts transform data migration from a one-time operation into a repeatable verification workflow.
 
-% TODO: Create comparison table
-\begin{table}[H]
-\centering
-\caption{Performance comparison: Legacy vs. Modernized system}
-\label{tab:performance-comparison}
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Metric} & \textbf{Legacy} & \textbf{Modernized} & \textbf{Change} \\
-\hline
-Avg. Latency (ms) & 45 & 52 & +15.6\% \\
-p95 Latency (ms) & 120 & 135 & +12.5\% \\
-p99 Latency (ms) & 250 & 280 & +12.0\% \\
-Throughput (RPS) & 850 & 820 & -3.5\% \\
-Error Rate (\%) & 0.5 & 0.3 & -40\% \\
-\hline
-\end{tabular}
-\end{table}
+\section{CI/Test Strategy for Dual-Backend Consistency}
+\subsection{Dual-Backend Test Design}
+To support coexistence, smoke tests were designed to run against both data backends (Airtable and PostgreSQL) under a common API expectation. This provided an early warning mechanism for behavioral divergence.
 
-\textbf{Analysis:} The modernized system introduces a modest latency increase (+15.6\% on average) due to token validation overhead. However, this is acceptable given the significant security improvements. Error rates decreased due to better error handling and resilience mechanisms.
+\subsection{Containerized Validation Environment}
+The test workflow uses containerized dependencies, including a PostgreSQL service and an Airtable-compatible mock component, so that migration checks can be reproduced reliably in CI.
 
-\subsection{Authentication Overhead Analysis}
-We measure the time spent on OIDC token validation:
+\subsection{Pipeline Integration}
+GitLab CI stages were defined to execute unit and smoke checks across backend variants. This allows migration decisions to be supported by continuous evidence instead of manual spot checks.
+
+\section{Implementation Scope and Current Status}
+At the current stage, the implemented work establishes the migration backbone:
 \begin{itemize}
-    \item Token parsing: 1-2 ms
-    \item Signature verification (with cached public key): 3-5 ms
-    \item Claims extraction: <1 ms
-    \item \textbf{Total authentication overhead:} 5-8 ms per request
+    \item infrastructure foundations and environment governance;
+    \item data replication and validation tooling;
+    \item coexistence-oriented CI/test pipeline.
 \end{itemize}
 
-Public key caching reduces overhead significantly; without caching, signature verification takes 30-50 ms (requires fetching JWKS from Keycloak).
-
-\subsection{Load Testing Results}
-We simulate increasing load to determine system capacity.
-
-% TODO: Create load testing graph
-\begin{figure}[H]
-    \centering
-    % \includegraphics[width=0.8\textwidth]{immagini/load-test-results.pdf}
-    \caption{System throughput under increasing concurrent users.}
-    \label{fig:load-test}
-\end{figure}
-
-\textbf{Observations:}
-\begin{itemize}
-    \item System maintains stable latency up to 500 concurrent users
-    \item Throughput plateaus at approximately 1200 RPS
-    \item CPU utilization reaches 75\% at peak load
-    \item No out-of-memory errors or crashes observed
-\end{itemize}
-
-\textbf{Bottleneck identified:} Database connection pool size limits throughput. Increasing pool size to 50 connections improves throughput by 20\%.
-
-\subsection{File Upload/Download Performance}
-We test file transfer performance with various file sizes:
-
-\begin{table}[H]
-\centering
-\caption{File transfer performance}
-\label{tab:file-performance}
-\begin{tabular}{|l|c|c|}
-\hline
-\textbf{File Size} & \textbf{Upload Time (s)} & \textbf{Download Time (s)} \\
-\hline
-1 MB & 0.8 & 0.5 \\
-10 MB & 3.2 & 2.1 \\
-100 MB & 28.5 & 18.2 \\
-1 GB & 295 & 185 \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Analysis:} Transfer times are dominated by network bandwidth (approximately 30 MB/s upload, 50 MB/s download). Object storage latency contributes <5\% overhead.
-
-\subsection{Scalability Testing}
-We test horizontal scalability by varying the number of service replicas:
-
-\begin{table}[H]
-\centering
-\caption{Scalability with increased replicas}
-\label{tab:scalability}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Replicas} & \textbf{Throughput (RPS)} & \textbf{Avg Latency (ms)} & \textbf{CPU/Replica (\%)} \\
-\hline
-1 & 420 & 95 & 85 \\
-3 & 1180 & 54 & 75 \\
-5 & 1950 & 52 & 70 \\
-10 & 3800 & 53 & 68 \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Result:} System scales nearly linearly up to 5 replicas. Beyond 10 replicas, database becomes the bottleneck.
-
-\section{Security Evaluation}
-\subsection{Authentication Security}
-\subsubsection{Token Validation}
-All API requests are protected by token validation. Invalid or expired tokens are rejected with HTTP 401 status.
-
-Test results:
-\begin{itemize}
-    \item Expired tokens: 100\% rejection rate
-    \item Tampered tokens (modified claims): 100\% rejection rate
-    \item Missing tokens: 100\% rejection rate
-\end{itemize}
-
-\subsubsection{Token Expiration Policy}
-Access tokens expire after 5 minutes, refresh tokens after 30 minutes. This strikes a balance between security and user experience (minimizes re-authentication frequency).
-
-\subsection{Authorization Testing}
-We verify that authorization policies are correctly enforced:
-\begin{itemize}
-    \item \textbf{Test case 1:} User A attempts to access file owned by User B without sharing → \texttt{403 Forbidden}
-    \item \textbf{Test case 2:} User A accesses shared file from User B → \texttt{200 OK}
-    \item \textbf{Test case 3:} Guest user attempts admin operation → \texttt{403 Forbidden}
-    \item \textbf{Test case 4:} Admin user accesses all resources → \texttt{200 OK}
-\end{itemize}
-
-Result: 100\% pass rate across 50 test cases.
-
-\subsection{Vulnerability Scanning}
-\subsubsection{Container Image Scanning}
-Trivy scan results:
-\begin{itemize}
-    \item Critical vulnerabilities: 0
-    \item High vulnerabilities: 2 (both in non-critical dependencies, patches applied)
-    \item Medium vulnerabilities: 5
-    \item Low vulnerabilities: 12
-\end{itemize}
-
-\subsubsection{Dependency Scanning}
-Snyk scan results for Python dependencies:
-\begin{itemize}
-    \item No critical vulnerabilities
-    \item 1 high vulnerability in \texttt{requests} library (updated to patched version)
-\end{itemize}
-
-\subsection{Penetration Testing}
-We conduct basic penetration tests:
-\begin{itemize}
-    \item SQL injection attempts: All blocked by parameterized queries
-    \item Cross-Site Scripting (XSS): Not applicable (API-only service)
-    \item Insecure Direct Object References (IDOR): Blocked by authorization checks
-    \item Brute force attacks: Rate limiting prevents password guessing (max 5 attempts per minute)
-\end{itemize}
-
-\subsection{TLS Configuration}
-SSL Labs rating: \textbf{A+}
-\begin{itemize}
-    \item TLS 1.3 enabled
-    \item Strong cipher suites only
-    \item HSTS enabled
-    \item Valid certificate chain
-\end{itemize}
-
-\section{Comparative Analysis}
-\subsection{Comparison with Related Work}
-We compare our approach with existing cloud migration case studies:
-
-\begin{table}[H]
-\centering
-\caption{Comparison with related work}
-\label{tab:comparison-related-work}
-\begin{tabular}{|l|c|c|c|c|}
-\hline
-\textbf{Feature} & \textbf{Our Work} & \textbf{Study A} & \textbf{Study B} & \textbf{Study C} \\
-\hline
-OIDC Integration & Yes & No & Yes & Partial \\
-Legacy Compatibility & Yes & No & No & Yes \\
-Performance Evaluation & Yes & Limited & Yes & No \\
-Security Analysis & Yes & Yes & Limited & Yes \\
-Open Source IAM & Yes & No & Yes & No \\
-Config Sync & Yes & No & No & Yes \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Observation:} Our work provides a more comprehensive solution covering OIDC integration, backward compatibility, and quantitative performance evaluation.
-
-\section{Qualitative Evaluation}
-\subsection{Developer Experience}
-We gather feedback from the development team (5 developers) through structured interviews:
-
-\textbf{Positive aspects:}
-\begin{itemize}
-    \item Simplified authentication logic (no custom token management)
-    \item Clear documentation and architectural diagrams
-    \item Well-defined APIs and service boundaries
-    \item Easier onboarding for new developers
-\end{itemize}
-
-\textbf{Challenges:}
-\begin{itemize}
-    \item Initial learning curve for Keycloak configuration
-    \item Debugging token-related issues requires understanding of OIDC flows
-\end{itemize}
-
-\subsection{Maintainability Assessment}
-We assess maintainability using qualitative criteria:
-\begin{itemize}
-    \item \textbf{Code quality:} Consistent style, >80\% test coverage, linting enforced
-    \item \textbf{Documentation:} Comprehensive README files, API documentation, architectural diagrams
-    \item \textbf{Modularity:} Clear separation of concerns, loosely coupled services
-    \item \textbf{Deployment:} Automated CI/CD pipelines, GitOps-based configuration management
-\end{itemize}
-
-\textbf{Verdict:} The modernized system exhibits significantly better maintainability compared to the legacy system.
-
-\subsection{Operational Improvements}
-Operational metrics before and after modernization:
-\begin{itemize}
-    \item Deployment frequency: From weekly to multiple times per day
-    \item Mean time to recovery (MTTR): Reduced from 2 hours to 15 minutes (automated rollbacks)
-    \item Incident rate: Reduced by 40\% due to improved monitoring and alerting
-\end{itemize}
-
-\section{Limitations and Trade-offs}
-\subsection{Performance Trade-offs}
-The OIDC authentication introduces latency overhead (+15\%). For latency-sensitive applications, this may require optimization (e.g., more aggressive caching, edge authentication).
-
-\subsection{Complexity Trade-offs}
-The modernized architecture is more complex than the legacy system, requiring expertise in Kubernetes, Keycloak, and OIDC. This increases operational overhead for teams unfamiliar with these technologies.
-
-\subsection{Migration Challenges}
-Maintaining backward compatibility during migration added development effort. A clean-slate rewrite would have been simpler but riskier.
-
-\section{Lessons Learned}
-\subsection{What Worked Well}
-\begin{itemize}
-    \item Incremental migration strategy minimized risk
-    \item Comprehensive testing (unit, integration, load) caught issues early
-    \item Detailed documentation accelerated team onboarding
-    \item Keycloak proved flexible and feature-rich
-\end{itemize}
-
-\subsection{What Could Be Improved}
-\begin{itemize}
-    \item Earlier performance testing would have identified bottlenecks sooner
-    \item More focus on observability from the start (distributed tracing)
-    \item Automated security scanning integrated into CI/CD from day one
-\end{itemize}
-
-\section{Summary}
-This chapter presented a comprehensive evaluation of the modernized system. Performance benchmarks show acceptable overhead from OIDC authentication. Security analysis confirms that the system meets industry standards. Qualitative assessments indicate improvements in developer experience and maintainability. The next chapter concludes the thesis and outlines future work.
+This scope is sufficient to evaluate migration feasibility and design quality, while leaving room for further functional expansion in subsequent project phases.

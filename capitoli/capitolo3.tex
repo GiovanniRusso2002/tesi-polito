@@ -1,114 +1,44 @@
-\chapter{Technologies and Tools}
-\label{chap:technologies}
+\chapter{Case Study Baseline (As-Is System)}
+\label{chap:baseline}
 
-This chapter introduces the key technologies, frameworks, and tools employed in the modernization of Outsight's cloud infrastructure. We provide technical details necessary to understand the architectural decisions and implementation choices presented in subsequent chapters.
+This chapter describes the initial state of the Outsight Cloud platform before the migration design was formalized. The goal is to establish the baseline against which migration decisions are evaluated.
 
-\section{Container Technologies}
-\subsection{Docker}
-Docker is the containerization platform used throughout this project. We discuss the container image structure, Dockerfile best practices, multi-stage builds, and security considerations such as rootless containers and minimal base images.
-
-\subsection{Kubernetes}
-Kubernetes orchestrates our containerized applications. We cover:
+\section{Current Architecture and Data Flow}
+The as-is platform handled LiDAR-related assets and simulations through a web application and backend API stack:
 \begin{itemize}
-    \item Core concepts: Pods, Services, Deployments, ConfigMaps, Secrets
-    \item Networking model and Ingress controllers
-    \item Storage abstractions: PersistentVolumes and PersistentVolumeClaims
-    \item Role-Based Access Control (RBAC)
-    \item Helm charts for package management
+    \item Frontend based on Vue 3.
+    \item Backend based on Node.js/Express.
+    \item Redis-backed session mechanisms.
+    \item Containerized deployment with reverse-proxy routing.
+    \item File storage through S3-compatible object storage services.
+    \item Core business data strongly coupled to Airtable.
 \end{itemize}
 
-\section{Identity and Access Management}
-\subsection{Keycloak}
-Keycloak is the central IAM solution in our architecture. Key features leveraged include:
+This architecture enabled fast delivery in earlier stages of product evolution, but it created a concentration of dependencies in external data services and manually maintained infrastructure conventions.
+
+\section{Operational and Cost Baseline}
+The baseline analysis highlighted two classes of constraints.
+
+\subsection{Operational Constraints}
+Initial platform analysis identified:
 \begin{itemize}
-    \item Realm configuration and client management
-    \item Identity brokering and user federation
-    \item Role-based and attribute-based access control
-    \item Token management and refresh token rotation
-    \item Admin API for programmatic configuration
+    \item Limited traceability in deployment and infrastructure changes.
+    \item Residual complexity in API routing conventions.
+    \item Difficulty in isolating and validating behavior when replacing data backends.
+    \item Dependency on non-uniform operational knowledge across team members.
 \end{itemize}
 
-\subsection{OpenID Connect (OIDC)}
-We detail the OIDC authentication flows used in this work:
+\subsection{Economic Constraints}
+From the baseline reports, recurring cost and dependency concentration on Airtable emerged as significant migration drivers. Airtable was not only a persistence layer but also part of operational workflows, which increased both direct cost exposure and long-term coupling risk.
+
+\section{Technical Debt and Migration Drivers}
+The migration need was not framed as a generic technology update, but as a response to specific debt patterns:
 \begin{itemize}
-    \item Authorization Code Flow with PKCE
-    \item Token validation and signature verification
-    \item Claims and scopes
-    \item Session management and logout mechanisms
+    \item \textbf{Data-layer coupling:} application behavior strongly tied to Airtable schema and workflows.
+    \item \textbf{Identity evolution pressure:} growing need for standards-based authentication and cleaner authorization boundaries.
+    \item \textbf{Infrastructure reproducibility gaps:} insufficiently formalized deployment model for multi-environment evolution.
+    \item \textbf{Validation limitations:} absence of a robust incremental strategy to verify parity during backend transition.
 \end{itemize}
 
-\subsection{JWT (JSON Web Tokens)}
-JWT structure, signing algorithms (RS256, HS256), token expiration, and validation procedures are examined.
+These drivers motivated a migration program with two design priorities: incremental risk reduction and explicit decision traceability.
 
-\section{Development and Deployment Tools}
-\subsection{CI/CD Pipelines}
-Continuous Integration and Continuous Deployment pipelines automate testing and deployment. Tools used include:
-\begin{itemize}
-    \item GitLab CI / GitHub Actions for pipeline automation
-    \item Automated testing frameworks
-    \item Container image scanning for vulnerabilities
-\end{itemize}
-
-\subsection{Infrastructure as Code}
-We employ declarative configuration using:
-\begin{itemize}
-    \item Kubernetes manifests (YAML)
-    \item Helm charts for templating and versioning
-    \item Configuration synchronization tools
-\end{itemize}
-
-\section{Programming Languages and Frameworks}
-\subsection{Backend Technologies}
-The backend services are implemented using:
-\begin{itemize}
-    \item \textbf{Language:} Python / Go / Java (specify as appropriate)
-    \item \textbf{Framework:} Flask / FastAPI / Spring Boot (specify as appropriate)
-    \item \textbf{Libraries:} OIDC client libraries, HTTP clients, logging frameworks
-\end{itemize}
-
-\subsection{Frontend Technologies}
-If applicable, the frontend technologies include:
-\begin{itemize}
-    \item JavaScript frameworks (React, Vue.js)
-    \item OIDC client libraries for browser-based authentication
-\end{itemize}
-
-\section{Storage and Data Management}
-\subsection{Object Storage}
-We use MinIO or cloud-provider object storage (e.g., AWS S3, Azure Blob Storage) for file storage, discussing S3-compatible APIs, bucket policies, and encryption at rest.
-
-\subsection{Databases}
-Database technologies for user and configuration management include relational databases (PostgreSQL) and their integration with Keycloak.
-
-\section{Monitoring and Observability}
-\subsection{Logging}
-Centralized logging using tools such as:
-\begin{itemize}
-    \item Elasticsearch, Logstash, Kibana (ELK stack)
-    \item Fluentd or Fluent Bit for log aggregation
-\end{itemize}
-
-\subsection{Metrics and Monitoring}
-Prometheus and Grafana for metrics collection and visualization. Key metrics include:
-\begin{itemize}
-    \item Service latency and throughput
-    \item Resource utilization (CPU, memory, disk I/O)
-    \item Authentication success/failure rates
-\end{itemize}
-
-\section{Security Tools}
-\subsection{Vulnerability Scanning}
-Container and dependency vulnerability scanning using tools like Trivy, Clair, or Snyk.
-
-\subsection{Network Security}
-Network policies in Kubernetes, TLS certificate management (Let's Encrypt, cert-manager), and API gateway security configurations.
-
-\section{Tool Selection Rationale}
-We justify the choice of each technology by comparing alternatives and explaining trade-offs in terms of:
-\begin{itemize}
-    \item Maturity and community support
-    \item Integration capabilities with existing infrastructure
-    \item Performance characteristics
-    \item Security features
-    \item Cost considerations
-\end{itemize}

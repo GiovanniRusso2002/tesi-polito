@@ -1,200 +1,87 @@
-\chapter{Architecture and Design}
-\label{chap:architecture}
+\chapter{Migration Methodology and Decision Framework}
+\label{chap:methodology}
 
-This chapter presents the architectural design of the modernized cloud infrastructure, explaining the design decisions, trade-offs, and rationale behind the proposed solution. We adopt a systematic approach, starting from high-level system architecture and progressively detailing individual components.
+This chapter formalizes the migration methodology used in this thesis. The emphasis is on how decisions were made, not only on which technologies were selected.
 
-\section{Overview of the System Architecture}
-We begin with a high-level architectural diagram illustrating the main components:
+\section{Migration Goals and Success Criteria}
+The migration goals were defined before implementation to avoid solution bias:
 \begin{itemize}
-    \item API Gateway / Ingress layer
-    \item Keycloak IAM service
-    \item Modernized file-sharing service
-    \item User management service
-    \item Configuration synchronization service
-    \item Storage backend (object storage)
-    \item Monitoring and logging infrastructure
+    \item Preserve operational continuity during transition.
+    \item Reduce architectural coupling to legacy data and identity assumptions.
+    \item Improve deployment reproducibility and environment governance.
+    \item Provide explicit technical and economic justification for major choices.
 \end{itemize}
 
-% TODO: Insert architectural diagram here
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{immagini/system-architecture.pdf}
-%     \caption{High-level system architecture.}
-%     \label{fig:system-architecture}
-% \end{figure}
-
-\section{Design Principles}
-The architecture is guided by the following principles:
+From these goals, the following success criteria were derived:
 \begin{itemize}
-    \item \textbf{Security by design:} All services use OIDC for authentication; sensitive data is encrypted in transit and at rest.
-    \item \textbf{Scalability:} Stateless service design enables horizontal scaling.
-    \item \textbf{Resilience:} Health checks, automatic restarts, and graceful degradation ensure high availability.
-    \item \textbf{Maintainability:} Clear separation of concerns, modular design, and comprehensive documentation.
-    \item \textbf{Cloud-native:} Leverages Kubernetes-native abstractions and follows the twelve-factor app methodology.
+    \item ability to run and validate critical flows during data-layer transition;
+    \item traceable infrastructure definitions across environments;
+    \item measurable reduction of dependency concentration on Airtable;
+    \item migration process auditable through tests, scripts, and CI evidence.
 \end{itemize}
 
-\section{Authentication and Authorization Flow}
-\subsection{OIDC Integration Architecture}
-We describe the end-to-end authentication flow:
-\begin{enumerate}
-    \item User initiates login via frontend or API client
-    \item Request is redirected to Keycloak authorization endpoint
-    \item User authenticates with Keycloak
-    \item Keycloak issues authorization code
-    \item Client exchanges code for access and refresh tokens
-    \item Access token is included in subsequent API requests
-    \item Services validate tokens with Keycloak's public key
-\end{enumerate}
+\section{Candidate Solutions Considered}
+The decision process considered multiple options for each migration dimension.
 
-% TODO: Insert sequence diagram
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{immagini/oidc-flow.pdf}
-%     \caption{OIDC authentication flow.}
-%     \label{fig:oidc-flow}
-% \end{figure}
-
-\subsection{Authorization Model}
-We employ role-based access control (RBAC) with the following roles:
+\subsection{Infrastructure and Runtime Options}
 \begin{itemize}
-    \item \textbf{Admin:} Full access to all resources and configuration
-    \item \textbf{User:} Access to own files and shared resources
-    \item \textbf{Guest:} Limited read-only access to public resources
+    \item Keep existing deployment style with incremental hardening.
+    \item Move to managed cloud services with IaC governance.
+    \item Adopt a full orchestration-first redesign from the beginning.
 \end{itemize}
 
-Token claims encode user roles, which are validated at the service level to enforce access policies.
-
-\section{File-Sharing Service Architecture}
-\subsection{Service Components}
-The file-sharing service consists of:
+\subsection{Data-Layer Migration Options}
 \begin{itemize}
-    \item \textbf{API layer:} RESTful endpoints for upload, download, delete, and share operations
-    \item \textbf{Authentication middleware:} Validates OIDC tokens
-    \item \textbf{Authorization layer:} Enforces access control policies
-    \item \textbf{Storage abstraction:} Interfaces with object storage backend
-    \item \textbf{Metadata service:} Manages file metadata and sharing permissions
+    \item Immediate cutover from Airtable to a relational database.
+    \item Long-term coexistence with no formal migration endpoint.
+    \item Incremental coexistence with progressive parity checks and controlled switchover.
 \end{itemize}
 
-\subsection{Storage Backend}
-We use object storage (MinIO or cloud-native S3) for file persistence. File paths are structured as:
-\begin{verbatim}
-/<user-id>/<file-id>/<filename>
-\end{verbatim}
-
-Access to storage is mediated through signed URLs or service-level permissions, ensuring users cannot bypass application-level access control.
-
-\subsection{Sharing Mechanisms}
-Two sharing models are supported:
+\subsection{Identity Evolution Options}
 \begin{itemize}
-    \item \textbf{User-to-user:} Direct sharing via user ID
-    \item \textbf{Link-based:} Temporary shareable links with expiration
+    \item Preserve legacy authentication contracts and postpone IAM modernization.
+    \item Introduce standards-based IAM with progressive integration in services.
+    \item Full immediate rewrite of authentication and authorization boundaries.
 \end{itemize}
 
-Sharing metadata is stored in a relational database, indexed by file ID and user ID for efficient query performance.
+\section{Technical and Economic Evaluation Criteria}
+Each candidate solution was evaluated against a shared set of criteria.
 
-\section{User Management Service}
-The user management service acts as a bridge between the application and Keycloak:
+\subsection{Technical Criteria}
 \begin{itemize}
-    \item User registration and profile management
-    \item Role assignment and permission updates
-    \item Audit logging of user actions
+    \item Backward compatibility with existing service behavior.
+    \item Security posture and readiness for standards-based IAM.
+    \item Deployment reproducibility across environments.
+    \item Testability of migration steps and rollback readiness.
+    \item Observability and troubleshooting support during transition.
 \end{itemize}
 
-It uses Keycloak's Admin API to synchronize user data and roles.
-
-\section{Configuration Synchronization Service}
-The configuration synchronization service manages deployment configurations across multiple environments (development, staging, production).
-
-\subsection{Design Goals}
+\subsection{Economic Criteria}
 \begin{itemize}
-    \item Centralized configuration source of truth (Git repository)
-    \item Automated propagation of configuration changes
-    \item Conflict detection and resolution strategies
-    \item Rollback capabilities for failed deployments
+    \item Recurring infrastructure and platform costs.
+    \item Operational overhead for day-2 activities.
+    \item Effort required for migration execution and maintenance.
+    \item Risk of long-term vendor or tooling dependency concentration.
 \end{itemize}
 
-\subsection{Architecture}
-The service monitors a Git repository for configuration changes, validates changes against predefined schemas, and applies updates to target Kubernetes clusters using Helm or kubectl.
-
-% TODO: Insert configuration sync diagram
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{immagini/config-sync.pdf}
-%     \caption{Configuration synchronization workflow.}
-%     \label{fig:config-sync}
-% \end{figure}
-
-\section{Networking and Communication}
-\subsection{Service Discovery}
-Kubernetes Services provide internal DNS-based service discovery. External access is handled by Ingress controllers with TLS termination.
-
-\subsection{Inter-Service Communication}
-Services communicate via RESTful APIs over HTTP/2. Authentication between services uses service accounts with JWT tokens issued by Keycloak.
-
-\subsection{Network Policies}
-Kubernetes NetworkPolicies restrict traffic to minimize attack surface:
+\section{Selected Strategy and Rationale}
+The selected strategy was an incremental migration centered on managed cloud services and reproducible infrastructure definitions:
 \begin{itemize}
-    \item File-sharing service can only receive traffic from Ingress
-    \item Database access is restricted to authorized services
-    \item External egress is limited to necessary endpoints (Keycloak, object storage)
+    \item AWS-managed building blocks for runtime, routing, storage, and observability.
+    \item Terraform as the infrastructure control plane.
+    \item Progressive data migration path from Airtable to PostgreSQL.
+    \item Validation-oriented coexistence between legacy and target data paths.
 \end{itemize}
 
-\section{Security Architecture}
-\subsection{Defense in Depth}
-Multiple security layers:
+This strategy was selected because it balances risk, implementation effort, and long-term maintainability. It avoids disruptive full replacement while still creating a clear target-state trajectory.
+
+\section{Risk Management and Coexistence Plan}
+Risk management was embedded in the migration design:
 \begin{itemize}
-    \item TLS for all external and internal communication
-    \item Token-based authentication with short-lived access tokens
-    \item Principle of least privilege for service accounts
-    \item Regular security audits and vulnerability scanning
+    \item Keep migration steps independently verifiable.
+    \item Separate development and production environment evolution.
+    \item Use dual-backend test paths to detect behavioral divergence early.
+    \item Define data validation artifacts to support switchover decisions.
 \end{itemize}
 
-\subsection{Secrets Management}
-Sensitive data (API keys, database passwords, TLS certificates) is stored in Kubernetes Secrets with encryption at rest enabled.
-
-\section{Monitoring and Observability Architecture}
-\subsection{Metrics Collection}
-Each service exposes Prometheus-compatible metrics on a dedicated endpoint. Key metrics include request latency, error rates, and authentication success/failure counts.
-
-\subsection{Distributed Tracing}
-We implement distributed tracing using OpenTelemetry to track request flows across services, enabling root cause analysis of performance bottlenecks.
-
-\subsection{Alerting}
-Prometheus AlertManager sends notifications for critical events:
-\begin{itemize}
-    \item Service downtime
-    \item High error rates
-    \item Resource exhaustion (CPU, memory, disk)
-    \item Failed authentication attempts exceeding threshold
-\end{itemize}
-
-\section{Design Decisions and Trade-offs}
-We explicitly document key design decisions and their trade-offs:
-
-\subsection{Choice of Keycloak over Alternatives}
-\textbf{Alternatives considered:} Auth0, Okta, custom JWT solution  
-\textbf{Decision:} Keycloak  
-\textbf{Rationale:} Open-source, self-hosted, no vendor lock-in, comprehensive OIDC support  
-\textbf{Trade-off:} Increased operational overhead for self-hosting
-
-\subsection{Object Storage over File System}
-\textbf{Alternatives considered:} Shared NFS, distributed file systems (Ceph)  
-\textbf{Decision:} Object storage (S3-compatible)  
-\textbf{Rationale:} Cloud-native, scalable, integrates with existing infrastructure  
-\textbf{Trade-off:} Slightly higher latency for small file access
-
-\subsection{Synchronous vs. Asynchronous Configuration Updates}
-\textbf{Decision:} Synchronous updates with rollback mechanism  
-\textbf{Rationale:} Immediate feedback on configuration errors, simpler debugging  
-\textbf{Trade-off:} Slower for large-scale updates, blocks on failures
-
-\section{Scalability and Performance Considerations}
-The architecture supports horizontal scaling of stateless services. We identify potential bottlenecks:
-\begin{itemize}
-    \item Database connections (addressed via connection pooling)
-    \item Token validation overhead (mitigated by caching public keys)
-    \item Object storage I/O (managed via CDN for frequently accessed files)
-\end{itemize}
-
-\section{Summary}
-This chapter presented a comprehensive architectural design for the modernized cloud infrastructure. We detailed component interactions, security mechanisms, and design trade-offs. The next chapter describes the implementation of this architecture.
+The coexistence phase is treated as a controlled engineering stage, not as an informal transition period.

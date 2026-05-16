@@ -1,157 +1,55 @@
-\chapter{Conclusions and Future Work}
-\label{chap:conclusions}
+\chapter{Evaluation and Discussion}
+\label{chap:evaluation}
 
-This chapter summarizes the contributions of this thesis, discusses the limitations of the proposed approach, reflects on the practical implications of the work, and outlines directions for future research and development.
+This chapter evaluates the migration approach with focus on decision quality, implementation readiness, and risk reduction evidence.
 
-\section{Summary of Contributions}
-This thesis documented and evaluated the modernization of a cloud infrastructure during a six-month internship at Outsight, a company specializing in cloud modernization solutions. The work focused on enhancing security, improving maintainability, and adopting cloud-native best practices.
-
-The main contributions of this thesis can be summarized as follows:
-
-\subsection{Practical Methodology for OIDC Integration}
-We developed and validated a practical methodology for integrating Keycloak-based OpenID Connect (OIDC) authentication into a legacy file-sharing service. This methodology includes:
+\section{Validation Methodology}
+Given the current project stage, evaluation is organized around migration readiness rather than final production performance optimization. The methodology combines:
 \begin{itemize}
-    \item Step-by-step migration strategy maintaining backward compatibility
-    \item Authentication middleware design patterns for token validation
-    \item Configuration guidelines for Keycloak realm, clients, and roles
-    \item Error handling and token refresh strategies for long-running operations
+    \item architectural consistency checks between migration goals and implemented foundations;
+    \item reproducibility checks through Infrastructure as Code and environment separation;
+    \item coexistence checks through dual-backend testing and CI evidence;
+    \item data migration checks through replication and validation scripts.
 \end{itemize}
 
-The approach is generalizable to other legacy services requiring modern IAM integration.
+\section{Technical Results}
+\subsection{Infrastructure and Deployment Readiness}
+The migration produced a reproducible infrastructure baseline on AWS, managed through Terraform and integrated with routing, certificate management, container runtime, and observability services.
 
-\subsection{Cloud-Native Architecture Design}
-We designed a comprehensive cloud-native architecture for secure file-sharing and user management services. Key architectural contributions include:
+\subsection{Data Migration Readiness}
+The project established concrete mechanisms to compare and validate behavior during Airtable-to-PostgreSQL transition. This is a key technical result because it enables incremental migration decisions based on evidence rather than assumptions.
+
+\subsection{Testing and Verification Readiness}
+Dual-backend smoke tests and CI integration provide an automated control surface for migration risk. This increases confidence in backward-compatible evolution during coexistence phases.
+
+\section{Migration KPIs and Economic Impact}
+The evaluation framework tracks migration progress using two KPI classes.
+
+\subsection{Technical Migration KPIs}
 \begin{itemize}
-    \item Separation of concerns: distinct services for authentication, file management, and configuration
-    \item Scalability through stateless service design and horizontal scaling
-    \item Security-by-design: defense-in-depth, principle of least privilege, encrypted communication
-    \item Resilience mechanisms: health checks, automatic restarts, graceful degradation
-    \item Network policies restricting inter-service communication
+    \item percentage of critical flows covered by backend-agnostic smoke tests;
+    \item number of migration checkpoints completed with successful validation reports;
+    \item reproducibility of environment provisioning across development stages;
+    \item incidence of regressions detected before deployment.
 \end{itemize}
 
-The architecture balances security, performance, and maintainability requirements.
-
-\subsection{Empirical Performance and Security Evaluation}
-We conducted a rigorous evaluation of the modernized system, providing quantitative data on:
+\subsection{Economic Migration KPIs}
 \begin{itemize}
-    \item Performance overhead introduced by OIDC authentication (+15\% latency, acceptable for most use cases)
-    \item System throughput and scalability characteristics (near-linear scaling up to 5 replicas)
-    \item Security posture improvements (100\% authorization enforcement, zero critical vulnerabilities)
-    \item Operational metrics (40\% reduction in incident rate, improved deployment frequency)
+    \item reduction in dependency concentration on high-recurring-cost services;
+    \item expected decrease in manual operational effort through IaC and pipeline automation;
+    \item migration effort distribution across infrastructure, data, and application layers.
 \end{itemize}
 
-This empirical evidence supports the viability of the proposed approach in production environments.
+Initial evidence confirms that the selected strategy is compatible with both technical risk control and economic sustainability goals.
 
-\subsection{Lessons Learned and Best Practices}
-We documented practical lessons learned throughout the project:
+\section{Limitations and Lessons Learned}
+\subsection{Limitations}
+The current evaluation reflects an intermediate migration stage. Long-term operational behavior and full post-migration cost curves require additional observation after broader adoption.
+
+\subsection{Lessons Learned}
+Three lessons emerge clearly:
 \begin{itemize}
-    \item Incremental migration reduces risk compared to big-bang approaches
-    \item Comprehensive automated testing is essential for catching regressions
-    \item Infrastructure-as-code and GitOps improve consistency and auditability
-    \item Token caching significantly reduces authentication overhead
-    \item Clear documentation and diagrams accelerate team onboarding
+    \item migration architecture must be paired with explicit validation architecture;
+    \item coexistence is manageable only when test and data checks are planned from the start;
+    \item technical and economic criteria must be evaluated together, not sequentially.
 \end{itemize}
-
-These insights are valuable for practitioners undertaking similar modernization projects.
-
-\section{Answers to Research Questions}
-Returning to the research questions posed in the evaluation chapter:
-
-\textbf{RQ1: Does OIDC-based authentication introduce acceptable performance overhead?}
-
-Yes. The measured overhead is approximately 15\% increase in average latency, primarily due to token validation. This is acceptable for most enterprise applications, and can be further mitigated through aggressive public key caching.
-
-\textbf{RQ2: How does the modernized architecture perform under realistic load conditions?}
-
-The system maintains stable performance up to 500 concurrent users and scales nearly linearly with additional replicas. Database connection pooling was identified as a bottleneck beyond 10 replicas.
-
-\textbf{RQ3: Does the system meet security requirements and industry best practices?}
-
-Yes. The system achieved 100\% authorization enforcement, TLS A+ rating, zero critical vulnerabilities, and successful resistance to common attack vectors (SQL injection, IDOR, brute force).
-
-\textbf{RQ4: What are the usability and maintainability improvements?}
-
-Developer feedback indicates simplified authentication logic, clearer architecture, and easier onboarding. Operational metrics show 40\% reduction in incident rate and improved deployment frequency.
-
-\section{Limitations of This Work}
-While this thesis provides valuable contributions, several limitations should be acknowledged:
-
-\subsection{Limited Scope of Evaluation}
-The evaluation was conducted in a single organization's infrastructure. Results may not generalize to significantly different environments (e.g., highly latency-sensitive applications, extreme scale requirements).
-
-\subsection{Technology-Specific Solutions}
-The implementation is tightly coupled to specific technologies (Keycloak, Kubernetes, MinIO). Migrating to alternative technologies (e.g., Auth0, AWS EKS, S3) would require adaptation.
-
-\subsection{Incomplete Long-Term Operational Data}
-The evaluation covers the initial six months post-deployment. Long-term operational data (e.g., maintenance burden over years, evolution challenges) is not available.
-
-\subsection{Single Case Study}
-This work is based on a single case study at Outsight. Validation across multiple organizations and use cases would strengthen the generalizability of findings.
-
-\subsection{User Experience Evaluation}
-The evaluation focused on technical metrics and developer experience. End-user experience (e.g., authentication UX, file-sharing workflows) was not systematically evaluated.
-
-\section{Practical Implications}
-This work has several practical implications for organizations undertaking cloud modernization:
-
-\subsection{For Practitioners}
-\begin{itemize}
-    \item OIDC-based authentication is a viable solution for modernizing legacy services with acceptable performance trade-offs
-    \item Keycloak provides a robust, cost-effective IAM solution for enterprises avoiding vendor lock-in
-    \item Incremental migration strategies reduce risk and maintain business continuity
-    \item Comprehensive documentation and architectural diagrams are critical for knowledge transfer
-\end{itemize}
-
-\subsection{For Organizations}
-\begin{itemize}
-    \item Investing in cloud-native architectures improves agility, security, and operational efficiency
-    \item Modernization projects require expertise in multiple domains (cloud platforms, security, DevOps)
-    \item Automated testing and CI/CD are essential for maintaining quality during rapid iteration
-    \item Security should be integrated from the beginning, not added retroactively
-\end{itemize}
-
-\subsection{For Researchers}
-\begin{itemize}
-    \item More empirical studies on cloud migration are needed to build a robust knowledge base
-    \item Performance overhead of token-based authentication deserves further investigation, particularly at extreme scales
-    \item Methodologies for maintaining backward compatibility during authentication modernization require more research
-\end{itemize}
-
-\section{Future Work}
-Several directions for future work emerge from this thesis:
-
-\subsection{Short-Term Extensions}
-\textbf{Edge caching for authentication:} Deploy authentication caches at edge locations to reduce latency for geographically distributed users.
-
-\textbf{Advanced authorization:} Implement attribute-based access control (ABAC) for fine-grained permissions based on user attributes, resource properties, and environmental context.
-
-\textbf{End-user experience evaluation:} Conduct user studies to assess the usability of the authentication and file-sharing workflows.
-
-\textbf{Cost analysis:} Perform detailed cost comparison between the modernized system and the legacy system, considering infrastructure, operational, and licensing costs.
-
-\subsection{Medium-Term Research}
-\textbf{Multi-cloud support:} Extend the architecture to support deployment across multiple cloud providers, addressing challenges related to identity federation and storage abstraction.
-
-\textbf{Zero-trust architecture:} Evolve the security model toward zero-trust principles, including continuous verification, micro-segmentation, and least-privilege access at every layer.
-
-\textbf{Observability enhancements:} Integrate distributed tracing (OpenTelemetry) and advanced anomaly detection to improve incident response and root cause analysis.
-
-\textbf{Automated compliance checking:} Develop tools to automatically verify compliance with security policies and regulatory requirements (GDPR, HIPAA, SOC 2).
-
-\subsection{Long-Term Vision}
-\textbf{AI-assisted infrastructure management:} Explore the use of machine learning for predictive scaling, anomaly detection, and automated incident remediation.
-
-\textbf{Federated identity across organizations:} Investigate federated identity protocols to enable seamless single sign-on across organizational boundaries.
-
-\textbf{Blockchain-based audit logging:} Evaluate blockchain technology for immutable audit logs, particularly for compliance-critical environments.
-
-\textbf{Standardized migration frameworks:} Develop generalized frameworks and tooling to assist organizations in migrating diverse legacy systems to cloud-native architectures.
-
-\section{Closing Remarks}
-This thesis demonstrates that cloud modernization, while challenging, can deliver significant improvements in security, scalability, and maintainability. The integration of modern IAM solutions like Keycloak with cloud-native architectures provides a solid foundation for building secure, resilient systems.
-
-The internship at Outsight provided invaluable hands-on experience in applying theoretical knowledge to real-world projects. The lessons learned extend beyond technical aspects to encompass project management, stakeholder communication, and the importance of balancing ideal solutions with practical constraints.
-
-As cloud technologies continue to evolve, organizations must continuously adapt their infrastructure and practices. The methodologies and insights presented in this thesis contribute to the growing body of knowledge on cloud modernization, offering a roadmap for practitioners embarking on similar journeys.
-
-The future of enterprise IT is undoubtedly cloud-native, and the transition, while complex, is both necessary and achievable. This work represents a step forward in understanding how to navigate that transition successfully, balancing innovation with pragmatism, and security with usability.

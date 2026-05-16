@@ -1,0 +1,32 @@
+\chapter{Conclusions and Future Work}
+\label{chap:conclusions}
+
+This thesis addressed the migration of a legacy platform toward a cloud-native architecture as a structured engineering decision problem. The work focused on defining and justifying a migration strategy under technical and economic constraints.
+
+\section{Key Outcomes}
+The migration approach demonstrates that legacy-to-cloud-native transition can preserve continuity when it is treated as an incremental engineering process with explicit validation checkpoints.
+
+The decision framework confirms the need to evaluate technical and economic criteria together. Security, compatibility, and operability decisions are sustainable only when recurring cost and operational effort are considered from the beginning.
+
+The implementation evidence shows that coexistence can be managed through dual-backend testing, CI-enforced checks, and data validation artifacts. These elements make migration progress measurable and auditable.
+
+Finally, the produced artifacts (decision rationale, Terraform definitions, migration scripts, validation workflows) improve reusability of the approach beyond a single project context.
+
+\section{Main Contributions}
+The main contributions of this thesis are:
+\begin{itemize}
+    \item a baseline analysis that makes migration drivers explicit;
+    \item a migration methodology and decision framework grounded in technical and economic evaluation;
+    \item a target architecture aligned with incremental migration constraints;
+    \item an implementation backbone for controlled execution and evidence-based validation.
+\end{itemize}
+
+\section{Future Improvements}
+Future work can extend this thesis in three directions:
+\begin{itemize}
+    \item complete and monitor full production cutover stages with long-term KPIs;
+    \item further evolve identity architecture toward full standards-based integration across all services;
+    \item consolidate post-migration cost and reliability analysis with extended operational data.
+\end{itemize}
+
+Overall, the thesis shows that cloud-native migration is most effective when treated as an explicit design process supported by verifiable checkpoints, rather than as a sequence of isolated implementation tasks.

@@ -15,8 +15,53 @@ The migration was implemented incrementally, with explicit separation between fo
 This sequencing reduced migration risk by enabling technical validation before irreversible system decisions.
 
 \section{Infrastructure as Code and Environment Separation}
+\subsection{Infrastructure as Code (IaC)}
+Infrastructure as Code (IaC) is a software engineering approach in which infrastructure is provisioned and managed through code instead of manual configuration procedures \cite{awsIacWhitepaper}. The rationale comes from DevOps principles: infrastructure should be treated with the same rigor applied to application code, including versioning, reviewability, traceability, and repeatability.
+
+Under the IaC paradigm, infrastructure definitions are declarative artifacts stored in version control systems. This replaces fragile practices based on manual console operations, ad-hoc scripts, or outdated runbooks. As highlighted by AWS guidance, declarative infrastructure improves consistency and reliability in environment creation and updates \cite{awsIacWhitepaper}.
+
+A key IaC characteristic is that engineers define the desired final state, while automation tooling computes and executes the required operations. This model provides:
+\begin{itemize}
+    \item \textbf{Consistency:} reproducible environments across development, testing, and production.
+    \item \textbf{Version control:} auditable change history for infrastructure evolution.
+    \item \textbf{Automation:} integration with CI/CD-driven deployment processes.
+    \item \textbf{Reproducibility:} deterministic creation and update workflows.
+    \item \textbf{Maintainability:} reusable infrastructure definitions that evolve over time.
+\end{itemize}
+
+In the Outsight Cloud migration, IaC was adopted to automate AWS provisioning and reduce manual intervention during environment setup and updates.
+
 \subsection{Terraform-Driven Provisioning}
-Infrastructure provisioning was implemented using Terraform, with explicit definitions for networking, routing, compute, storage, and observability-related services. The resulting setup includes managed components such as load balancing, container runtime services, DNS/TLS integration, and cloud logging.
+Terraform is an Infrastructure as Code (IaC) tool developed by HashiCorp that enables provisioning and lifecycle management of infrastructure through declarative configuration files \cite{hashicorpTerraformIntro}. Instead of manually creating resources through cloud consoles, infrastructure is defined as code in human-readable files (HCL), which can be versioned, reviewed, reused, and integrated into software delivery workflows.
+
+Terraform interacts with platforms through providers, i.e., plugins that map Terraform resources to external APIs. In this migration, the AWS provider was used to manage cloud resources including load balancing, container runtime services, networking components, DNS/TLS integration, storage services, and observability-related infrastructure.
+
+\subsection{Terraform Workflow: Write, Plan, Apply}
+The Terraform workflow follows three phases \cite{hashicorpTerraformIntro}:
+\begin{itemize}
+    \item \textbf{Write:} define the target infrastructure state declaratively in configuration files.
+    \item \textbf{Plan:} generate an execution plan that compares desired state and current state, showing which resources will be created, updated, or removed.
+    \item \textbf{Apply:} execute the planned operations while respecting resource dependencies through an internal dependency graph.
+\end{itemize}
+
+This workflow was especially useful for migration safety, because planned changes could be reviewed before execution and applied incrementally.
+
+\subsection{State Management and Team Collaboration}
+Terraform keeps a state representation of real infrastructure (\texttt{terraform.tfstate}) to compute incremental changes instead of recreating complete environments \cite{hashicorpTerraformIntro}. In practice, state management enabled drift detection and made environment updates predictable across migration iterations.
+
+For collaborative operations, shared state and controlled execution are essential. This improves consistency across development stages and reduces configuration drift during parallel workstreams.
+
+\subsection{Why Terraform in the Outsight Cloud Migration}
+Terraform was selected because it aligned with the migration objectives:
+\begin{itemize}
+    \item \textbf{Standardization:} infrastructure definitions became versioned artifacts.
+    \item \textbf{Automation:} provisioning and updates were integrated into CI/CD-oriented processes.
+    \item \textbf{Consistency:} environments were reproducible across development and production contexts.
+    \item \textbf{Scalability:} infrastructure changes could be applied incrementally.
+    \item \textbf{Maintainability:} modular and declarative definitions reduced manual intervention.
+\end{itemize}
+
+Within the Outsight Cloud project, this translated into a reproducible AWS infrastructure baseline supporting the broader cloudification strategy and reducing operational risk during migration.
 
 \subsection{Environment Governance}
 A dedicated effort was made to separate development and production concerns. This included environment-specific configuration handling and controlled evolution of shared resources to avoid production side effects during migration experimentation.

@@ -30,6 +30,68 @@ The decision process considered multiple options for each migration dimension.
     \item Adopt a full orchestration-first redesign from the beginning.
 \end{itemize}
 
+\subsection{Alternative Cloud Platforms Considered}
+During the migration design phase, multiple cloud platform alternatives were considered before selecting the target environment. The comparison focused on scalability, availability of managed services, IaC support, ecosystem maturity, operational complexity, and integration with the existing technical baseline.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Comparative assessment of cloud provider alternatives for Outsight Cloud migration}
+\label{tab:cloud-provider-comparison}
+\begin{tabular}{|p{3.0cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
+\hline
+\textbf{Criterion} & \textbf{AWS} & \textbf{Azure} & \textbf{GCP} & \textbf{On-prem} \\
+\hline
+Managed services fit & High & Medium & Medium & Low \\
+\hline
+IaC and automation & High & Medium & Medium & Low \\
+\hline
+Operational complexity & Low to medium & Medium & Medium & High \\
+\hline
+Ecosystem and maturity & Very high & High & High & Variable \\
+\hline
+Migration continuity with current baseline & High & Medium-low & Medium-low & Low \\
+\hline
+\end{tabular}
+\normalsize
+\end{table}
+
+\subsubsection{Microsoft Azure}
+Microsoft Azure offers a broad enterprise ecosystem with managed services for compute, storage, databases, networking, and DevOps workflows. Functionally, it provides equivalents for many services used in this project, including:
+\begin{itemize}
+    \item Azure Virtual Machines (similar role to EC2),
+    \item Azure Kubernetes Service (AKS),
+    \item Azure SQL Database,
+    \item Azure Blob Storage,
+    \item Azure DevOps.
+\end{itemize}
+
+Azure is particularly strong in Microsoft-centric enterprise contexts. However, for Outsight Cloud it introduced additional migration overhead because the existing deployment strategy and operational knowledge were already aligned with AWS-oriented patterns.
+
+\subsubsection{Google Cloud Platform (GCP)}
+Google Cloud Platform was also considered, especially due to its strengths in containerized workloads and Kubernetes-native operations. Relevant services included:
+\begin{itemize}
+    \item Google Kubernetes Engine (GKE),
+    \item Cloud SQL,
+    \item Compute Engine,
+    \item Cloud Storage.
+\end{itemize}
+
+GCP presents strong capabilities in analytics, machine learning, and managed Kubernetes. Nevertheless, AWS was preferred for this migration due to broader service coverage in the specific infrastructure management areas required by the project and stronger alignment with the existing cloudification path.
+
+\subsubsection{On-prem Infrastructure}
+Another option was to continue with self-managed virtual-machine infrastructure (or on-premises style operations). While this approach offers full control over resources and configurations, it significantly increases operational responsibilities:
+\begin{itemize}
+    \item infrastructure maintenance,
+    \item scalability management,
+    \item backup and disaster recovery operations,
+    \item monitoring and incident handling,
+    \item high-availability design,
+    \item security hardening and lifecycle management.
+\end{itemize}
+
+This option conflicted with the migration objective of reducing operational overhead through managed cloud services.
+
 \subsection{Data-Layer Migration Options}
 \begin{itemize}
     \item Immediate cutover from Airtable to a relational database.
@@ -56,14 +118,6 @@ Each candidate solution was evaluated against a shared set of criteria.
     \item Observability and troubleshooting support during transition.
 \end{itemize}
 
-\subsection{Economic Criteria}
-\begin{itemize}
-    \item Recurring infrastructure and platform costs.
-    \item Operational overhead for day-2 activities.
-    \item Effort required for migration execution and maintenance.
-    \item Risk of long-term vendor or tooling dependency concentration.
-\end{itemize}
-
 \section{Selected Strategy and Rationale}
 The selected strategy was an incremental migration centered on managed cloud services and reproducible infrastructure definitions:
 \begin{itemize}
@@ -71,6 +125,17 @@ The selected strategy was an incremental migration centered on managed cloud ser
     \item Terraform as the infrastructure control plane.
     \item Progressive data migration path from Airtable to PostgreSQL.
     \item Validation-oriented coexistence between legacy and target data paths.
+\end{itemize}
+
+AWS was selected because it provided the most complete fit for the project constraints and goals:
+\begin{itemize}
+    \item mature IaC integration through Terraform-based workflows,
+    \item managed services required by the target architecture (including ECS, RDS, and S3),
+    \item strong scalability and availability characteristics,
+    \item robust DevOps integration for automated provisioning and updates,
+    \item strong support for cloud-native architecture evolution,
+    \item continuity with the broader company cloudification strategy,
+    \item alignment with the company's commercial and strategic technology choices.
 \end{itemize}
 
 This strategy was selected because it balances risk, implementation effort, and long-term maintainability. It avoids disruptive full replacement while still creating a clear target-state trajectory.

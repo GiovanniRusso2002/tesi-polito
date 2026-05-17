@@ -16,29 +16,53 @@ The as-is platform handled LiDAR-related assets and simulations through a web ap
 
 This architecture enabled fast delivery in earlier stages of product evolution, but it created a concentration of dependencies in external data services and manually maintained infrastructure conventions.
 
-\section{Operational and Cost Baseline}
-The baseline analysis highlighted two classes of constraints.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{immagini/architetura_iniziale.pdf}
+    \caption{Outsight Cloud baseline architecture before the migration, as documented in the pre-migration technical material.}
+    \label{fig:outsight-as-is-architecture}
+\end{figure}
 
-\subsection{Operational Constraints}
-Initial platform analysis identified:
+\section{Airtable as Primary Data Storage}
+Before the migration to PostgreSQL, Outsight Cloud relied on Airtable as its primary data storage system. Airtable acted not only as a database, but also as an operational platform supporting multiple workflows inside the application domain.
+
+It stored core entities such as users, organizations, sites, simulations, role assignments, and permissions. In addition, Airtable was used for operational forms and for triggering integrations with external services, including Slack notifications.
+
+Unlike a traditional relational DBMS, Airtable organizes data through linked records and lookup fields. This model offered flexibility in the early product phase and enabled rapid prototyping, especially because non-technical stakeholders could inspect and manipulate data through a graphical interface.
+
+\section{Limitations of Airtable}
+As the platform evolved and the amount of managed data increased, several limitations became evident.
+
+\subsection{Data Modeling and Consistency}
+Relationships between entities (for example organizations, sites, and simulations) were represented through linked records and lookup fields, rather than enforced through explicit foreign-key constraints. As a consequence, consistency guarantees depended heavily on application logic.
+
+During access and synchronization flows, lookup fields could expose heterogeneous representations of the same logical information. In some contexts values appeared as scalars, while in others they appeared as arrays. This increased backend complexity and made query and mapping logic harder to maintain.
+
+\subsection{Limited Relational Capabilities}
+Airtable does not provide full relational capabilities comparable to SQL databases. Advanced joins, complex filtering patterns, indexing strategies, and transactional control are more limited than in PostgreSQL-like systems.
+
+\subsection{Operational Inefficiency}
+Several workflows depended on manual interactions through Airtable forms. In particular, user creation and onboarding required internal manual intervention, which slowed operations and increased the probability of human error.
+
+\subsection{Scalability, Coupling, and Cost}
+Over time, Airtable became both application datastore and operational control surface. This created tight coupling between business logic and Airtable-specific concepts, increasing technical debt and reducing architectural evolvability.
+
+The economic impact was also significant: recurring operational costs reached approximately EUR~1000 per month for database usage alone.
+
+\section{Motivation for Migration to PostgreSQL}
+The migration to PostgreSQL was initiated to address these constraints and provide a more robust foundation for the future evolution of Outsight Cloud.
+
+PostgreSQL introduced key advantages:
 \begin{itemize}
-    \item Limited traceability in deployment and infrastructure changes.
-    \item Residual complexity in API routing conventions.
-    \item Difficulty in isolating and validating behavior when replacing data backends.
-    \item Dependency on non-uniform operational knowledge across team members.
+    \item explicit relational modeling through primary and foreign keys;
+    \item stronger guarantees for data consistency and integrity;
+    \item improved querying capabilities and indexing mechanisms;
+    \item reduced dependence on Airtable-specific structures;
+    \item lower operational cost exposure;
+    \item improved scalability and maintainability.
 \end{itemize}
 
-\subsection{Economic Constraints}
-From the baseline reports, recurring cost and dependency concentration on Airtable emerged as significant migration drivers. Airtable was not only a persistence layer but also part of operational workflows, which increased both direct cost exposure and long-term coupling risk.
+The migration also aligned with the broader cloudification strategy and AWS replatforming effort aimed at long-term reliability and maintainability.
 
-\section{Technical Debt and Migration Drivers}
-The migration need was not framed as a generic technology update, but as a response to specific debt patterns:
-\begin{itemize}
-    \item \textbf{Data-layer coupling:} application behavior strongly tied to Airtable schema and workflows.
-    \item \textbf{Identity evolution pressure:} growing need for standards-based authentication and cleaner authorization boundaries.
-    \item \textbf{Infrastructure reproducibility gaps:} insufficiently formalized deployment model for multi-environment evolution.
-    \item \textbf{Validation limitations:} absence of a robust incremental strategy to verify parity during backend transition.
-\end{itemize}
-
-These drivers motivated a migration program with two design priorities: incremental risk reduction and explicit decision traceability.
+Therefore, the objective was not only to replace one storage technology with another, but to progressively transition from a semi-structured operational backend to a maintainable and scalable relational architecture.
 

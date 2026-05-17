@@ -1,19 +1,29 @@
 \chapter{Introduction}
 
 \section{Industrial Context and Legacy Constraints}
-Many software-intensive companies operate platforms that are already cloud-hosted but not truly cloud-native in design, deployment workflow, and operational governance. In these contexts, modernization is not a greenfield exercise: it requires preserving existing behavior while progressively reducing technical debt.
+In recent years, cloud computing has progressively transformed how software systems are designed, deployed, and maintained. Organizations increasingly migrate applications from traditional infrastructures to cloud-native environments to improve scalability, maintainability, automation capabilities, and operational efficiency.
 
-This thesis focuses on Outsight Cloud, a platform used to manage LiDAR-related assets and simulations. The initial system combined a Vue frontend and a Node.js/Express backend, with a data model strongly coupled to Airtable, Redis-based sessions, containerized deployment, and reverse-proxy routing. Although functional, this setup exposed structural constraints in scalability, long-term maintainability, and cost control.
+However, migrating an existing platform to the cloud is not a simple technology replacement activity. Legacy systems typically evolve over multiple years through incremental additions of services, integrations, and operational procedures. As a consequence, they embed architectural dependencies, technology constraints, and operational practices that make migration non-trivial.
+
+This thesis analyzes Outsight Cloud (OC), a platform used to manage LiDAR-related workflows and assets, including organizations, sites, simulations, documentation, and associated files. Before migration, the platform relied on a Docker Compose-based containerized architecture integrated with several external services. Core application data was managed through Airtable, while additional capabilities depended on external storage systems, documentation engines, and notification services.
 
 \section{Problem Statement}
-The core problem addressed in this work is the migration of a legacy platform toward a cloud-native architecture under real operational constraints. The migration had to satisfy the following conditions:
+The engineering problem addressed in this work is the migration of Outsight Cloud from a legacy architecture to a cloud-native environment under real technical and operational constraints.
+
+Although the initial architecture supported rapid development in earlier product stages, several limitations progressively emerged:
 \begin{itemize}
-    \item \textbf{Continuity:} avoid disruptive replacement and preserve business-critical flows during transition.
-    \item \textbf{Security modernization:} prepare the platform for standards-based identity and access management instead of legacy authentication assumptions.
-    \item \textbf{Data evolution:} progressively decouple application logic from Airtable-centric persistence.
-    \item \textbf{Operational robustness:} improve reproducibility through Infrastructure as Code, environment separation, and automated validation.
-    \item \textbf{Economic sustainability:} justify architectural choices also in terms of recurring cost and operational effort.
+    \item strong dependency on external services;
+    \item lack of robust relational data modeling capabilities;
+    \item operational inefficiencies caused by manual workflows;
+    \item limited scalability as platform usage increased;
+    \item increasing maintenance complexity;
+    \item recurring infrastructure and platform costs;
+    \item absence of cloud-native orchestration mechanisms.
 \end{itemize}
+
+These limitations made the architecture progressively harder to evolve while the platform continued to grow. For this reason, the company initiated a cloudification process aimed at redesigning infrastructure and migrating services to AWS.
+
+The migration objective was not limited to infrastructure relocation. It required redefining the architectural model, selecting appropriate cloud technologies, introducing Infrastructure as Code practices, replacing legacy components, and designing a maintainable target architecture.
 
 \section{Thesis Scope}
 The thesis focuses on designing and justifying a migration strategy for a legacy platform under real technical and economic constraints. The scope includes:

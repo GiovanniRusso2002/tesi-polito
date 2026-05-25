@@ -61,6 +61,29 @@ Although this approach offered direct control over infrastructure resources and 
 
 This option conflicted with one of the primary migration goals: reducing operational burden through managed cloud services and automation-oriented infrastructure governance.
 
+\begin{table}[H]
+\centering
+\small
+\caption{Comparative assessment of cloud provider alternatives for Outsight Cloud migration}
+\label{tab:cloud-provider-comparison}
+\begin{tabular}{|p{3.0cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
+\hline
+\textbf{Criterion} & \textbf{AWS} & \textbf{Azure} & \textbf{GCP} & \textbf{On-prem} \\
+\hline
+Managed services fit & High & Medium & Medium & Low \\
+\hline
+IaC and automation & High & Medium & Medium & Low \\
+\hline
+Operational complexity & Low to medium & Medium & Medium & High \\
+\hline
+Ecosystem and maturity & Very high & High & High & Variable \\
+\hline
+Migration continuity with current baseline & High & Medium-low & Medium-low & Low \\
+\hline
+\end{tabular}
+\normalsize
+\end{table}
+
 \subsection{Data-Layer Migration Options}
 Different migration approaches were also considered for the transition from Airtable to PostgreSQL.
 

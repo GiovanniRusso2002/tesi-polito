@@ -4,74 +4,85 @@
 This chapter provides the conceptual background required to frame the migration problem and positions the thesis with respect to related work.
 
 \section{Cloud-Native Principles for Legacy Modernization}
-Cloud-native modernization is not limited to container adoption. In a migration context, it also requires reproducible infrastructure, explicit service boundaries, automated validation, and operational observability. These principles are especially relevant when modern and legacy components must coexist during transition.
+Cloud-native modernization is not limited to container adoption or workload relocation. In migration contexts, it also requires reproducible infrastructure, explicit service boundaries, deployment automation, operational observability, and validation mechanisms capable of supporting incremental system evolution. These principles become particularly important when legacy and modern components must coexist during transition phases.
+
+Modern cloud-native systems are typically designed around automation-oriented practices and managed services that simplify infrastructure operations and improve scalability. However, migrating a legacy platform toward such architectures requires careful consideration of operational continuity, compatibility constraints, and long-term maintainability.
 
 \subsection{Incremental Delivery and Operability}
-A recurring principle in modernization literature is incremental delivery over big-bang replacement. Incremental delivery reduces migration risk, enables early feedback, and supports rollback strategies. To be effective, it requires infrastructure automation, environment consistency, and testable interfaces between old and new components.
+A recurring principle in modernization literature is the preference for incremental delivery over disruptive big-bang replacement. Incremental migration reduces operational risk, enables earlier feedback cycles, and allows validation activities to be performed progressively throughout the transition process.
+
+To be effective, incremental delivery requires infrastructure automation, environment consistency, reproducible deployment workflows, and testable interfaces between legacy and target components. In industrial systems, these practices are essential for preserving operational continuity while introducing architectural changes.
 
 \subsection{Infrastructure as Code}
-Infrastructure as Code (IaC) is a key enabler for modernization because it turns deployment topology, security controls, and environment configuration into versioned artifacts. This supports traceability, reviewability, and reproducibility across development and production environments.
+Infrastructure as Code (IaC) is a key enabler for cloud-native modernization because it transforms infrastructure configuration into versioned and reproducible artifacts. Instead of relying on manual provisioning procedures, infrastructure resources are defined declaratively and managed through automated workflows.
+
+This approach improves traceability, reproducibility, reviewability, and consistency across development and production environments. In migration projects, IaC also simplifies environment replication, deployment governance, and rollback management, reducing operational risks during infrastructure evolution.
 
 \section{Migration Strategies and Patterns}
-Common migration strategies include rehosting, replatforming, refactoring, and selective rebuilding. In practice, many enterprise projects combine these strategies across subsystems. Decision criteria generally include coupling level, criticality, migration effort, and risk exposure.
+Cloud migration projects can follow different strategies depending on system complexity, operational requirements, and modernization goals. Common approaches include rehosting, replatforming, refactoring, and selective rebuilding. In practice, enterprise migration projects often combine multiple strategies across subsystems according to their coupling level, criticality, migration effort, and risk exposure.
 
 \subsection{Cloud Migration Fundamentals}
-Cloud migration is the process of moving applications, data, and infrastructure resources from traditional environments to cloud-based infrastructures \cite{awsCloudMigrationOverview}. In practice, this transition is executed in a controlled and systematic way, with prioritized workloads, staged rollout, and validation activities designed to minimize disruption.
+Cloud migration is the process of moving applications, data, and infrastructure resources from traditional environments to cloud-based platforms \cite{awsCloudMigrationOverview}. In practice, this transition is executed progressively through staged rollout strategies and validation activities designed to minimize disruption.
 
-Historically, many organizations operated software systems on self-managed infrastructures hosted in local data centers or virtualized environments. While these architectures provided direct control, they also introduced significant operational complexity, including infrastructure maintenance, capacity planning, hardware lifecycle management, backup strategies, and service availability governance.
+Historically, many organizations operated software systems on self-managed infrastructures hosted in local data centers or virtualized environments. While these architectures provided direct control over resources, they also introduced significant operational complexity related to infrastructure maintenance, capacity planning, backup management, monitoring, and service availability.
 
-Cloud migration therefore should not be interpreted as pure workload relocation. In many cases it also requires architectural redesign decisions to improve scalability, maintainability, automation, and long-term operational efficiency.
+Cloud migration should therefore not be interpreted as simple workload relocation. In many cases, migration also requires architectural redesign decisions intended to improve scalability, maintainability, automation capabilities, and long-term operational efficiency.
 
-\subsubsection{Main Drivers and Benefits}
-Reference guidance highlights recurring migration drivers and benefits \cite{awsCloudMigrationOverview}:
-\begin{itemize}
-    \item \textbf{Cost efficiency:} reduced on-premises operational burden and better resource-cost alignment;
-    \item \textbf{Scalability and flexibility:} elastic allocation under variable workloads;
-    \item \textbf{Reliability and managed operations:} broader use of managed services for availability, monitoring, backup, and recovery;
-    \item \textbf{Performance:} access to modern infrastructure capabilities and distributed delivery models;
-    \item \textbf{Sustainability:} improved energy efficiency through hyperscale infrastructure optimization.
-\end{itemize}
+Reference guidance highlights several recurring migration drivers and benefits \cite{awsCloudMigrationOverview}, including cost optimization, elastic scalability, managed operational services, improved infrastructure reliability, and access to modern distributed delivery models.
 
-\subsubsection{Migration Strategies}
-Cloud migration can be approached through multiple strategies, selected according to modernization goals and technical constraints \cite{awsCloudMigrationOverview}:
-\begin{itemize}
-    \item \textbf{Rehosting:} move workloads with minimal changes (lift-and-shift);
-    \item \textbf{Replatforming:} adapt selected components to better exploit cloud capabilities;
-    \item \textbf{Refactoring:} redesign parts of the system to align with cloud-native principles.
-\end{itemize}
+Cloud migration strategies are generally classified into three major categories \cite{awsCloudMigrationOverview}: rehosting, which moves workloads with minimal architectural changes; replatforming, which introduces selective adaptations to better exploit cloud capabilities; and refactoring, which redesigns parts of the system to align with cloud-native principles.
 
-\subsubsection{Execution Phases and Challenges}
-Migration programs are often organized in three macro-phases \cite{awsCloudMigrationOverview}: assess, mobilize, and migrate/modernize. These phases help structure technical discovery, platform preparation, pilot execution, and scaled rollout.
+Migration programs are often organized into assessment, preparation, and migration phases \cite{awsCloudMigrationOverview}. These phases support technical discovery, environment preparation, pilot execution, and incremental rollout activities.
 
-Typical challenges include legacy technical complexity, execution constraints during large-scale migration waves, and cloud-skills gaps in delivery teams \cite{awsCloudMigrationOverview}. For this reason, successful migration programs combine technical planning, organizational preparation, and incremental verification.
+Typical migration challenges include legacy technical complexity, execution constraints during coexistence phases, and operational adaptation to new infrastructure models. For this reason, successful migration projects require not only technical redesign, but also controlled validation and incremental transition strategies.
 
-\subsubsection{Implication for Outsight Cloud}
-In the Outsight Cloud case, migration was not limited to infrastructure relocation. It required service redesign, replacement of legacy dependencies, and adoption of Infrastructure as Code practices. The objective was to evolve from an externally coupled legacy setup toward a more maintainable and scalable cloud-native architecture on AWS.
+In the Outsight Cloud case, migration extended beyond infrastructure relocation. The project required redesign of deployment workflows, replacement of legacy dependencies, migration from Airtable to PostgreSQL, and adoption of Infrastructure as Code practices to support long-term maintainability and scalability.
 
 \subsection{Coexistence as a First-Class Requirement}
-For systems that cannot tolerate interruption, coexistence between legacy and target components becomes a design requirement. This introduces additional complexity: contract compatibility, dual-path validation, and progressive switchover mechanisms.
+For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.
+
+This coexistence model introduces additional engineering complexity, including contract compatibility, dual-backend validation, synchronization workflows, rollback capabilities, and progressive switchover mechanisms. As a consequence, migration validation becomes an integral part of the system architecture rather than a secondary operational activity.
 
 \subsection{Decision-Driven Migration}
-Related work often describes migration patterns conceptually, but less frequently provides explicit decision frameworks that combine technical and economic rationale. This gap is relevant for industrial contexts where architecture choices must be justified beyond purely technical preference.
+Related work frequently describes migration patterns from a purely technological perspective, focusing primarily on target architectures and adopted cloud services. In industrial contexts, however, migration decisions must also consider operational constraints, organizational impact, recurring costs, maintainability, and migration risk.
+
+For this reason, migration strategies should be supported by explicit decision frameworks capable of combining technical and economic rationale. This aspect is particularly relevant in large-scale modernization projects where architectural choices affect both infrastructure sustainability and long-term operational governance.
 
 \section{IAM Modernization in Legacy Systems}
-Identity and Access Management (IAM) modernization is a recurrent challenge in legacy platforms. Token-based approaches and standards such as OAuth 2.0 and OpenID Connect (OIDC) provide stronger interoperability and security controls than ad-hoc authentication schemes.
+Identity and Access Management (IAM) modernization is a recurrent challenge in legacy platforms. Historically, many systems implemented authentication and authorization logic directly inside application workflows and persistence layers, generating tightly coupled identity-management models that become difficult to evolve and maintain over time.
+
+Modern cloud-native architectures instead rely on standardized protocols and dedicated identity services to improve interoperability, scalability, and security.
 
 \subsection{From Application-Coupled Identity to Standard Protocols}
-Legacy systems frequently embed identity assumptions in application code and persistence layers. Migrating to standards-based IAM requires decoupling these assumptions, redefining authorization boundaries, and validating compatibility with existing clients and workflows.
+Legacy systems frequently embed authentication assumptions directly into business logic and data models. Migrating toward standards-based IAM therefore requires decoupling identity management from application-specific implementations and redefining authorization boundaries.
+
+Protocols such as OAuth 2.0 and OpenID Connect (OIDC) provide stronger interoperability and security guarantees than ad-hoc authentication approaches. However, introducing standardized IAM mechanisms into existing systems also requires compatibility validation with existing workflows, clients, and operational procedures.
 
 \subsection{Open-Source and Managed IAM Trade-offs}
-The choice between open-source IAM solutions and managed identity platforms affects control, integration flexibility, and operating cost. For migration projects, this decision also impacts how quickly existing services can adopt new identity flows.
+The choice between open-source IAM solutions and managed identity platforms affects operational complexity, integration flexibility, infrastructure ownership, and long-term maintenance costs.
+
+Managed IAM services simplify operational governance by reducing infrastructure-management responsibilities and providing built-in support for authentication workflows, user lifecycle management, and security integration. Open-source solutions, on the other hand, generally provide greater customization flexibility and infrastructure control at the cost of increased operational responsibility.
+
+In migration projects, these trade-offs also influence how progressively existing services can adopt modern authentication flows while preserving backward compatibility.
 
 \section{Limitations in Existing Approaches}
-The literature provides strong foundations on migration patterns and IAM technologies, but industrial guidance is often fragmented across separate dimensions.
+The literature provides strong conceptual foundations on cloud migration patterns and IAM technologies. However, industrial guidance often remains fragmented across separate technical dimensions.
 
 \subsection{Fragmented Treatment of Technical and Economic Criteria}
-Technical architecture decisions are frequently discussed without detailed economic framing. However, recurring infrastructure costs, operational burden, and dependency reduction are often decisive in enterprise migration roadmaps.
+Technical architecture decisions are frequently discussed without detailed consideration of operational costs, infrastructure governance, or long-term maintenance overhead. In practice, however, recurring infrastructure costs and dependency-management considerations are often decisive factors in enterprise migration strategies.
+
+As a consequence, migration projects require evaluation frameworks capable of combining scalability, maintainability, operational sustainability, and economic impact within a unified decision process.
 
 \subsection{Limited Evidence on Incremental Validation}
-Many case studies report final architectures but provide limited detail on intermediate validation mechanisms, such as dual-backend tests, migration data checks, and environment-separated verification workflows.
+Many migration case studies focus primarily on final target architectures while providing limited evidence regarding coexistence management and intermediate validation mechanisms.
+
+In industrial environments, however, migration reliability often depends on validation practices such as dual-backend testing, data-consistency verification, environment-separated deployment workflows, and incremental rollout strategies. These aspects are essential for reducing migration risk during long transition phases.
 
 \section{Positioning of This Thesis}
-This thesis addresses the above limitations through a decision-oriented migration case study. The contribution is not a generic technology survey, but an end-to-end reasoning process from baseline constraints to architecture selection, incremental implementation, and migration-focused validation.
+This thesis addresses the above limitations through a decision-oriented migration case study focused on incremental architectural evolution under real industrial constraints.
 
+The contribution of the work is not limited to the description of a target AWS architecture. Instead, the thesis emphasizes the reasoning process that connects baseline system limitations, migration decisions, infrastructure automation, coexistence management, and validation workflows.
+
+Particular attention is given to Infrastructure as Code adoption, migration reproducibility, controlled coexistence between legacy and target systems, and validation-oriented migration practices designed to reduce technical and operational risk.
+
+Although the work is centered on Outsight Cloud, the migration principles and engineering practices discussed throughout the thesis are applicable to broader legacy modernization scenarios involving progressive cloud-native adoption.

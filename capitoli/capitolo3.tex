@@ -1,68 +1,80 @@
 \chapter{Case Study Baseline (As-Is System)}
 \label{chap:baseline}
 
-This chapter describes the initial state of the Outsight Cloud platform before the migration design was formalized. The goal is to establish the baseline against which migration decisions are evaluated.
+This chapter describes the initial state of the Outsight Cloud platform before the migration strategy was formalized. The objective is to establish the architectural and operational baseline against which migration decisions and modernization efforts are evaluated.
 
 \section{Current Architecture and Data Flow}
-The as-is platform handled LiDAR-related assets and simulations through a web application and backend API stack:
-\begin{itemize}
-    \item Frontend based on Vue 3.
-    \item Backend based on Node.js/Express.
-    \item Redis-backed session mechanisms.
-    \item Containerized deployment with reverse-proxy routing.
-    \item File storage through S3-compatible object storage services.
-    \item Core business data strongly coupled to Airtable.
-\end{itemize}
+Before the migration to AWS, Outsight Cloud relied on a containerized architecture designed to support rapid feature delivery and operational flexibility during the early stages of product development.
 
-This architecture enabled fast delivery in earlier stages of product evolution, but it created a concentration of dependencies in external data services and manually maintained infrastructure conventions.
+The platform managed LiDAR-related workflows and assets through a web application and backend API stack composed of several interconnected services. The frontend was implemented as a Vue 3 Single Page Application (SPA), while backend logic was handled by a Node.js/Express API service. Session management relied on Redis, and the overall deployment was orchestrated through Docker Compose with Traefik acting as reverse proxy and HTTPS entry point.
+
+The platform also integrated multiple external services responsible for storage, documentation, notifications, and operational workflows. File storage relied on an S3-compatible object storage service, while technical documentation was hosted through GitBook. Notification-related functionalities depended on integrations with Slack and Customer.io.
+
+A central characteristic of the original architecture was the strong dependence on Airtable as the primary operational datastore. Core business entities such as users, organizations, sites, simulations, permissions, and role assignments were all managed through Airtable-based workflows.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{immagini/architetura_iniziale.pdf}
-    \caption{Outsight Cloud baseline architecture before the migration, as documented in the pre-migration technical material.}
+    \caption{Outsight Cloud baseline architecture before the migration.}
     \label{fig:outsight-as-is-architecture}
 \end{figure}
 
+Although this architecture enabled fast iteration and reduced initial infrastructure complexity, over time it introduced increasing dependency concentration around externally managed services and operationally coupled workflows.
+
 \section{Airtable as Primary Data Storage}
-Before the migration to PostgreSQL, Outsight Cloud relied on Airtable as its primary data storage system. Airtable acted not only as a database, but also as an operational platform supporting multiple workflows inside the application domain.
+Before the migration to PostgreSQL, Airtable represented the central data-management component of Outsight Cloud. Its role extended beyond traditional data persistence, functioning simultaneously as operational datastore, workflow-management layer, and integration hub for several internal processes.
 
-It stored core entities such as users, organizations, sites, simulations, role assignments, and permissions. In addition, Airtable was used for operational forms and for triggering integrations with external services, including Slack notifications.
+Airtable stored most of the platform's core business entities, including users, organizations, sites, simulations, permissions, and role assignments. In addition, it supported operational forms and triggered integrations with external systems such as Slack-based notification workflows.
 
-Unlike a traditional relational DBMS, Airtable organizes data through linked records and lookup fields. This model offered flexibility in the early product phase and enabled rapid prototyping, especially because non-technical stakeholders could inspect and manipulate data through a graphical interface.
+Unlike traditional relational database systems, Airtable organizes information through linked records and lookup fields instead of explicit relational schemas and foreign-key constraints. During the early phases of the project, this model provided significant flexibility and accelerated development activities. Non-technical stakeholders could directly inspect and modify operational data through Airtable's graphical interface, simplifying collaboration between technical and operational teams.
+
+This flexibility was particularly useful during rapid product evolution phases, where requirements changed frequently and development speed was prioritized over strict schema governance.
+
+However, as the platform evolved and the volume of managed data increased, several structural limitations progressively emerged.
 
 \section{Limitations of Airtable}
-As the platform evolved and the amount of managed data increased, several limitations became evident.
+As Outsight Cloud became more complex, the limitations of using Airtable as primary backend infrastructure became increasingly evident. The issues affected not only data consistency and backend maintainability, but also operational workflows, scalability, and long-term architectural evolution.
 
 \subsection{Data Modeling and Consistency}
-Relationships between entities (for example organizations, sites, and simulations) were represented through linked records and lookup fields, rather than enforced through explicit foreign-key constraints. As a consequence, consistency guarantees depended heavily on application logic.
+Relationships between entities such as organizations, sites, simulations, and permissions were represented through linked records and lookup fields rather than through explicit relational constraints.
 
-During access and synchronization flows, lookup fields could expose heterogeneous representations of the same logical information. In some contexts values appeared as scalars, while in others they appeared as arrays. This increased backend complexity and made query and mapping logic harder to maintain.
+As a consequence, consistency guarantees depended heavily on application-side logic instead of database-level enforcement mechanisms. Backend services frequently needed to normalize and reinterpret Airtable responses in order to maintain coherent internal representations.
+
+In several cases, lookup fields exposed heterogeneous data structures depending on the access context. The same logical information could appear either as scalar values or arrays, increasing backend complexity and complicating synchronization and mapping logic.
+
+This absence of strict schema enforcement progressively increased technical debt and reduced maintainability as the number of entities and relationships expanded.
 
 \subsection{Limited Relational Capabilities}
-Airtable does not provide full relational capabilities comparable to SQL databases. Advanced joins, complex filtering patterns, indexing strategies, and transactional control are more limited than in PostgreSQL-like systems.
+Although Airtable supports basic linked-record relationships, it does not provide the full relational capabilities of SQL database systems such as PostgreSQL.
+
+Advanced joins, indexing strategies, transactional consistency, complex filtering operations, and optimized querying mechanisms were significantly more limited. As business logic became more sophisticated, these limitations increasingly affected backend implementation complexity and query efficiency.
+
+The platform therefore required growing amounts of application-side logic to compensate for missing relational features that would normally be handled directly by a relational DBMS.
 
 \subsection{Operational Inefficiency}
-Several workflows depended on manual interactions through Airtable forms. In particular, user creation and onboarding required internal manual intervention, which slowed operations and increased the probability of human error.
+Several operational workflows relied on manual interactions through Airtable forms and operational interfaces.
+
+User onboarding and account-management procedures, for example, often required manual intervention from internal teams. This approach slowed operational processes, increased dependency on human intervention, and raised the probability of operational errors.
+
+As the number of users, organizations, and managed simulations increased, these manual procedures became progressively harder to scale efficiently.
 
 \subsection{Scalability, Coupling, and Cost}
-Over time, Airtable became both application datastore and operational control surface. This created tight coupling between business logic and Airtable-specific concepts, increasing technical debt and reducing architectural evolvability.
+Over time, Airtable evolved from a simple operational datastore into a critical architectural dependency tightly coupled with application workflows and operational procedures.
 
-The economic impact was also significant: recurring operational costs reached approximately EUR~1000 per month for database usage alone.
+Business logic progressively became dependent on Airtable-specific concepts and APIs, reducing architectural flexibility and complicating future system evolution. This dependency concentration increased technical debt and limited the maintainability of the platform.
+
+The economic impact also became significant. Recurring operational costs associated with Airtable usage reached approximately EUR~1000 per month, creating additional pressure to adopt a more scalable and sustainable backend architecture.
 
 \section{Motivation for Migration to PostgreSQL}
-The migration to PostgreSQL was initiated to address these constraints and provide a more robust foundation for the future evolution of Outsight Cloud.
+The migration from Airtable to PostgreSQL was initiated to address the architectural, operational, and economic limitations identified in the previous sections.
 
-PostgreSQL introduced key advantages:
-\begin{itemize}
-    \item explicit relational modeling through primary and foreign keys;
-    \item stronger guarantees for data consistency and integrity;
-    \item improved querying capabilities and indexing mechanisms;
-    \item reduced dependence on Airtable-specific structures;
-    \item lower operational cost exposure;
-    \item improved scalability and maintainability.
-\end{itemize}
+The objective was not simply to replace one storage technology with another, but to progressively transition from a semi-structured operational backend toward a maintainable and scalable relational architecture capable of supporting long-term platform evolution.
 
-The migration also aligned with the broader cloudification strategy and AWS replatforming effort aimed at long-term reliability and maintainability.
+PostgreSQL introduced several advantages compared to the previous data-management model. Explicit relational schemas based on primary and foreign keys enabled stronger consistency guarantees and improved integrity enforcement. Advanced querying capabilities, transactional support, and indexing mechanisms also simplified backend implementation and improved data-management efficiency.
 
-Therefore, the objective was not only to replace one storage technology with another, but to progressively transition from a semi-structured operational backend to a maintainable and scalable relational architecture.
+From an architectural perspective, the migration reduced dependence on Airtable-specific structures and allowed the platform to regain ownership of its data model and persistence logic. This improved maintainability and simplified future evolution of backend services.
+
+The migration also aligned with the broader cloudification strategy of Outsight Cloud and the transition toward AWS-managed infrastructure and cloud-native operational practices.
+
+For these reasons, PostgreSQL became a foundational component of the target architecture, supporting the broader modernization effort described in the following chapters.
 

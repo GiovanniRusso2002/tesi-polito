@@ -1,38 +1,28 @@
 \chapter{Introduction}
 
 \section{Industrial Context and Legacy Constraints}
-In recent years, cloud computing has progressively transformed how software systems are designed, deployed, and maintained. Organizations increasingly migrate applications from traditional infrastructures to cloud-native environments to improve scalability, maintainability, automation capabilities, and operational efficiency.
+In recent years, cloud computing has significantly transformed the way software systems are designed, deployed, and maintained. Modern cloud platforms provide scalable infrastructure, managed services, automated deployment capabilities, and operational flexibility that are difficult to achieve with traditional self-managed environments. As a consequence, many organizations are progressively modernizing legacy applications to adopt cloud-native architectures.
 
-However, migrating an existing platform to the cloud is not a simple technology replacement activity. Legacy systems typically evolve over multiple years through incremental additions of services, integrations, and operational procedures. As a consequence, they embed architectural dependencies, technology constraints, and operational practices that make migration non-trivial.
+However, migrating an existing production platform to the cloud is rarely a straightforward process. Legacy systems are typically the result of years of incremental development shaped by evolving business requirements, operational constraints, and technological decisions. Over time, these systems often accumulate architectural dependencies and operational practices that complicate scalability, maintainability, and long-term evolution.
 
-This thesis analyzes Outsight Cloud (OC), a platform used to manage LiDAR-related workflows and assets, including organizations, sites, simulations, documentation, and associated files. Before migration, the platform relied on a Docker Compose-based containerized architecture integrated with several external services. Core application data was managed through Airtable, while additional capabilities depended on external storage systems, documentation engines, and notification services.
+This thesis analyzes the migration of Outsight Cloud (OC), a platform used to manage LiDAR-related workflows, simulations, organizations, sites, and associated resources. Before the migration effort, the platform relied on a Docker Compose-based architecture integrated with several external services, including Airtable for core data management.
+
+The original architecture enabled rapid development and operational flexibility during the early stages of the product lifecycle. Airtable simplified data management and allowed non-technical stakeholders to interact directly with operational data through a graphical interface, while externally managed services reduced initial infrastructure complexity and accelerated feature delivery.
+
+As the platform evolved, however, several limitations progressively emerged. Core business logic became increasingly dependent on external platforms and semi-structured data representations, making the system harder to maintain and evolve. At the same time, operational workflows required growing amounts of manual intervention, while scalability and infrastructure management became more difficult as platform usage and integrations expanded.
+
+The migration effort described in this thesis was therefore motivated not only by infrastructure modernization goals, but also by the need to redesign the architectural foundations of the platform in a more scalable, maintainable, and operationally sustainable way.
 
 \section{Problem Statement}
-The engineering problem addressed in this work is the migration of Outsight Cloud from a legacy architecture to a cloud-native environment under real technical and operational constraints.
+The engineering problem addressed in this work concerns the migration of Outsight Cloud from a legacy architecture toward a cloud-native environment under real industrial and operational constraints.
 
-Although the initial architecture supported rapid development in earlier product stages, several limitations progressively emerged:
-\begin{itemize}
-    \item strong dependency on external services;
-    \item lack of robust relational data modeling capabilities;
-    \item operational inefficiencies caused by manual workflows;
-    \item limited scalability as platform usage increased;
-    \item increasing maintenance complexity;
-    \item recurring infrastructure and platform costs;
-    \item absence of cloud-native orchestration mechanisms.
-\end{itemize}
+Although the original platform architecture supported fast development and iterative product evolution, over time it introduced technical and operational limitations that reduced architectural flexibility and increased maintenance complexity. In particular, the platform became strongly dependent on external services and platform-specific integrations, especially Airtable, which was deeply embedded in application workflows and operational processes.
 
-These limitations made the architecture progressively harder to evolve while the platform continued to grow. For this reason, the company initiated a cloudification process aimed at redesigning infrastructure and migrating services to AWS.
+This dependency introduced several challenges. The absence of a fully relational data model limited consistency guarantees and complicated the management of relationships between entities. Operational procedures increasingly relied on manual or partially automated workflows, generating inefficiencies and increasing the risk of human error. In parallel, the original deployment model became progressively harder to scale and maintain as infrastructure requirements, integrations, and operational complexity continued to grow.
 
-The migration objective was not limited to infrastructure relocation. It required redefining the architectural model, selecting appropriate cloud technologies, introducing Infrastructure as Code practices, replacing legacy components, and designing a maintainable target architecture.
+To address these limitations, the company initiated a cloudification process aimed at redesigning the platform architecture and migrating services to AWS. The migration objective extended beyond simple workload relocation and required a broader architectural transformation involving infrastructure redesign, adoption of Infrastructure as Code practices, migration from Airtable to PostgreSQL, introduction of managed cloud services, and modernization of deployment and operational workflows.
 
-\section{Thesis Scope}
-The thesis focuses on designing and justifying a migration strategy for a legacy platform under real technical and economic constraints. The scope includes:
-\begin{itemize}
-    \item defining the problem context and migration drivers;
-    \item comparing candidate cloud migration options;
-    \item selecting and motivating a target architecture;
-    \item presenting implementation and validation foundations already supported by project evidence.
-\end{itemize}
+A central challenge of the migration was preserving service continuity while legacy and target components coexisted during transition phases. For this reason, the migration strategy was designed as an incremental process supported by validation workflows, reproducible infrastructure management, and controlled coexistence mechanisms capable of reducing technical and operational risk.
 
 \section{Thesis Structure}
 This thesis is organized as follows:

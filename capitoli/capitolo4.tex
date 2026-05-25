@@ -1,152 +1,125 @@
 \chapter{Migration Methodology and Decision Framework}
 \label{chap:methodology}
 
-This chapter formalizes the migration methodology used in this thesis. The emphasis is on how decisions were made, not only on which technologies were selected.
+This chapter presents the migration methodology adopted for the modernization of Outsight Cloud and explains the decision process that guided the selection of the target architecture and migration strategy. The focus is not limited to the technologies adopted, but also includes the technical, operational, and economic considerations that influenced the migration process.
 
 \section{Migration Goals and Success Criteria}
-The migration goals were defined before implementation to avoid solution bias:
-\begin{itemize}
-    \item Preserve operational continuity during transition.
-    \item Reduce architectural coupling to legacy data and identity assumptions.
-    \item Improve deployment reproducibility and environment governance.
-    \item Provide explicit technical and economic justification for major choices.
-\end{itemize}
+Before defining the target architecture, a set of migration goals was identified in order to establish a structured decision framework and reduce solution bias during implementation activities.
 
-From these goals, the following success criteria were derived:
-\begin{itemize}
-    \item ability to run and validate critical flows during data-layer transition;
-    \item traceable infrastructure definitions across environments;
-    \item measurable reduction of dependency concentration on Airtable;
-    \item migration process auditable through tests, scripts, and CI evidence.
-\end{itemize}
+The first objective was to preserve operational continuity throughout the migration process. Since Outsight Cloud was already used in production environments, the migration could not rely on disruptive replacement strategies or prolonged service interruptions. Maintaining coexistence between legacy and target components therefore became a primary design requirement.
+
+Another major objective was the reduction of architectural coupling to legacy dependencies, particularly those related to Airtable-based operational workflows and platform-specific integrations. The migration also aimed to improve scalability, maintainability, and long-term architectural evolvability by adopting managed cloud services and reproducible infrastructure-management practices.
+
+Particular attention was also given to deployment reproducibility and environment governance. The migration strategy needed to support controlled infrastructure evolution across development and production environments while reducing manual operational activities.
+
+In addition to technical goals, the migration process required explicit evaluation of operational sustainability and recurring infrastructure costs. Architectural decisions therefore had to balance technical quality, implementation complexity, operational overhead, and long-term maintainability.
+
+From these objectives, several success criteria were derived. The migration process needed to support validation of critical application flows during the transition from Airtable to PostgreSQL, provide traceable infrastructure definitions across environments, reduce dependency concentration around legacy services, and enable migration verification through tests, scripts, and CI-supported validation workflows.
 
 \section{Candidate Solutions Considered}
-The decision process considered multiple options for each migration dimension.
+The migration design process considered multiple alternatives for each architectural dimension, including infrastructure management, cloud-platform selection, data-layer evolution, and identity-management modernization.
+
+Rather than adopting a purely technology-driven approach, the evaluation focused on identifying solutions capable of balancing migration risk, operational continuity, maintainability, and implementation effort.
 
 \subsection{Infrastructure and Runtime Options}
-\begin{itemize}
-    \item Keep existing deployment style with incremental hardening.
-    \item Move to managed cloud services with IaC governance.
-    \item Adopt a full orchestration-first redesign from the beginning.
-\end{itemize}
+Several infrastructure strategies were considered during the migration-planning phase.
+
+The first option consisted of preserving the existing deployment model based on Docker Compose while progressively hardening operational workflows and infrastructure management practices. This approach minimized short-term migration complexity but did not adequately address scalability limitations, operational governance issues, or long-term maintainability concerns.
+
+A second option involved migrating toward managed cloud services combined with Infrastructure as Code practices. This strategy introduced a more structured cloud-native operational model while preserving incremental migration capabilities and reducing infrastructure-management overhead.
+
+A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases.
+
+Given the project constraints and the need for controlled incremental evolution, the migration strategy favored managed cloud services combined with reproducible infrastructure provisioning practices.
 
 \subsection{Alternative Cloud Platforms Considered}
-During the migration design phase, multiple cloud platform alternatives were considered before selecting the target environment. The comparison focused on scalability, availability of managed services, IaC support, ecosystem maturity, operational complexity, and integration with the existing technical baseline.
+During the migration design phase, multiple cloud platform alternatives were evaluated before selecting the final target environment. The comparison focused on scalability, availability of managed services, Infrastructure as Code support, ecosystem maturity, operational complexity, and compatibility with the existing technical baseline.
 
-\begin{table}[H]
-\centering
-\small
-\caption{Comparative assessment of cloud provider alternatives for Outsight Cloud migration}
-\label{tab:cloud-provider-comparison}
-\begin{tabular}{|p{3.0cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
-\hline
-\textbf{Criterion} & \textbf{AWS} & \textbf{Azure} & \textbf{GCP} & \textbf{On-prem} \\
-\hline
-Managed services fit & High & Medium & Medium & Low \\
-\hline
-IaC and automation & High & Medium & Medium & Low \\
-\hline
-Operational complexity & Low to medium & Medium & Medium & High \\
-\hline
-Ecosystem and maturity & Very high & High & High & Variable \\
-\hline
-Migration continuity with current baseline & High & Medium-low & Medium-low & Low \\
-\hline
-\end{tabular}
-\normalsize
-\end{table}
+The main alternatives considered were Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform (GCP), and continuation with self-managed infrastructure.
 
-\subsubsection{Microsoft Azure}
-Microsoft Azure offers a broad enterprise ecosystem with managed services for compute, storage, databases, networking, and DevOps workflows. Functionally, it provides equivalents for many services used in this project, including:
-\begin{itemize}
-    \item Azure Virtual Machines (similar role to EC2),
-    \item Azure Kubernetes Service (AKS),
-    \item Azure SQL Database,
-    \item Azure Blob Storage,
-    \item Azure DevOps.
-\end{itemize}
+\textbf{Amazon Web Services (AWS).} AWS was considered the strongest candidate due to the maturity of its managed-service ecosystem and its compatibility with the migration objectives of Outsight Cloud.
 
-Azure is particularly strong in Microsoft-centric enterprise contexts. However, for Outsight Cloud it introduced additional migration overhead because the existing deployment strategy and operational knowledge were already aligned with AWS-oriented patterns.
+Services such as ECS Fargate, RDS PostgreSQL, S3, Cognito, SES, and CloudFront provided native support for the architectural model targeted by the migration strategy. In addition, AWS offered strong Terraform integration, mature DevOps tooling, and operational scalability aligned with the company's broader cloudification strategy.
 
-\subsubsection{Google Cloud Platform (GCP)}
-Google Cloud Platform was also considered, especially due to its strengths in containerized workloads and Kubernetes-native operations. Relevant services included:
-\begin{itemize}
-    \item Google Kubernetes Engine (GKE),
-    \item Cloud SQL,
-    \item Compute Engine,
-    \item Cloud Storage.
-\end{itemize}
+The existing operational knowledge inside the company was also already partially aligned with AWS-based workflows, reducing migration overhead and simplifying infrastructure adoption.
 
-GCP presents strong capabilities in analytics, machine learning, and managed Kubernetes. Nevertheless, AWS was preferred for this migration due to broader service coverage in the specific infrastructure management areas required by the project and stronger alignment with the existing cloudification path.
+\textbf{Microsoft Azure.} Microsoft Azure was also evaluated as a potential target environment. Azure provides a broad enterprise ecosystem with managed services covering compute, storage, networking, databases, and DevOps workflows.
 
-\subsubsection{On-prem Infrastructure}
-Another option was to continue with self-managed virtual-machine infrastructure (or on-premises style operations). While this approach offers full control over resources and configurations, it significantly increases operational responsibilities:
-\begin{itemize}
-    \item infrastructure maintenance,
-    \item scalability management,
-    \item backup and disaster recovery operations,
-    \item monitoring and incident handling,
-    \item high-availability design,
-    \item security hardening and lifecycle management.
-\end{itemize}
+Equivalent services for most components used in this project were available, including Azure Virtual Machines, Azure Kubernetes Service (AKS), Azure SQL Database, and Azure Blob Storage.
 
-This option conflicted with the migration objective of reducing operational overhead through managed cloud services.
+Although Azure presented strong enterprise integration capabilities, especially in Microsoft-oriented ecosystems, it introduced additional migration complexity because the existing operational direction and cloudification path were already more closely aligned with AWS-based infrastructure models.
+
+\textbf{Google Cloud Platform (GCP).} Google Cloud Platform was considered primarily because of its strengths in containerized workloads and Kubernetes-native operations.
+
+Relevant services included Google Kubernetes Engine (GKE), Cloud SQL, Compute Engine, and Cloud Storage. GCP also provides strong capabilities in analytics and large-scale distributed infrastructure management.
+
+However, compared to AWS, GCP offered less alignment with the operational and architectural direction already established inside the project. For this reason, AWS was considered a more suitable choice for the migration requirements of Outsight Cloud.
+
+\textbf{On-Premises Infrastructure.} Another possible strategy consisted of continuing with self-managed infrastructure hosted on virtual machines or on-premises-style environments.
+
+Although this approach offered direct control over infrastructure resources and configurations, it significantly increased operational responsibilities related to maintenance, monitoring, backup management, scalability planning, high availability, and infrastructure security.
+
+This option conflicted with one of the primary migration goals: reducing operational burden through managed cloud services and automation-oriented infrastructure governance.
 
 \subsection{Data-Layer Migration Options}
-\begin{itemize}
-    \item Immediate cutover from Airtable to a relational database.
-    \item Long-term coexistence with no formal migration endpoint.
-    \item Incremental coexistence with progressive parity checks and controlled switchover.
-\end{itemize}
+Different migration approaches were also considered for the transition from Airtable to PostgreSQL.
+
+A first possibility was an immediate cutover strategy, where Airtable would be replaced directly with a relational database system. Although this approach simplified long-term architecture, it introduced high migration risk and limited rollback flexibility.
+
+A second option involved maintaining long-term coexistence between Airtable and PostgreSQL without defining a clear migration endpoint. While operationally safer in the short term, this approach risked increasing architectural complexity and prolonging dependency concentration around legacy systems.
+
+The selected approach instead relied on incremental coexistence supported by progressive validation mechanisms and controlled switchover procedures. This model allowed migration progress to be verified incrementally while reducing operational risk and preserving service continuity.
 
 \subsection{Identity Evolution Options}
-\begin{itemize}
-    \item Preserve legacy authentication contracts and postpone IAM modernization.
-    \item Introduce standards-based IAM with progressive integration in services.
-    \item Full immediate rewrite of authentication and authorization boundaries.
-\end{itemize}
+The migration process also required evaluating alternative approaches for identity and authentication modernization.
+
+One option consisted of preserving existing authentication contracts and postponing IAM modernization until after infrastructure migration. While simpler initially, this strategy risked extending architectural coupling to legacy authentication assumptions.
+
+A second possibility involved introducing standards-based IAM mechanisms progressively while preserving compatibility with existing services and workflows. This approach enabled gradual adoption of modern authentication practices while reducing migration disruption.
+
+A third option consisted of a complete redesign of authentication and authorization mechanisms from the beginning of the migration project. Although architecturally cleaner, this approach introduced excessive migration complexity and operational risk during early transition stages.
+
+For these reasons, the migration strategy favored progressive IAM modernization combined with controlled coexistence between legacy and modern authentication flows.
 
 \section{Technical and Economic Evaluation Criteria}
-Each candidate solution was evaluated against a shared set of criteria.
+Each candidate solution was evaluated against a common set of technical and operational criteria in order to support structured architectural decision-making.
 
 \subsection{Technical Criteria}
-\begin{itemize}
-    \item Backward compatibility with existing service behavior.
-    \item Security posture and readiness for standards-based IAM.
-    \item Deployment reproducibility across environments.
-    \item Testability of migration steps and rollback readiness.
-    \item Observability and troubleshooting support during transition.
-\end{itemize}
+Technical evaluation focused on aspects directly related to migration feasibility, operational continuity, and long-term maintainability.
+
+Particular importance was given to backward compatibility with existing workflows and service behaviors, since migration phases required coexistence between legacy and target components. Security considerations were also central, especially regarding readiness for standards-based IAM integration and cloud-native infrastructure governance.
+
+Deployment reproducibility represented another key criterion. Candidate solutions needed to support versioned infrastructure definitions, automated provisioning workflows, and consistent environment management across development and production stages.
+
+Migration testability was also considered essential. The selected architecture needed to support incremental validation workflows, rollback readiness, and automated verification practices capable of reducing migration risk.
+
+Finally, operational observability and troubleshooting support were evaluated in order to ensure visibility during coexistence and rollout phases.
+
+\subsection{Economic and Operational Criteria}
+In addition to technical aspects, the evaluation process also considered operational sustainability and recurring infrastructure costs.
+
+Particular attention was given to reducing operational overhead associated with infrastructure maintenance and manual workflows. Candidate solutions were also evaluated according to their ability to reduce dependency concentration around high-cost external services and simplify long-term operational governance.
+
+Maintainability, scalability, and automation capabilities were therefore analyzed together with recurring infrastructure costs and migration effort distribution.
 
 \section{Selected Strategy and Rationale}
-The selected strategy was an incremental migration centered on managed cloud services and reproducible infrastructure definitions:
-\begin{itemize}
-    \item AWS-managed building blocks for runtime, routing, storage, and observability.
-    \item Terraform as the infrastructure control plane.
-    \item Progressive data migration path from Airtable to PostgreSQL.
-    \item Validation-oriented coexistence between legacy and target data paths.
-\end{itemize}
+The selected strategy was an incremental migration centered on managed cloud services, Infrastructure as Code practices, and progressive coexistence between legacy and target systems.
 
-AWS was selected because it provided the most complete fit for the project constraints and goals:
-\begin{itemize}
-    \item mature IaC integration through Terraform-based workflows,
-    \item managed services required by the target architecture (including ECS, RDS, and S3),
-    \item strong scalability and availability characteristics,
-    \item robust DevOps integration for automated provisioning and updates,
-    \item strong support for cloud-native architecture evolution,
-    \item continuity with the broader company cloudification strategy,
-    \item alignment with the company's commercial and strategic technology choices.
-\end{itemize}
+AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, while Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
 
-This strategy was selected because it balances risk, implementation effort, and long-term maintainability. It avoids disruptive full replacement while still creating a clear target-state trajectory.
+The migration strategy also introduced a progressive transition path from Airtable to PostgreSQL supported by coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
+
+AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture, and compatibility with the broader cloudification strategy already adopted by the company.
+
+The selected approach balanced migration risk, implementation effort, operational sustainability, and long-term maintainability. Rather than relying on disruptive architectural replacement, the strategy focused on controlled incremental evolution toward a cloud-native environment.
 
 \section{Risk Management and Coexistence Plan}
-Risk management was embedded in the migration design:
-\begin{itemize}
-    \item Keep migration steps independently verifiable.
-    \item Separate development and production environment evolution.
-    \item Use dual-backend test paths to detect behavioral divergence early.
-    \item Define data validation artifacts to support switchover decisions.
-\end{itemize}
+Risk management was integrated directly into the migration strategy rather than treated as a separate operational activity.
 
-The coexistence phase is treated as a controlled engineering stage, not as an informal transition period.
+Migration steps were designed to remain independently verifiable through validation workflows, data-consistency checks, and coexistence-oriented testing mechanisms. Development and production environments were managed separately in order to reduce operational risk during experimentation and rollout phases.
+
+Special attention was given to coexistence between Airtable and PostgreSQL during migration stages. Dual-backend validation workflows were introduced to detect behavioral divergence early and support controlled switchover decisions.
+
+Data replication and validation artifacts were also designed to provide measurable evidence regarding migration progress and consistency verification.
+
+As a consequence, coexistence was treated not as an informal transition phase, but as a structured engineering stage supported by automation, validation, and reproducible infrastructure management practices.

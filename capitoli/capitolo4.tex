@@ -47,7 +47,7 @@ The existing operational knowledge inside the company was also already partially
 
 Equivalent services for most components used in this project were available, including Azure Virtual Machines, Azure Kubernetes Service (AKS), Azure SQL Database, and Azure Blob Storage.
 
-Although Azure presented strong enterprise integration capabilities, especially in Microsoft-oriented ecosystems, it introduced additional migration complexity because the existing operational direction and cloudification path were already more closely aligned with AWS-based infrastructure models.
+Although Azure presented strong enterprise integration capabilities, especially in Microsoft-oriented ecosystems, and was considered stronger from a governance perspective, it introduced additional migration complexity because the existing operational direction and cloudification path were already more closely aligned with AWS-based infrastructure models.
 
 \textbf{Google Cloud Platform (GCP).} Google Cloud Platform was considered primarily because of its strengths in containerized workloads and Kubernetes-native operations.
 
@@ -133,6 +133,10 @@ AWS-managed services were adopted for runtime execution, routing, storage, authe
 The migration strategy also introduced a progressive transition path from Airtable to PostgreSQL supported by coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
 
 AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture, and compatibility with the broader cloudification strategy already adopted by the company.
+
+Another key motivation was the quality of the managed database offering, in particular Amazon Aurora PostgreSQL, which combines low-maintenance operational requirements with strong reliability and global scalability characteristics. AWS was also considered highly developer-friendly, with broad customizability enabled by Lambda-based logic and service integrations that fit the operating model of a SaaS company requiring implementation flexibility.
+
+The main trade-off acknowledged during the evaluation is that AWS can become expensive under specific scaling and usage conditions. However, for this project, the balance between service quality, customization freedom, and migration continuity remained favorable to AWS.
 
 The selected approach balanced migration risk, implementation effort, operational sustainability, and long-term maintainability. Rather than relying on disruptive architectural replacement, the strategy focused on controlled incremental evolution toward a cloud-native environment.
 

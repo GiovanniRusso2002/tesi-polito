@@ -1,55 +1,27 @@
 \chapter{Evaluation and Discussion}
 \label{chap:evaluation}
 
-This chapter evaluates the migration approach with focus on decision quality, implementation readiness, and risk reduction evidence.
+\section{Benchmark Methodology and Demand Profile}
+\subsection{Measurement Scope}
+\subsection{Workload and Demand Definition}
+\subsection{As-Is vs To-Be Benchmark Setup}
 
-\section{Validation Methodology}
-Given the current project stage, evaluation is organized around migration readiness rather than final production performance optimization. The methodology combines:
-\begin{itemize}
-    \item architectural consistency checks between migration goals and implemented foundations;
-    \item reproducibility checks through Infrastructure as Code and environment separation;
-    \item coexistence checks through dual-backend testing and CI evidence;
-    \item data migration checks through replication and validation scripts.
-\end{itemize}
+\section{Cost and TCO Analysis}
+\subsection{Current Architecture Costs (As-Is)}
+\subsection{Target Architecture Costs (To-Be)}
+\subsection{Total Cost of Ownership (TCO)}
 
-\section{Technical Results}
-\subsection{Infrastructure and Deployment Readiness}
-The migration produced a reproducible infrastructure baseline on AWS, managed through Terraform and integrated with routing, certificate management, container runtime, and observability services.
+\section{Latency and Performance Analysis}
+\subsection{As-Is Latency Measurements}
+\subsection{To-Be Latency Measurements}
+\subsection{Comparative Results}
 
-\subsection{Data Migration Readiness}
-The project established concrete mechanisms to compare and validate behavior during Airtable-to-PostgreSQL transition. This is a key technical result because it enables incremental migration decisions based on evidence rather than assumptions.
+\section{Operational Cost and Efficiency}
+\subsection{As-Is Operational Effort}
+\subsection{To-Be Operational Effort}
+\subsection{Operational Cost Comparison}
 
-\subsection{Testing and Verification Readiness}
-Dual-backend smoke tests and CI integration provide an automated control surface for migration risk. This increases confidence in backward-compatible evolution during coexistence phases.
-
-\section{Migration KPIs and Economic Impact}
-The evaluation framework tracks migration progress using two KPI classes.
-
-\subsection{Technical Migration KPIs}
-\begin{itemize}
-    \item percentage of critical flows covered by backend-agnostic smoke tests;
-    \item number of migration checkpoints completed with successful validation reports;
-    \item reproducibility of environment provisioning across development stages;
-    \item incidence of regressions detected before deployment.
-\end{itemize}
-
-\subsection{Economic Migration KPIs}
-\begin{itemize}
-    \item reduction in dependency concentration on high-recurring-cost services;
-    \item expected decrease in manual operational effort through IaC and pipeline automation;
-    \item migration effort distribution across infrastructure, data, and application layers.
-\end{itemize}
-
-Initial evidence confirms that the selected strategy is compatible with both technical risk control and economic sustainability goals.
-
-\section{Limitations and Lessons Learned}
-\subsection{Limitations}
-The current evaluation reflects an intermediate migration stage. Long-term operational behavior and full post-migration cost curves require additional observation after broader adoption.
-
-\subsection{Lessons Learned}
-Three lessons emerge clearly:
-\begin{itemize}
-    \item migration architecture must be paired with explicit validation architecture;
-    \item coexistence is manageable only when test and data checks are planned from the start;
-    \item technical and economic criteria must be evaluated together, not sequentially.
-\end{itemize}
+\section{Security Evaluation}
+\subsection{Security Exposure Analysis}
+\subsection{Security Scalability Analysis}
+\subsection{As-Is vs To-Be Security Comparison}

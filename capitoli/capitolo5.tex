@@ -1,78 +1,7 @@
 \chapter{Target Architecture and Solution Design (To-Be)}
 \label{chap:architecture}
 
-This chapter presents the target architecture resulting from the decision framework in Chapter~\ref{chap:methodology}. The architecture is described as a migration destination designed for incremental adoption.
-
-\section{Initial Architecture of Outsight Cloud}
-Before the migration to AWS, Outsight Cloud relied on a containerized architecture deployed through Docker Compose and integrated with multiple external services. This was the initial technical baseline of the platform.
-
-The initial architecture was organized into four layers:
-\begin{itemize}
-    \item client layer;
-    \item reverse proxy layer;
-    \item application layer;
-    \item external services layer.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{immagini/architetura_iniziale.pdf}
-    \caption{Initial architecture of Outsight Cloud before AWS migration.}
-    \label{fig:outsight-initial-architecture}
-\end{figure}
-
-In this setup, users accessed a Vue.js Single Page Application (SPA) through a web browser. Requests were routed by Traefik and forwarded to application services running in Docker containers. The backend integrated external systems including Airtable, S3-compatible storage, GitBook, Redis, and notification services.
-
-\subsection{Client Layer}
-\subsubsection{Browser -- Vue.js SPA}
-The frontend entry point was a browser-based SPA implemented in Vue.js. Its responsibilities included:
-\begin{itemize}
-    \item rendering the user interface;
-    \item managing user interactions;
-    \item invoking backend APIs;
-    \item displaying simulations, organizations, sites, and documentation.
-\end{itemize}
-
-\subsection{Reverse Proxy Layer}
-\subsubsection{Traefik Reverse Proxy}
-Traefik handled incoming HTTPS traffic and routed requests to internal services. Main responsibilities were HTTPS termination, request routing, container discovery, and traffic forwarding. The application was exposed externally through port 443, while internal service communication relied on Docker networking.
-
-\subsection{Application Layer}
-The application logic was deployed through a Docker Compose stack with three primary components.
-
-\subsubsection{Frontend Container}
-OWS\_APP hosted the Vue frontend and exposed it on port 3000, delivering the web interface and client-side behavior.
-
-\subsubsection{Backend Container}
-OWS\_API implemented backend logic with Node.js/Express and exposed APIs on port 3001. It orchestrated users, organizations, sites, simulations, file access, notifications, and external integrations.
-
-\subsubsection{Redis}
-Redis was primarily used as session storage and temporary state support, reducing repeated access to external systems and improving responsiveness.
-
-\subsection{External Services Layer}
-\subsubsection{Airtable}
-Airtable was the primary datastore for users, organizations, sites, simulations, permissions, and roles. It also supported operational workflows and integrations.
-
-\subsubsection{S3-Compatible Storage}
-Object storage relied on an S3-compatible service for simulation assets, uploaded files, and project resources, but this storage was not fully integrated into a native AWS architecture.
-
-\subsubsection{GitBook Documentation Engine}
-GitBook was used as an external documentation platform for product documentation, deployment guides, technical manuals, and support material.
-
-\subsubsection{Notification Services}
-Operational notifications depended on external integrations such as Slack and Customer.io for account and workflow events.
-
-\subsection{Architectural Limitations}
-Although the initial architecture enabled rapid early development, several limitations emerged:
-\begin{itemize}
-    \item strong dependency on Airtable as primary backend;
-    \item limited scalability and weak cloud-native orchestration;
-    \item high coupling with external services;
-    \item manual operational workflows;
-    \item increasing operational complexity over time.
-\end{itemize}
-
-These limitations motivated the migration path toward the AWS architecture presented in the next sections.
+This chapter presents the target architecture resulting from the decision framework in Chapter~\ref{chap:methodology}. The baseline as-is system is described in Chapter~\ref{chap:baseline}; here the focus is on the migration destination designed for incremental adoption.
 
 \section{Architecture Overview}
 The migration of Outsight Cloud to AWS required the definition of a cloud-native architecture able to improve scalability, maintainability, and service integration while preserving the original application workflow.
@@ -133,6 +62,25 @@ Amazon SES is used for outgoing email communication such as invitations, account
 
 \subsection{Amazon SNS}
 Amazon SNS is adopted for asynchronous event-driven notifications. It supports decoupled communication patterns for alerts, internal notifications, workflow events, and service integration triggers.
+
+\section{Network and Security Topology}
+The AWS deployment of Outsight Cloud was designed around a simplified cloud-native networking model focused on incremental migration, operational simplicity, and controlled exposure of public services.
+
+The infrastructure operates inside an AWS Virtual Private Cloud (VPC) and relies on multiple public subnets distributed across different Availability Zones in order to improve service availability and fault tolerance. During the migration phase, the selected architecture prioritized deployment simplicity and rapid operational adoption over complex network segmentation strategies.
+
+Application services running on Amazon ECS Fargate are deployed with public outbound connectivity enabled. This configuration simplifies communication with externally managed services and reduces infrastructure overhead by avoiding additional networking components during the early migration stages.
+
+Despite the use of public subnets, direct external access to application containers is restricted through dedicated Security Groups. Network exposure responsibilities are separated between the Application Load Balancer (ALB) and ECS services: the ALB accepts inbound HTTP and HTTPS traffic from external clients; ECS services accept inbound traffic only from the ALB; application containers are therefore not directly exposed to the Internet.
+
+The Application Load Balancer acts as the primary public entry point for the platform and is responsible for HTTPS termination, request routing, health checks, and traffic distribution across frontend and backend services.
+
+Transport Layer Security (TLS) is managed through AWS Certificate Manager (ACM), enabling centralized certificate lifecycle management and secure HTTPS communication across deployment environments.
+
+The architecture also separates application traffic from static asset delivery. Simulation files and large downloadable resources are stored in private Amazon S3 buckets and distributed through Amazon CloudFront. The CDN layer operates independently from the application load balancer and is dedicated exclusively to content delivery and asset acceleration.
+
+To reduce direct exposure of storage resources, access to S3 objects is restricted through CloudFront Origin Access Control (OAC), allowing content retrieval only through the CDN distribution layer.
+
+Overall, the network topology reflects a pragmatic migration-oriented design that balances security, operational simplicity, and incremental cloud-native adoption while preserving the possibility of future evolution toward more isolated and fully private network architectures.
 
 \section{Architectural Benefits}
 Compared to the pre-migration system, the selected architecture provides:

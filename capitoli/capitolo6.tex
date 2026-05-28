@@ -80,22 +80,11 @@ Dedicated scripts were prepared to:
 
 These artifacts transform data migration from a one-time operation into a repeatable verification workflow.
 
-\section{CI/Test Strategy for Dual-Backend Consistency}
-\subsection{Dual-Backend Test Design}
-To support coexistence, smoke tests were designed to run against both data backends (Airtable and PostgreSQL) under a common API expectation. This provided an early warning mechanism for behavioral divergence.
-
-\subsection{Containerized Validation Environment}
-The test workflow uses containerized dependencies, including a PostgreSQL service and an Airtable-compatible mock component, so that migration checks can be reproduced reliably in CI.
-
-\subsection{Pipeline Integration}
-GitLab CI stages were defined to execute unit and smoke checks across backend variants. This allows migration decisions to be supported by continuous evidence instead of manual spot checks.
-
 \section{Implementation Scope and Current Status}
 At the current stage, the implemented work establishes the migration backbone:
 \begin{itemize}
     \item infrastructure foundations and environment governance;
-    \item data replication and validation tooling;
-    \item coexistence-oriented CI/test pipeline.
+    \item data replication and validation tooling.
 \end{itemize}
 
 This scope is sufficient to evaluate migration feasibility and design quality, while leaving room for further functional expansion in subsequent project phases.

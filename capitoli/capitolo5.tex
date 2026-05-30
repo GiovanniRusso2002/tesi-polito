@@ -4,7 +4,7 @@
 This chapter presents the target architecture resulting from the decision framework in Chapter~\ref{chap:methodology}. The baseline as-is system is described in Chapter~\ref{chap:baseline}; here the focus is on the migration destination designed for incremental adoption.
 
 \section{Architecture Overview}
-The migration of Outsight Cloud to AWS required the definition of a cloud-native architecture able to improve scalability, maintainability, and service integration while preserving the original application workflow.
+The migration of Outsight Cloud from a Docker Compose-based deployment hosted on DigitalOcean Droplets to AWS required the definition of a cloud-native architecture able to improve scalability, maintainability, and service integration while preserving the original application workflow.
 
 The selected architecture follows a layered model with four levels:
 \begin{itemize}
@@ -14,14 +14,14 @@ The selected architecture follows a layered model with four levels:
     \item managed services layer.
 \end{itemize}
 
-\begin{figure}[H]
+The resulting left-to-right request flow starts from user interaction through the browser, continues through CloudFront and an Application Load Balancer, reaches frontend and backend services on ECS Fargate, and integrates with managed services including PostgreSQL, Redis, Amazon S3, Cognito, SES, and SNS (Figure~\ref{fig:outsight-to-be-architecture}).
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.58\textwidth]{immagini/design_definito.png}
     \caption{Final AWS architecture adopted for Outsight Cloud.}
     \label{fig:outsight-to-be-architecture}
 \end{figure}
-
-Figure~\ref{fig:outsight-to-be-architecture} shows the left-to-right request flow: users interact through the browser, traffic is delivered through CloudFront and routed by an Application Load Balancer, frontend and backend services run on ECS Fargate, and application logic integrates with managed services including PostgreSQL, Redis, Amazon S3, Cognito, SES, and SNS.
 
 \section{Client and Delivery Layer}
 \subsection{Browser}
@@ -36,7 +36,9 @@ The Application Load Balancer (ALB) is the central routing component. It receive
 
 \section{Application Layer}
 \subsection{ECS Fargate Runtime}
-The application layer is deployed on Amazon ECS Fargate with a serverless container execution model. Compared to traditional VM-based deployment, Fargate removes the need to provision and maintain servers manually.
+The application layer is deployed on Amazon ECS Fargate with a serverless container execution model. Compared to the previous deployment model based on Docker Compose workloads running on DigitalOcean Droplets, Fargate removes the need to provision, maintain, patch, and scale virtual machines manually.
+
+This runtime choice follows the evaluation described in Chapter~\ref{chap:methodology}: among the container orchestration alternatives considered, ECS Fargate offered the best fit for an incremental migration from the existing Docker Compose baseline. Applications could continue to be packaged as standard containers, preserving compatibility with the existing Docker Compose workloads previously hosted on DigitalOcean Droplets, while benefiting from a fully managed execution environment integrated with ALB, CloudWatch, IAM, and Auto Scaling. Kubernetes was not selected at this stage because the associated cluster-management overhead---covering networking, upgrades, monitoring, capacity planning, and security governance---was not justified by the scale and operational requirements of Outsight Cloud during the migration.
 
 \subsection{Frontend Service (Vue)}
 The frontend service is implemented in Vue.js and is responsible for rendering the user interface, handling user interactions, communicating with backend APIs, and managing authentication-related flows. Deploying it as a dedicated container enables independent release and scaling behavior.
@@ -89,6 +91,7 @@ Compared to the pre-migration system, the selected architecture provides:
     \item cloud-native deployment model with managed runtime and services;
     \item independent scaling of frontend and backend components;
     \item reduced operational burden through managed infrastructure;
+    \item reduced dependence on self-managed virtual machines through adoption of AWS managed services;
     \item higher maintainability and better integration with IaC and automation workflows.
 \end{itemize}
 

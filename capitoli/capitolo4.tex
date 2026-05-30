@@ -22,20 +22,32 @@ The migration design process considered multiple alternatives for each architect
 Rather than adopting a purely technology-driven approach, the evaluation focused on identifying solutions capable of balancing migration risk, operational continuity, maintainability, and implementation effort.
 
 \subsection{Infrastructure and Runtime Options}
-Several infrastructure strategies were considered during the migration-planning phase.
+\label{sec:runtime-options}
+Several infrastructure strategies were considered during the planning phase of the migration.
 
-The first option consisted of preserving the existing deployment model based on Docker Compose while progressively hardening operational workflows and infrastructure management practices. This approach minimized short-term migration complexity but did not adequately address scalability limitations, operational governance issues, or long-term maintainability concerns.
+The first option consisted of preserving the existing deployment model based on Docker Compose workloads hosted on DigitalOcean Droplets while progressively hardening operational workflows and infrastructure management practices. This approach minimized short-term migration complexity but did not adequately address scalability limitations, operational governance issues, or long-term maintainability concerns.
 
 A second option involved migrating toward managed cloud services combined with Infrastructure as Code practices. This strategy introduced a more structured cloud-native operational model while preserving incremental migration capabilities and reducing infrastructure-management overhead.
 
 A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases.
 
-Given the project constraints and the need for controlled incremental evolution, the migration strategy favored managed cloud services combined with reproducible infrastructure provisioning practices.
+\subsubsection{Container Orchestration: Kubernetes vs ECS Fargate}
+During the infrastructure design phase, Kubernetes-based solutions were evaluated as a potential runtime platform for containerized workloads. Kubernetes is a portable, extensible open source platform for managing containerized workloads and services through declarative configuration and automation~\cite{kubernetesOverview}. In production environments, it provides a framework to run distributed systems resiliently by handling scaling, failover, service discovery, load balancing, and controlled rollouts~\cite{kubernetesOverview}.
+
+However, adopting Kubernetes would have introduced additional operational complexity that was not justified by the requirements of Outsight Cloud at the time of the migration. Managing Kubernetes clusters requires expertise in cluster administration, networking, upgrades, monitoring, capacity planning, and security governance. These responsibilities would have increased both implementation effort and long-term operational overhead.
+
+In contrast, Amazon ECS Fargate provides a managed container execution environment that eliminates the need to provision and maintain worker nodes. The service offers native integration with other AWS components, including Application Load Balancer, CloudWatch, IAM, and Auto Scaling, while preserving support for Docker-based workloads already used by the existing platform.
+
+From a migration perspective, ECS Fargate enabled a smoother transition from the original Docker Compose deployment model running on DigitalOcean Droplets because applications could continue to be packaged as standard containers without requiring a complete redesign of the runtime environment.
+
+Given the project objectives---incremental migration, reduced operational burden, faster adoption, and maintainability---ECS Fargate provided the most appropriate balance between scalability and operational simplicity. While Kubernetes remains a viable option for future platform evolution, its additional complexity was not justified by the scale and requirements of the current migration effort.
+
+Given the project constraints and the need for controlled incremental evolution, the migration strategy favored managed cloud services combined with reproducible infrastructure provisioning practices, with ECS Fargate selected as the container runtime platform.
 
 \subsection{Alternative Cloud Platforms Considered}
 During the migration design phase, multiple cloud platform alternatives were evaluated before selecting the final target environment. The comparison focused on scalability, availability of managed services, Infrastructure as Code support, ecosystem maturity, operational complexity, and compatibility with the existing technical baseline.
 
-The main alternatives considered were Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform (GCP), and continuation with self-managed infrastructure.
+The main alternatives considered were Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform (GCP), continuation on the existing DigitalOcean infrastructure, and self-managed on-premises infrastructure.
 
 \textbf{Amazon Web Services (AWS).} AWS was considered the strongest candidate due to the maturity of its managed-service ecosystem and its compatibility with the migration objectives of Outsight Cloud.
 
@@ -54,6 +66,9 @@ Although Azure presented strong enterprise integration capabilities, especially 
 Relevant services included Google Kubernetes Engine (GKE), Cloud SQL, Compute Engine, and Cloud Storage. GCP also provides strong capabilities in analytics and large-scale distributed infrastructure management.
 
 However, compared to AWS, GCP offered less alignment with the operational and architectural direction already established inside the project. For this reason, AWS was considered a more suitable choice for the migration requirements of Outsight Cloud.
+
+\textbf{Continuation on DigitalOcean.}
+Another alternative consisted of preserving the existing infrastructure provider and progressively improving the deployment model while continuing to operate on DigitalOcean Droplets. This approach would have minimized migration effort in the short term and leveraged existing operational knowledge. However, it would not have provided the same level of managed-service integration, infrastructure automation, and cloud-native capabilities offered by AWS. As a consequence, it was considered less suitable for supporting the long-term modernization objectives of the platform.
 
 \textbf{On-Premises Infrastructure.} Another possible strategy consisted of continuing with self-managed infrastructure hosted on virtual machines or on-premises-style environments.
 
@@ -128,9 +143,11 @@ Maintainability, scalability, and automation capabilities were therefore analyze
 \section{Selected Strategy and Rationale}
 The selected strategy was an incremental migration centered on managed cloud services, Infrastructure as Code practices, and progressive coexistence between legacy and target systems.
 
-AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, while Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
+The migration involved replacing a virtual-machine-based infrastructure hosted on DigitalOcean Droplets with a cloud-native architecture built on AWS managed services. Rather than performing a disruptive lift-and-shift migration, the strategy focused on progressively modernizing infrastructure, deployment workflows, and data-management components while maintaining operational continuity.
 
-The migration strategy also introduced a progressive transition path from Airtable to PostgreSQL supported by coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
+AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:runtime-options}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
+
+The migration strategy also introduced a progressive transition from Airtable to PostgreSQL with coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
 
 AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture, and compatibility with the broader cloudification strategy already adopted by the company.
 
@@ -140,6 +157,7 @@ The main trade-off acknowledged during the evaluation is that AWS can become exp
 
 The selected approach balanced migration risk, implementation effort, operational sustainability, and long-term maintainability. Rather than relying on disruptive architectural replacement, the strategy focused on controlled incremental evolution toward a cloud-native environment.
 
+\clearpage
 \section{Risk Management and Coexistence Plan}
 Risk management was integrated directly into the migration strategy rather than treated as a separate operational activity.
 

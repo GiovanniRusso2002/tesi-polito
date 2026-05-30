@@ -4,7 +4,7 @@
 This chapter presents the target architecture resulting from the decision framework in Chapter~\ref{chap:methodology}. The baseline as-is system is described in Chapter~\ref{chap:baseline}; here the focus is on the migration destination designed for incremental adoption.
 
 \section{Architecture Overview}
-The migration of Outsight Cloud from a Docker Compose-based deployment hosted on DigitalOcean Droplets to AWS required the definition of a cloud-native architecture able to improve scalability, maintainability, and service integration while preserving the original application workflow.
+The migration of Outsight Cloud from the legacy deployment model to AWS required the definition of a cloud-native architecture able to improve scalability, maintainability, and service integration while preserving the original application workflow.
 
 The selected architecture follows a layered model with four levels:
 \begin{itemize}
@@ -36,9 +36,9 @@ The Application Load Balancer (ALB) is the central routing component. It receive
 
 \section{Application Layer}
 \subsection{ECS Fargate Runtime}
-The application layer is deployed on Amazon ECS Fargate with a serverless container execution model. Compared to the previous deployment model based on Docker Compose workloads running on DigitalOcean Droplets, Fargate removes the need to provision, maintain, patch, and scale virtual machines manually.
+The application layer is deployed on Amazon ECS Fargate with a serverless container execution model. Compared to the previous self-managed deployment model, Fargate removes the need to provision, maintain, patch, and scale virtual machines manually.
 
-This runtime choice follows the evaluation described in Chapter~\ref{chap:methodology}: among the container orchestration alternatives considered, ECS Fargate offered the best fit for an incremental migration from the existing Docker Compose baseline. Applications could continue to be packaged as standard containers, preserving compatibility with the existing Docker Compose workloads previously hosted on DigitalOcean Droplets, while benefiting from a fully managed execution environment integrated with ALB, CloudWatch, IAM, and Auto Scaling. Kubernetes was not selected at this stage because the associated cluster-management overhead---covering networking, upgrades, monitoring, capacity planning, and security governance---was not justified by the scale and operational requirements of Outsight Cloud during the migration.
+This runtime choice follows the evaluation described in Chapter~\ref{chap:methodology}: among the container orchestration alternatives considered, ECS Fargate offered the best fit for an incremental migration from the legacy baseline described in Chapter~\ref{chap:baseline}. Kubernetes was not selected at this stage because the associated cluster-management overhead---covering networking, upgrades, monitoring, capacity planning, and security governance---was not justified by the scale and operational requirements of Outsight Cloud during the migration.
 
 \subsection{Frontend Service (Vue)}
 The frontend service is implemented in Vue.js and is responsible for rendering the user interface, handling user interactions, communicating with backend APIs, and managing authentication-related flows. Deploying it as a dedicated container enables independent release and scaling behavior.

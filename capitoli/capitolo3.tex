@@ -4,17 +4,17 @@
 This chapter describes the initial state of the Outsight Cloud platform before the migration strategy was formalized. The objective is to establish the architectural and operational baseline against which migration decisions and modernization efforts are evaluated.
 
 \section{Current Architecture and Data Flow}
-Before the migration to AWS, Outsight Cloud relied on a containerized architecture hosted on DigitalOcean Droplets and designed to support rapid feature delivery and operational flexibility during the early stages of product development.
+Before the migration to AWS, Outsight Cloud relied on a containerized architecture designed to support rapid feature delivery and operational flexibility during the early stages of product development.
 
-The platform managed LiDAR-related workflows and assets through a web application and backend API stack composed of several interconnected services deployed on DigitalOcean virtual machines. The frontend was implemented as a Vue 3 Single Page Application (SPA), while backend logic was handled by a Node.js/Express API service. Session management relied on Redis, and the overall deployment was orchestrated through Docker Compose with Traefik acting as reverse proxy and HTTPS entry point.
+The platform managed LiDAR-related workflows and assets through a web application and backend API stack composed of several interconnected services. The frontend was implemented as a Vue 3 Single Page Application (SPA), while backend logic was handled by a Node.js/Express API service. Session management relied on Redis, and the overall deployment was orchestrated through Docker Compose with Traefik acting as reverse proxy and HTTPS entry point on DigitalOcean Droplets.
 
 The platform also integrated multiple external services responsible for storage, documentation, notifications, and operational workflows. File storage relied on an S3-compatible object storage service, while technical documentation was hosted through GitBook. Notification-related functionalities depended on integrations with Slack and Customer.io.
 
-From an infrastructure perspective, the architecture followed a virtual-machine-centric model. Application services were deployed as long-running containers on DigitalOcean Droplets, with scaling, upgrades, deployment management, and operational maintenance handled directly by the engineering team. While this approach was sufficient during the initial stages of the platform, it increasingly exposed limitations related to scalability, operational governance, fault tolerance, and infrastructure reproducibility.
+From an infrastructure perspective, the architecture followed a virtual-machine-centric model. Application services were deployed as long-running containers, with scaling, upgrades, deployment management, and operational maintenance handled directly by the engineering team. While this approach was sufficient during the initial stages of the platform, it increasingly exposed limitations related to scalability, operational governance, fault tolerance, and infrastructure reproducibility.
 
 A central characteristic of the original architecture was the strong dependence on Airtable as the primary operational datastore. Core business entities such as users, organizations, sites, simulations, permissions, and role assignments were all managed through Airtable-based workflows.
 
-Although this architecture enabled fast iteration and reduced initial infrastructure complexity, it combined self-managed infrastructure hosted on DigitalOcean with multiple external service dependencies. Over time, this approach introduced increasing dependency concentration, operational coupling, and infrastructure management challenges that complicated scalability, maintainability, and long-term platform evolution.
+Although this architecture enabled fast iteration and reduced initial infrastructure complexity, it combined self-managed infrastructure with multiple external service dependencies. Over time, this approach introduced increasing dependency concentration, operational coupling, and infrastructure management challenges that complicated scalability, maintainability, and long-term platform evolution.
 
 \begin{figure}[htbp]
     \centering
@@ -80,7 +80,7 @@ From an architectural perspective, the migration reduced dependence on Airtable-
 
 The migration also aligned with the broader cloudification strategy of Outsight Cloud and the transition toward AWS-managed infrastructure and cloud-native operational practices.
 
-More broadly, the migration formed part of a larger modernization initiative aimed at replacing the existing DigitalOcean-based virtual-machine deployment model with an AWS-native architecture built around managed services, Infrastructure as Code, and containerized workloads.
+More broadly, the migration formed part of a larger modernization initiative aimed at replacing the legacy deployment model with an AWS-native architecture built around managed services, Infrastructure as Code, and containerized workloads.
 
 For these reasons, PostgreSQL became a foundational component of the target architecture, supporting the broader modernization effort described in the following chapters.
 

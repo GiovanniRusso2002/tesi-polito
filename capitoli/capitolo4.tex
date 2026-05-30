@@ -25,7 +25,7 @@ Rather than adopting a purely technology-driven approach, the evaluation focused
 \label{sec:runtime-options}
 Several infrastructure strategies were considered during the planning phase of the migration.
 
-The first option consisted of preserving the existing deployment model based on Docker Compose workloads hosted on DigitalOcean Droplets while progressively hardening operational workflows and infrastructure management practices. This approach minimized short-term migration complexity but did not adequately address scalability limitations, operational governance issues, or long-term maintainability concerns.
+The first option consisted of preserving the existing deployment model while progressively hardening operational workflows and infrastructure management practices. This approach minimized short-term migration complexity but did not adequately address scalability limitations, operational governance issues, or long-term maintainability concerns.
 
 A second option involved migrating toward managed cloud services combined with Infrastructure as Code practices. This strategy introduced a more structured cloud-native operational model while preserving incremental migration capabilities and reducing infrastructure-management overhead.
 
@@ -38,7 +38,7 @@ However, adopting Kubernetes would have introduced additional operational comple
 
 In contrast, Amazon ECS Fargate provides a managed container execution environment that eliminates the need to provision and maintain worker nodes. The service offers native integration with other AWS components, including Application Load Balancer, CloudWatch, IAM, and Auto Scaling, while preserving support for Docker-based workloads already used by the existing platform.
 
-From a migration perspective, ECS Fargate enabled a smoother transition from the original Docker Compose deployment model running on DigitalOcean Droplets because applications could continue to be packaged as standard containers without requiring a complete redesign of the runtime environment.
+From a migration perspective, ECS Fargate enabled a smoother transition from the legacy Docker Compose deployment model because applications could continue to be packaged as standard containers without requiring a complete redesign of the runtime environment.
 
 Given the project objectives---incremental migration, reduced operational burden, faster adoption, and maintainability---ECS Fargate provided the most appropriate balance between scalability and operational simplicity. While Kubernetes remains a viable option for future platform evolution, its additional complexity was not justified by the scale and requirements of the current migration effort.
 
@@ -68,7 +68,7 @@ Relevant services included Google Kubernetes Engine (GKE), Cloud SQL, Compute En
 However, compared to AWS, GCP offered less alignment with the operational and architectural direction already established inside the project. For this reason, AWS was considered a more suitable choice for the migration requirements of Outsight Cloud.
 
 \textbf{Continuation on DigitalOcean.}
-Another alternative consisted of preserving the existing infrastructure provider and progressively improving the deployment model while continuing to operate on DigitalOcean Droplets. This approach would have minimized migration effort in the short term and leveraged existing operational knowledge. However, it would not have provided the same level of managed-service integration, infrastructure automation, and cloud-native capabilities offered by AWS. As a consequence, it was considered less suitable for supporting the long-term modernization objectives of the platform.
+Another alternative consisted of preserving the existing infrastructure provider and progressively improving the deployment model without changing cloud platform. This approach would have minimized migration effort in the short term and leveraged existing operational knowledge. However, it would not have provided the same level of managed-service integration, infrastructure automation, and cloud-native capabilities offered by AWS. As a consequence, it was considered less suitable for supporting the long-term modernization objectives of the platform.
 
 \textbf{On-Premises Infrastructure.} Another possible strategy consisted of continuing with self-managed infrastructure hosted on virtual machines or on-premises-style environments.
 
@@ -143,7 +143,7 @@ Maintainability, scalability, and automation capabilities were therefore analyze
 \section{Selected Strategy and Rationale}
 The selected strategy was an incremental migration centered on managed cloud services, Infrastructure as Code practices, and progressive coexistence between legacy and target systems.
 
-The migration involved replacing a virtual-machine-based infrastructure hosted on DigitalOcean Droplets with a cloud-native architecture built on AWS managed services. Rather than performing a disruptive lift-and-shift migration, the strategy focused on progressively modernizing infrastructure, deployment workflows, and data-management components while maintaining operational continuity.
+The migration involved replacing the legacy infrastructure with a cloud-native architecture built on AWS managed services. Rather than performing a disruptive lift-and-shift migration, the strategy focused on progressively modernizing infrastructure, deployment workflows, and data-management components while maintaining operational continuity.
 
 AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:runtime-options}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
 

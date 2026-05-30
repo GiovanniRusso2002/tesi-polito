@@ -55,7 +55,7 @@ resource "aws_ecs_service" "backend" {
 }
 \end{lstlisting}
 
-Listing~\ref{lst:terraform-ecs} shows a simplified Terraform resource definition used to deploy a backend container as an ECS Fargate service. Through declarative configuration files, containerized workloads previously orchestrated through Docker Compose on DigitalOcean Droplets could be provisioned reproducibly in AWS while preserving the same packaging model.
+Listing~\ref{lst:terraform-ecs} shows a simplified Terraform resource definition used to deploy a backend container as an ECS Fargate service. Through declarative configuration files, containerized workloads previously orchestrated through Docker Compose could be provisioned reproducibly in AWS while preserving the same packaging model.
 
 \subsection{Terraform Workflow: Write, Plan, Apply}
 The Terraform workflow follows three phases \cite{hashicorpTerraformIntro}:
@@ -87,19 +87,19 @@ Within the Outsight Cloud project, this translated into a reproducible AWS infra
 \subsection{Environment Governance}
 A dedicated effort was made to separate development and production concerns. This included environment-specific configuration handling and controlled evolution of shared resources to avoid production side effects during migration experimentation.
 
-This separation was particularly important during the migration from the existing DigitalOcean-based infrastructure because it allowed AWS environments to be validated independently before production workloads were progressively redirected to the new platform.
+This separation was particularly important during the migration from the legacy infrastructure because it allowed AWS environments to be validated independently before production workloads were progressively redirected to the new platform.
 
 \section{Infrastructure Migration Execution}
 \label{sec:infra-migration-exec}
-While Chapters~\ref{chap:baseline} and~\ref{chap:architecture} describe respectively the legacy platform and the target AWS design, this section documents how the transition from DigitalOcean to AWS was executed in practice. The objective was to replace the previous Docker Compose and Traefik deployment model with a reproducible cloud-native foundation without forcing a simultaneous application and data cutover.
+While Chapters~\ref{chap:baseline} and~\ref{chap:architecture} describe respectively the legacy platform and the target AWS design, this section documents how the transition to AWS was executed in practice. The objective was to replace the previous Docker Compose and Traefik deployment model with a reproducible cloud-native foundation without forcing a simultaneous application and data cutover.
 
 \subsection{Target Environment Definition and Terraform Provisioning}
 The first implementation step consisted of translating the target architecture into an Infrastructure as Code baseline using Terraform. Rather than manually configuring AWS resources through the console, the migration team defined a declarative stack covering the core components required to host Outsight Cloud in AWS.
 
-The initial Terraform implementation provisioned the main building blocks of the target platform, including ECS Fargate services for the frontend and backend containers, an Application Load Balancer for public routing, Route~53 records for DNS management, ACM certificates for HTTPS, CloudWatch log groups for centralized logging, and S3 together with CloudFront for simulation file storage and delivery. This stack established the first operational AWS environment capable of replacing the legacy hosting model on DigitalOcean Droplets.
+The initial Terraform implementation provisioned the main building blocks of the target platform, including ECS Fargate services for the frontend and backend containers, an Application Load Balancer for public routing, Route~53 records for DNS management, ACM certificates for HTTPS, CloudWatch log groups for centralized logging, and S3 together with CloudFront for simulation file storage and delivery. This stack established the first operational AWS environment capable of replacing the legacy hosting model.
 
 \subsection{Routing, Application Adaptation, and Container Deployment}
-A key difference between the legacy and target deployment models concerned request routing. On DigitalOcean, Traefik acted as reverse proxy and HTTPS entry point for containerized services. In the AWS architecture, routing responsibilities were transferred to the ALB and expressed explicitly in infrastructure and application configuration.
+A key difference between the legacy and target deployment models concerned request routing. In the previous environment, Traefik acted as reverse proxy and HTTPS entry point for containerized services. In the AWS architecture, routing responsibilities were transferred to the ALB and expressed explicitly in infrastructure and application configuration.
 
 The frontend was exposed at the root path, while backend APIs were served under \texttt{/api}. To support this model without relying on proxy-level path rewriting, the Express backend was adapted so that API routes could be mounted under \texttt{/api} while preserving the \texttt{/status} endpoint for health checks. This change simplified the deployment topology and made routing behavior explicit and verifiable in the target environment.
 
@@ -108,12 +108,12 @@ Container images continued to be distributed through GitLab Container Registry. 
 \subsection{Storage, TLS, and Content Delivery}
 Simulation file storage was redesigned around a private S3 bucket fronted by CloudFront. This replaced the previous S3-compatible storage integration with an AWS-native delivery model that improved scalability and reliability while keeping the bucket non-public. Access to stored objects was restricted through CloudFront Origin Access Control, and Terraform also defined IAM permissions for upload workflows and cache invalidation.
 
-Public HTTPS access was enabled through ACM-managed certificates integrated with the ALB and CloudFront distribution layers. Route~53 was used to manage DNS records either through an existing hosted zone or through a delegated subdomain, depending on the deployment environment. Together, these components replaced the certificate and routing responsibilities previously handled by Traefik on DigitalOcean.
+Public HTTPS access was enabled through ACM-managed certificates integrated with the ALB and CloudFront distribution layers. Route~53 was used to manage DNS records either through an existing hosted zone or through a delegated subdomain, depending on the deployment environment. Together, these components replaced the certificate and routing responsibilities previously handled by Traefik in the legacy environment.
 
 \subsection{Environment Validation and Controlled Service Transition}
 Once the AWS environment was provisioned, validation activities focused on verifying that the new infrastructure behaved correctly before redirecting production traffic. The validation scope included ECS service startup, ALB routing between frontend and backend paths, HTTPS and DNS configuration, centralized logging, and the S3/CloudFront flow for simulation assets.
 
-Development and production concerns were kept separated throughout this process. In particular, experimental infrastructure changes and database modernization activities were isolated in development-oriented environments so that AWS networking, deployment workflows, and service exposure could be tested without affecting the production system still running on DigitalOcean.
+Development and production concerns were kept separated throughout this process. In particular, experimental infrastructure changes and database modernization activities were isolated in development-oriented environments so that AWS networking, deployment workflows, and service exposure could be tested without affecting the production system still running on the legacy platform.
 
 The final transition step consisted of progressively redirecting public access from the legacy environment to the AWS platform through DNS updates managed in Route~53. This sequencing allowed the team to validate the new stack independently, compare behavior against the existing deployment, and reduce migration risk by avoiding a single disruptive cutover across infrastructure, application routing, and data storage at the same time.
 
@@ -134,7 +134,7 @@ These artifacts transform data migration from a one-time operation into a repeat
 \section{Implementation Scope and Current Status}
 At the current stage, the implemented work establishes the migration backbone:
 \begin{itemize}
-    \item AWS infrastructure provisioning and controlled transition from the DigitalOcean baseline;
+    \item AWS infrastructure provisioning and controlled transition from the legacy baseline;
     \item environment governance and Terraform-driven deployment foundations;
     \item data replication and validation tooling.
 \end{itemize}

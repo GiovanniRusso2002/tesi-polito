@@ -29,9 +29,10 @@ The first option consisted of preserving the existing deployment model while pro
 
 A second option involved migrating toward managed cloud services combined with Infrastructure as Code practices. This strategy introduced a more structured cloud-native operational model while preserving incremental migration capabilities and reducing infrastructure-management overhead.
 
-A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases.
+A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases. The orchestration choice between Kubernetes and Amazon ECS Fargate is analyzed in the following subsection.
 
-\subsubsection{Container Orchestration: Kubernetes vs ECS Fargate}
+\subsection{Container Orchestration: Kubernetes vs ECS Fargate}
+\label{sec:k8s-ecs-comparison}
 During the infrastructure design phase, Kubernetes-based solutions were evaluated as a potential runtime platform for containerized workloads. Kubernetes is a portable, extensible open source platform for managing containerized workloads and services through declarative configuration and automation~\cite{kubernetesOverview}. In production environments, it provides a framework to run distributed systems resiliently by handling scaling, failover, service discovery, load balancing, and controlled rollouts~\cite{kubernetesOverview}.
 
 However, adopting Kubernetes would have introduced additional operational complexity that was not justified by the requirements of Outsight Cloud at the time of the migration. Managing Kubernetes clusters requires expertise in cluster administration, networking, upgrades, monitoring, capacity planning, and security governance. These responsibilities would have increased both implementation effort and long-term operational overhead.
@@ -145,7 +146,7 @@ The selected strategy was an incremental migration centered on managed cloud ser
 
 The migration involved replacing the legacy infrastructure with a cloud-native architecture built on AWS managed services. Rather than performing a disruptive lift-and-shift migration, the strategy focused on progressively modernizing infrastructure, deployment workflows, and data-management components while maintaining operational continuity.
 
-AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:runtime-options}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
+AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:k8s-ecs-comparison}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
 
 The migration strategy also introduced a progressive transition from Airtable to PostgreSQL with coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
 

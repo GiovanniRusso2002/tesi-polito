@@ -6,15 +6,33 @@ This chapter describes the initial state of the Outsight Cloud platform before t
 \section{Current Architecture and Data Flow}
 Before the migration to AWS, Outsight Cloud relied on a containerized architecture designed to support rapid feature delivery and operational flexibility during the early stages of product development.
 
-The platform managed LiDAR-related workflows and assets through a web application and backend API stack composed of several interconnected services. The frontend was implemented as a Vue 3 Single Page Application (SPA), while backend logic was handled by a Node.js/Express API service. Session management relied on Redis, and the overall deployment was orchestrated through Docker Compose with Traefik acting as reverse proxy and HTTPS entry point on DigitalOcean Droplets.
+The platform managed LiDAR-related workflows and assets through a web application and backend API stack composed of several interconnected services. The main components of the legacy architecture were:
 
-The platform also integrated multiple external services responsible for storage, documentation, notifications, and operational workflows. File storage relied on an S3-compatible object storage service, while technical documentation was hosted through GitBook. Notification-related functionalities depended on integrations with Slack and Customer.io.
+\begin{itemize}
+    \item \textbf{Vue 3 SPA Frontend} responsible for the user interface and interaction layer.
+
+    \item \textbf{Node.js/Express Backend API} implementing business logic, workflow orchestration, and integrations with external services.
+
+    \item \textbf{Redis} used for session management and temporary application state.
+
+    \item \textbf{Docker Compose} used to orchestrate application containers on DigitalOcean Droplets.
+
+    \item \textbf{Traefik Reverse Proxy} providing HTTPS termination and request routing.
+
+    \item \textbf{Airtable} acting as the primary operational datastore for users, organizations, sites, simulations, permissions, and role assignments.
+
+    \item \textbf{S3-Compatible Object Storage} used for simulation files and asset storage.
+
+    \item \textbf{GitBook} used as the platform documentation system.
+
+    \item \textbf{Slack and Customer.io Integrations} supporting notifications and operational workflows.
+
+    \item \textbf{DigitalOcean Droplets} providing the virtual-machine-based infrastructure hosting the application stack.
+\end{itemize}
 
 From an infrastructure perspective, the architecture followed a virtual-machine-centric model. Application services were deployed as long-running containers, with scaling, upgrades, deployment management, and operational maintenance handled directly by the engineering team. While this approach was sufficient during the initial stages of the platform, it increasingly exposed limitations related to scalability, operational governance, fault tolerance, and infrastructure reproducibility.
 
-A central characteristic of the original architecture was the strong dependence on Airtable as the primary operational datastore. Core business entities such as users, organizations, sites, simulations, permissions, and role assignments were all managed through Airtable-based workflows.
-
-Although this architecture enabled fast iteration and reduced initial infrastructure complexity, it combined self-managed infrastructure with multiple external service dependencies. Over time, this approach introduced increasing dependency concentration, operational coupling, and infrastructure management challenges that complicated scalability, maintainability, and long-term platform evolution.
+Although the stack enabled fast iteration and reduced initial infrastructure complexity during early product development, it combined self-managed virtual-machine infrastructure with multiple external service dependencies.
 
 \begin{figure}[htbp]
     \centering
@@ -24,17 +42,11 @@ Although this architecture enabled fast iteration and reduced initial infrastruc
 \end{figure}
 
 \section{Airtable as Primary Data Storage}
-Before the migration to PostgreSQL, Airtable represented the central data-management component of Outsight Cloud. Its role extended beyond traditional data persistence, functioning simultaneously as operational datastore, workflow-management layer, and integration hub for several internal processes.
+As shown in the component overview above, Airtable was more than a persistence layer: it acted simultaneously as operational datastore, workflow-management layer, and integration hub for several internal processes.
 
 Airtable is a cloud-based platform that combines spreadsheet-like interfaces with lightweight database capabilities. Data is organized into bases, tables, records, and fields, allowing users to manage structured information through a graphical and collaborative environment. Airtable also provides features such as views, forms, automations, integrations, and API access, making it particularly suitable for rapid prototyping and operational workflow management \cite{airtableBasics}.
 
-Airtable stored most of the platform's core business entities, including users, organizations, sites, simulations, permissions, and role assignments. In addition, it supported operational forms and triggered integrations with external systems such as Slack-based notification workflows.
-
-Unlike traditional relational database systems, Airtable organizes information through linked records and lookup fields instead of explicit relational schemas and foreign-key constraints. During the early phases of the project, this model provided significant flexibility and accelerated development activities. Non-technical stakeholders could directly inspect and modify operational data through Airtable's graphical interface, simplifying collaboration between technical and operational teams.
-
-One of the main advantages of Airtable is its accessibility for non-technical users. Teams can directly visualize, edit, and organize operational data without requiring advanced database knowledge. This flexibility contributed to the rapid development of Outsight Cloud during its early stages, especially in contexts where business requirements evolved quickly and operational workflows frequently changed.
-
-However, as the platform evolved and the volume of managed data increased, several structural limitations progressively emerged.
+In Outsight Cloud, these capabilities were exercised through API access, operational forms, and integrations with external systems such as Slack-based notification workflows. During the early phases of the project, the accessibility of Airtable for non-technical stakeholders accelerated development and simplified collaboration between engineering and operations teams.
 
 \section{Limitations of Airtable}
 As Outsight Cloud became more complex, the limitations of using Airtable as primary backend infrastructure became increasingly evident. The issues affected not only data consistency and backend maintainability, but also operational workflows, scalability, and long-term architectural evolution.
@@ -78,9 +90,5 @@ PostgreSQL introduced several advantages compared to the previous data-managemen
 
 From an architectural perspective, the migration reduced dependence on Airtable-specific structures and allowed the platform to regain ownership of its data model and persistence logic. This improved maintainability and simplified future evolution of backend services.
 
-The migration also aligned with the broader cloudification strategy of Outsight Cloud and the transition toward AWS-managed infrastructure and cloud-native operational practices.
-
-More broadly, the migration formed part of a larger modernization initiative aimed at replacing the legacy deployment model with an AWS-native architecture built around managed services, Infrastructure as Code, and containerized workloads.
-
-For these reasons, PostgreSQL became a foundational component of the target architecture, supporting the broader modernization effort described in the following chapters.
+For these reasons, PostgreSQL was identified as the target relational datastore for the modernization effort. How that transition was executed in practice is described in Chapter~\ref{chap:methodology}.
 

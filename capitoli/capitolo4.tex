@@ -14,7 +14,7 @@ Particular attention was also given to deployment reproducibility and environmen
 
 In addition to technical goals, the migration process required explicit evaluation of operational sustainability and recurring infrastructure costs. Architectural decisions therefore had to balance technical quality, implementation complexity, operational overhead, and long-term maintainability.
 
-From these objectives, several success criteria were derived. The migration process needed to support validation of critical application flows during the transition from Airtable to PostgreSQL, provide traceable infrastructure definitions across environments, reduce dependency concentration around legacy services, and enable migration verification through tests, scripts, and CI-supported validation workflows.
+From these objectives, several success criteria were derived. The migration process needed to support validation of critical application flows during the data-layer transition outlined in Chapter~\ref{chap:baseline}, provide traceable infrastructure definitions across environments, reduce dependency concentration around legacy services, and enable migration verification through tests, scripts, and CI-supported validation workflows.
 
 \section{Candidate Solutions Considered}
 The migration design process considered multiple alternatives for each architectural dimension, including infrastructure management, cloud-platform selection, data-layer evolution, and identity-management modernization.
@@ -29,7 +29,7 @@ The first option consisted of preserving the existing deployment model while pro
 
 A second option involved migrating toward managed cloud services combined with Infrastructure as Code practices. This strategy introduced a more structured cloud-native operational model while preserving incremental migration capabilities and reducing infrastructure-management overhead.
 
-A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases. The orchestration choice between Kubernetes and Amazon ECS Fargate is analyzed in the following subsection.
+A third possibility was the adoption of a fully orchestration-oriented redesign from the beginning, for example through Kubernetes-centered infrastructure. Although this approach provided strong scalability and orchestration capabilities, it significantly increased migration complexity and operational overhead during the early transition phases.
 
 \subsection{Container Orchestration: Kubernetes vs ECS Fargate}
 \label{sec:k8s-ecs-comparison}
@@ -41,7 +41,7 @@ In contrast, Amazon ECS Fargate provides a managed container execution environme
 
 From a migration perspective, ECS Fargate enabled a smoother transition from the legacy Docker Compose deployment model because applications could continue to be packaged as standard containers without requiring a complete redesign of the runtime environment.
 
-Given the project objectives---incremental migration, reduced operational burden, faster adoption, and maintainability---ECS Fargate provided the most appropriate balance between scalability and operational simplicity. While Kubernetes remains a viable option for future platform evolution, its additional complexity was not justified by the scale and requirements of the current migration effort.
+Given the project objectives (incremental migration, reduced operational burden, faster adoption, and maintainability), ECS Fargate provided the most appropriate balance between scalability and operational simplicity. While Kubernetes remains a viable option for future platform evolution, its additional complexity was not justified by the scale and requirements of the current migration effort.
 
 Given the project constraints and the need for controlled incremental evolution, the migration strategy favored managed cloud services combined with reproducible infrastructure provisioning practices, with ECS Fargate selected as the container runtime platform.
 
@@ -101,11 +101,12 @@ Migration continuity with current baseline & High & Medium-low & Medium-low & Lo
 \end{table}
 
 \subsection{Data-Layer Migration Options}
-Different migration approaches were also considered for the transition from Airtable to PostgreSQL.
+\label{sec:data-layer-options}
+Given the limitations of the legacy datastore identified in Chapter~\ref{chap:baseline}, the evaluation focused on \emph{how} to reach the target relational model, not on whether to adopt PostgreSQL.
 
-A first possibility was an immediate cutover strategy, where Airtable would be replaced directly with a relational database system. Although this approach simplified long-term architecture, it introduced high migration risk and limited rollback flexibility.
+A first possibility was an immediate cutover strategy. Although this approach simplified long-term architecture, it introduced high migration risk and limited rollback flexibility.
 
-A second option involved maintaining long-term coexistence between Airtable and PostgreSQL without defining a clear migration endpoint. While operationally safer in the short term, this approach risked increasing architectural complexity and prolonging dependency concentration around legacy systems.
+A second option involved maintaining long-term dual-backend operation without defining a clear migration endpoint. While operationally safer in the short term, this approach risked increasing architectural complexity and prolonging dependency concentration around legacy systems.
 
 The selected approach instead relied on incremental coexistence supported by progressive validation mechanisms and controlled switchover procedures. This model allowed migration progress to be verified incrementally while reducing operational risk and preserving service continuity.
 
@@ -148,11 +149,11 @@ The migration involved replacing the legacy infrastructure with a cloud-native a
 
 AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:k8s-ecs-comparison}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
 
-The migration strategy also introduced a progressive transition from Airtable to PostgreSQL with coexistence-oriented validation mechanisms. Instead of replacing the legacy backend immediately, the migration process relied on incremental rollout and controlled verification workflows capable of reducing operational risk.
+For the data layer, the strategy applied the incremental coexistence model defined in Section~\ref{sec:data-layer-options}, building on the PostgreSQL target identified in Chapter~\ref{chap:baseline}.
 
-AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture, and compatibility with the broader cloudification strategy already adopted by the company.
+AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture (including RDS PostgreSQL), and compatibility with the broader cloudification strategy already adopted by the company.
 
-Another key motivation was the quality of the managed database offering, in particular Amazon Aurora PostgreSQL, which combines low-maintenance operational requirements with strong reliability and global scalability characteristics. AWS was also considered highly developer-friendly, with broad customizability enabled by Lambda-based logic and service integrations that fit the operating model of a SaaS company requiring implementation flexibility.
+AWS was also considered highly developer-friendly, with broad customizability enabled by Lambda-based logic and service integrations that fit the operating model of a SaaS company requiring implementation flexibility.
 
 The main trade-off acknowledged during the evaluation is that AWS can become expensive under specific scaling and usage conditions. However, for this project, the balance between service quality, customization freedom, and migration continuity remained favorable to AWS.
 
@@ -164,7 +165,7 @@ Risk management was integrated directly into the migration strategy rather than 
 
 Migration steps were designed to remain independently verifiable through validation workflows, data-consistency checks, and coexistence-oriented testing mechanisms. Development and production environments were managed separately in order to reduce operational risk during experimentation and rollout phases.
 
-Special attention was given to coexistence between Airtable and PostgreSQL during migration stages. Dual-backend validation workflows were introduced to detect behavioral divergence early and support controlled switchover decisions.
+Special attention was given to dual-backend coexistence during data-layer migration stages. Validation workflows were introduced to detect behavioral divergence early and support controlled switchover decisions.
 
 Data replication and validation artifacts were also designed to provide measurable evidence regarding migration progress and consistency verification.
 

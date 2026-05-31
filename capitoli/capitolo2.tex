@@ -38,7 +38,7 @@ Typical migration challenges include legacy technical complexity, execution cons
 
 In the Outsight Cloud case, migration extended beyond infrastructure relocation. The project required redesign of deployment workflows, replacement of legacy dependencies, migration from Airtable to PostgreSQL, and adoption of Infrastructure as Code practices to support long-term maintainability and scalability.
 
-\subsection{Coexistence as a First-Class Requirement}
+\subsection{System Coexistence in Incremental Migration}
 For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.
 
 This coexistence model introduces additional engineering complexity, including contract compatibility, dual-backend validation, synchronization workflows, rollback capabilities, and progressive switchover mechanisms. As a consequence, migration validation becomes an integral part of the system architecture rather than a secondary operational activity.
@@ -50,6 +50,8 @@ For this reason, migration strategies should be supported by explicit decision f
 
 \section{IAM Modernization in Legacy Systems}
 Identity and Access Management (IAM) modernization is a recurrent challenge in legacy platforms. Historically, many systems implemented authentication and authorization logic directly inside application workflows and persistence layers, generating tightly coupled identity-management models that become difficult to evolve and maintain over time.
+
+In AWS-based environments, \emph{AWS Identity and Access Management} (IAM) is the web service that governs access to cloud resources: it defines who is authenticated and who is authorized to use them, and associates \emph{principals}---such as IAM users, roles, federated identities, or applications---with permission policies that determine which operations are allowed on account resources~\cite{awsIamIntroduction}. Access is granted only after an authorization request succeeds against the policies in effect for that principal and target service~\cite{awsIamIntroduction}.
 
 Modern cloud-native architectures instead rely on standardized protocols and dedicated identity services to improve interoperability, scalability, and security.
 
@@ -69,14 +71,14 @@ In migration projects, these trade-offs also influence how progressively existin
 The literature provides strong conceptual foundations on cloud migration patterns and IAM technologies. However, industrial guidance often remains fragmented across separate technical dimensions.
 
 \subsection{Fragmented Treatment of Technical and Economic Criteria}
-Technical architecture decisions are frequently discussed without detailed consideration of operational costs, infrastructure governance, or long-term maintenance overhead. In practice, however, recurring infrastructure costs and dependency-management considerations are often decisive factors in enterprise migration strategies.
+Technical architecture decisions are frequently discussed without detailed consideration of operational costs, infrastructure governance, or long-term maintenance overhead, even though sustainable migration depends on aligning technical choices with those same constraints.
 
 As a consequence, migration projects require evaluation frameworks capable of combining scalability, maintainability, operational sustainability, and economic impact within a unified decision process.
 
 \subsection{Limited Evidence on Incremental Validation}
 Many migration case studies focus primarily on final target architectures while providing limited evidence regarding coexistence management and intermediate validation mechanisms.
 
-In industrial environments, however, migration reliability often depends on validation practices such as dual-backend testing, data-consistency verification, environment-separated deployment workflows, and incremental rollout strategies. These aspects are essential for reducing migration risk during long transition phases.
+In industrial environments migration reliability often depends on validation practices such as dual-backend testing, data-consistency verification, environment-separated deployment workflows, and incremental rollout strategies. These aspects are essential for reducing migration risk during long transition phases.
 
 \section{Positioning of This Thesis}
 This thesis addresses the above limitations through a decision-oriented migration case study focused on incremental architectural evolution under real industrial constraints.

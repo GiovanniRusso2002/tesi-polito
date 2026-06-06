@@ -9,7 +9,7 @@ Cloud-native modernization is not limited to container adoption or workload relo
 Modern cloud-native systems are typically designed around automation-oriented practices and managed services that simplify infrastructure operations and improve scalability. However, migrating a legacy platform toward such architectures requires careful consideration of operational continuity, compatibility constraints, and long-term maintainability.
 
 \subsection{Incremental Delivery and Operability}
-A recurring principle in modernization literature is the preference for incremental delivery over disruptive big-bang replacement. Incremental migration reduces operational risk, enables earlier feedback cycles, and allows validation activities to be performed progressively throughout the transition process.
+A recurring principle in modernization literature is the preference for incremental delivery over full-system replacement. Incremental migration reduces operational risk, enables earlier feedback cycles, and allows validation activities to be performed progressively throughout the transition process.
 
 To be effective, incremental delivery requires infrastructure automation, environment consistency, reproducible deployment workflows, and testable interfaces between legacy and target components. In industrial systems, these practices are essential for preserving operational continuity while introducing architectural changes.
 
@@ -30,13 +30,25 @@ Cloud migration should therefore not be interpreted as simple workload relocatio
 
 Reference guidance highlights several recurring migration drivers and benefits \cite{awsCloudMigrationOverview}, including cost optimization, elastic scalability, managed operational services, improved infrastructure reliability, and access to modern distributed delivery models.
 
-Cloud migration strategies are generally classified into three major categories \cite{awsCloudMigrationOverview}: rehosting, which moves workloads with minimal architectural changes; replatforming, which introduces selective adaptations to better exploit cloud capabilities; and refactoring, which redesigns parts of the system to align with cloud-native principles.
+Cloud migration strategies are generally classified into three major categories~\cite{awsCloudMigrationOverview}:
 
-Migration programs are often organized into assessment, preparation, and migration phases \cite{awsCloudMigrationOverview}. These phases support technical discovery, environment preparation, pilot execution, and incremental rollout activities.
+\begin{itemize}
+    \item \textbf{Rehosting}, which moves workloads to the cloud with minimal architectural changes.
 
-Typical migration challenges include legacy technical complexity, execution constraints during coexistence phases, and operational adaptation to new infrastructure models. For this reason, successful migration projects require not only technical redesign, but also controlled validation and incremental transition strategies.
+    \item \textbf{Replatforming}, which introduces selective adaptations to better exploit cloud capabilities while preserving the overall application architecture.
 
-In the Outsight Cloud case, migration extended beyond infrastructure relocation. The project required redesign of deployment workflows, replacement of legacy dependencies, migration from Airtable to PostgreSQL, and adoption of Infrastructure as Code practices to support long-term maintainability and scalability.
+    \item \textbf{Refactoring}, which redesigns parts of the system to align with cloud-native principles and improve long-term scalability and maintainability.
+\end{itemize}
+
+Migration programs are often organized into assessment, preparation, and migration phases~\cite{awsCloudMigrationOverview}. These phases support technical discovery, environment preparation, pilot execution, and incremental rollout activities.
+
+In practice, real-world migration projects often combine multiple strategies across different system components. The Outsight Cloud migration can be primarily classified as a replatforming effort complemented by selective refactoring activities.
+
+The migration preserved the core application architecture and business functionality while replacing key infrastructure and platform dependencies. Examples of replatforming include the transition from DigitalOcean-hosted workloads to AWS managed services and the adoption of ECS Fargate as the runtime environment.
+
+At the same time, selected components required refactoring to support the migration objectives. These changes included the transition from Airtable to PostgreSQL, the introduction of Infrastructure as Code practices through Terraform, and adaptations to deployment and routing workflows required by the target cloud-native architecture.
+
+Consequently, the migration should not be viewed as a simple infrastructure relocation, but as a controlled modernization process combining replatforming and selective refactoring to improve scalability, maintainability, and operational sustainability.
 
 \subsection{System Coexistence in Incremental Migration}
 For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.

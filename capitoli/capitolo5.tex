@@ -85,14 +85,19 @@ To reduce direct exposure of storage resources, access to S3 objects is restrict
 Overall, the network topology reflects a pragmatic migration-oriented design that balances security, operational simplicity, and incremental cloud-native adoption while preserving the possibility of future evolution toward more isolated and fully private network architectures.
 
 \section{Architectural Benefits}
-Compared to the pre-migration system, the selected architecture provides:
-\begin{itemize}
-    \item clearer separation between presentation, business logic, and service layers;
-    \item cloud-native deployment model with managed runtime and services;
-    \item independent scaling of frontend and backend components;
-    \item reduced operational burden through managed infrastructure;
-    \item reduced dependence on self-managed virtual machines through adoption of AWS managed services;
-    \item higher maintainability and better integration with IaC and automation workflows.
-\end{itemize}
 
-Overall, the final AWS design aligns with the broader cloudification strategy of Outsight Cloud and provides a robust baseline for future platform evolution.
+Compared to the legacy architecture presented in Chapter 3, the target AWS-based design introduces several architectural improvements that directly address the migration drivers identified in Chapter 1 and the decision criteria discussed in Chapter 4.
+
+First, the architecture provides a clearer separation of concerns between the presentation layer, application services, data storage, and supporting cloud services. This separation reduces coupling between components and simplifies future evolution of individual subsystems without requiring extensive modifications across the platform.
+
+Second, the adoption of AWS managed services significantly reduces operational responsibility. Functions previously handled through self-managed infrastructure, such as load balancing, TLS certificate management, storage scalability, and database availability, are delegated to managed AWS services. This allows engineering effort to focus on application functionality rather than infrastructure maintenance.
+
+The architecture also improves scalability characteristics. Frontend and backend services are deployed independently through ECS Fargate, enabling each component to scale according to its own workload profile. Similarly, managed storage and database services can evolve independently from application deployments, providing greater flexibility as platform demand increases.
+
+From a maintainability perspective, the introduction of Infrastructure as Code through Terraform establishes a reproducible and version-controlled infrastructure model. Infrastructure definitions become reviewable artifacts that can be tracked, validated, and evolved using the same engineering practices applied to application code. This reduces configuration drift and improves consistency across environments.
+
+The migration from Airtable to PostgreSQL further strengthens architectural ownership of the data layer. Explicit relational schemas, database-level constraints, and native query capabilities reduce application-side complexity while improving consistency guarantees and long-term maintainability.
+
+Finally, the target architecture improves operational resilience. Environment separation, automated provisioning, managed services, and the validation mechanisms described in Chapter 6 provide a stronger foundation for controlled deployments, future migrations, and incremental platform evolution.
+
+Overall, the final AWS architecture is not simply a replacement for the previous hosting environment. Rather, it establishes a cloud-native operational model designed to improve scalability, maintainability, operational efficiency, and long-term sustainability while supporting the future growth of Outsight Cloud.

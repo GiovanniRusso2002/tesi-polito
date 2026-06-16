@@ -5,7 +5,7 @@ This thesis investigated the modernization of Outsight Cloud through the migrati
 
 The original system relied on self-managed infrastructure and Docker Compose, while depending on several external services, most notably Airtable as the primary operational datastore. Although this architecture enabled rapid development and operational flexibility during the early stages of the product lifecycle, it progressively introduced limitations related to scalability, maintainability, operational governance, and dependency management.
 
-Rather than approaching migration as a simple infrastructure relocation exercise, this work treated cloud adoption as a broader architectural transformation problem involving infrastructure modernization, data-layer evolution, deployment automation, and operational redesign. Particular attention was given to preserving service continuity through incremental migration practices and coexistence-oriented validation mechanisms.
+Rather than approaching migration as a simple infrastructure relocation exercise, this work treated cloud adoption as a broader architectural transformation problem involving infrastructure modernization, data-layer evolution, deployment automation, and operational redesign. Particular attention was given to the engineering artifacts that made this transformation controllable, including Terraform definitions, data migration tooling, validation scripts, and environment-specific deployment workflows.
 
 \section{Key Outcomes}
 
@@ -15,9 +15,9 @@ A second contribution is the design of a target AWS architecture based on manage
 
 The work also demonstrated the value of Infrastructure as Code as a foundational migration enabler. By adopting Terraform as the infrastructure management layer, infrastructure resources became reproducible, version-controlled, auditable, and easier to evolve across development and production environments.
 
-Another important outcome concerns the migration strategy itself. Instead of relying on a disruptive replacement approach, the project adopted incremental coexistence between legacy and target systems. Data replication tooling, validation scripts, and consistency checks were introduced to make migration progress measurable and verifiable while reducing operational risk.
+Another important outcome concerns the migration strategy itself. Data replication tooling, validation scripts, and consistency checks were introduced to make migration progress measurable and verifiable while reducing operational risk.
 
-More broadly, the case study confirms that cloud-native migration should not be viewed solely as a technology upgrade. The transition from the legacy platform and Airtable-based operational processes toward an AWS-native architecture required coordinated changes across infrastructure, deployment workflows, data management, and operational governance.
+The case study also shows that technical outcomes and operational outcomes were closely connected: the transition toward an AWS-native architecture required coordinated changes across infrastructure, deployment workflows, data management, and operational governance.
 
 Finally, the artifacts produced throughout the project (architectural evaluations, Terraform configurations, migration tooling, and validation workflows) provide reusable practices that can support similar modernization initiatives in other industrial contexts.
 
@@ -35,4 +35,4 @@ Future work may also investigate more advanced cloud-native capabilities, includ
 
 Finally, a comprehensive post-migration evaluation should be performed once the platform is fully operating on AWS. Such an assessment would enable a detailed comparison between the legacy architecture and the final cloud-native solution in terms of performance, operational effort, reliability, security, and total cost of ownership.
 
-Overall, this thesis demonstrates that legacy-to-cloud-native migration is most effective when treated as a structured engineering process supported by explicit architectural decisions, reproducible infrastructure management, continuous validation, and controlled incremental evolution. The Outsight Cloud case study shows how a production platform can be modernized progressively while preserving operational continuity and reducing migration risk.
+Overall, this thesis demonstrates that legacy-to-cloud-native migration is most effective when treated as a structured engineering process supported by explicit architectural decisions, reproducible infrastructure management, continuous validation, and controlled incremental evolution. The Outsight Cloud case study shows how modernization can be grounded in concrete engineering practices: declarative infrastructure, managed runtime services, relational data modeling, automated validation, and risk-aware rollout planning.

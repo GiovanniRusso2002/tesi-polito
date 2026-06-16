@@ -6,7 +6,7 @@ This chapter presents the migration methodology adopted for the modernization of
 \section{Migration Goals and Success Criteria}
 Before defining the target architecture, a set of migration goals was identified in order to establish a structured decision framework and reduce solution bias during implementation activities.
 
-The first objective was to preserve operational continuity throughout the migration process. Since Outsight Cloud was already used in production environments, the migration could not rely on disruptive replacement strategies or prolonged service interruptions. Maintaining coexistence between legacy and target components therefore became a primary design requirement.
+The first objective was to avoid disruptive replacement strategies or prolonged service interruptions in production environments. This requirement translated into concrete success criteria: staged rollout capability, rollback readiness, validation of critical workflows before cutover, and separation between development and production migration activities.
 
 Another major objective was the reduction of architectural coupling to legacy dependencies, particularly those related to Airtable-based operational workflows and platform-specific integrations. The migration also aimed to improve scalability, maintainability, and long-term architectural evolvability by adopting managed cloud services and reproducible infrastructure-management practices.
 
@@ -19,7 +19,7 @@ From these objectives, several success criteria were derived. The migration proc
 \section{Candidate Solutions Considered}
 The migration design process considered multiple alternatives for each architectural dimension, including infrastructure management, cloud-platform selection, data-layer evolution, and identity-management modernization.
 
-Rather than adopting a purely technology-driven approach, the evaluation focused on identifying solutions capable of balancing migration risk, operational continuity, maintainability, and implementation effort.
+Rather than adopting a purely technology-driven approach, the evaluation focused on identifying solutions capable of balancing migration risk, production stability, maintainability, and implementation effort.
 
 \subsection{Infrastructure and Runtime Options}
 \label{sec:runtime-options}
@@ -108,7 +108,7 @@ A first possibility was an immediate cutover strategy. Although this approach si
 
 A second option involved maintaining long-term dual-backend operation without defining a clear migration endpoint. While operationally safer in the short term, this approach risked increasing architectural complexity and prolonging dependency concentration around legacy systems.
 
-The selected approach instead relied on incremental coexistence supported by progressive validation mechanisms and controlled switchover procedures. This model allowed migration progress to be verified incrementally while reducing operational risk and preserving service continuity.
+The selected approach instead relied on progressive validation mechanisms and controlled switchover procedures. This model allowed data-transfer correctness, API behavior, and rollback readiness to be verified before the final transition to PostgreSQL.
 
 \subsection{Identity Evolution Options}
 The migration process also required evaluating alternative approaches for identity and authentication modernization.
@@ -119,21 +119,21 @@ A second possibility involved introducing standards-based IAM mechanisms progres
 
 A third option consisted of a complete redesign of authentication and authorization mechanisms from the beginning of the migration project. Although architecturally cleaner, this approach introduced excessive migration complexity and operational risk during early transition stages.
 
-For these reasons, the migration strategy favored progressive IAM modernization combined with controlled coexistence between legacy and modern authentication flows.
+For these reasons, the migration strategy favored progressive IAM modernization based on compatibility-preserving authentication changes and staged adoption of standards-based flows.
 
 \section{Technical and Economic Evaluation Criteria}
 Each candidate solution was evaluated against a common set of technical and operational criteria in order to support structured architectural decision-making.
 
 \subsection{Technical Criteria}
-Technical evaluation focused on aspects directly related to migration feasibility, operational continuity, and long-term maintainability.
+Technical evaluation focused on aspects directly related to migration feasibility, production stability, and long-term maintainability.
 
-Particular importance was given to backward compatibility with existing workflows and service behaviors, since migration phases required coexistence between legacy and target components. Security considerations were also central, especially regarding readiness for standards-based IAM integration and cloud-native infrastructure governance.
+Particular importance was given to backward compatibility with existing workflows and service behaviors, because API contracts, authentication assumptions, and data-access paths had to remain predictable during staged changes. Security considerations were also central, especially regarding readiness for standards-based IAM integration and cloud-native infrastructure governance.
 
 Deployment reproducibility represented another key criterion. Candidate solutions needed to support versioned infrastructure definitions, automated provisioning workflows, and consistent environment management across development and production stages.
 
 Migration testability was also considered essential. The selected architecture needed to support incremental validation workflows, rollback readiness, and automated verification practices capable of reducing migration risk.
 
-Finally, operational observability and troubleshooting support were evaluated in order to ensure visibility during coexistence and rollout phases.
+Finally, operational observability and troubleshooting support were evaluated in order to ensure visibility during rollout phases.
 
 \subsection{Economic and Operational Criteria}
 In addition to technical aspects, the evaluation process also considered operational sustainability and recurring infrastructure costs.
@@ -143,13 +143,13 @@ Particular attention was given to reducing operational overhead associated with 
 Maintainability, scalability, and automation capabilities were therefore analyzed together with recurring infrastructure costs and migration effort distribution.
 
 \section{Selected Strategy and Rationale}
-The selected strategy was an incremental migration centered on managed cloud services, Infrastructure as Code practices, and progressive coexistence between legacy and target systems.
+The selected strategy was an incremental migration centered on managed cloud services, Infrastructure as Code practices, and independently verifiable migration steps.
 
-The migration involved replacing the legacy infrastructure with a cloud-native architecture built on AWS managed services. Rather than performing a disruptive lift-and-shift migration, the strategy focused on progressively modernizing infrastructure, deployment workflows, and data-management components while maintaining operational continuity.
+The migration involved replacing the legacy infrastructure with a cloud-native architecture built on AWS managed services. The selected strategy prioritized progressive modernization of infrastructure, deployment workflows, and data-management components through changes that could be validated separately.
 
 AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes as the container runtime platform (see Section~\ref{sec:k8s-ecs-comparison}). Terraform became the primary infrastructure control layer responsible for reproducible provisioning and environment governance.
 
-For the data layer, the strategy applied the incremental coexistence model defined in Section~\ref{sec:data-layer-options}, building on the PostgreSQL target identified in Chapter~\ref{chap:baseline}.
+For the data layer, the strategy applied the controlled transition model defined in Section~\ref{sec:data-layer-options}, building on the PostgreSQL target identified in Chapter~\ref{chap:baseline}.
 
 AWS was selected because it provided the most complete alignment with the technical and operational requirements of the project. In particular, the platform offered mature Terraform integration, strong scalability characteristics, managed services aligned with the target architecture (including RDS PostgreSQL), and compatibility with the broader cloudification strategy already adopted by the company.
 
@@ -157,7 +157,7 @@ AWS was also considered highly developer-friendly, with broad customizability en
 
 The main trade-off acknowledged during the evaluation is that AWS can become expensive under specific scaling and usage conditions. However, for this project, the balance between service quality, customization freedom, and migration continuity remained favorable to AWS.
 
-The selected approach balanced migration risk, implementation effort, operational sustainability, and long-term maintainability. Rather than relying on disruptive architectural replacement, the strategy focused on controlled incremental evolution toward a cloud-native environment.
+The selected approach balanced migration risk, implementation effort, operational sustainability, and long-term maintainability. Its rationale was to make each architectural change independently verifiable, so that modernization could proceed through controlled increments rather than a single high-risk replacement event.
 
 \clearpage
 \section{Risk Management and Coexistence Plan}

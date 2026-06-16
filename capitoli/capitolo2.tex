@@ -4,14 +4,14 @@
 This chapter provides the conceptual background required to frame the migration problem and positions the thesis with respect to related work.
 
 \section{Cloud-Native Principles for Legacy Modernization}
-Cloud-native modernization is not limited to container adoption or workload relocation. In migration contexts, it also requires reproducible infrastructure, explicit service boundaries, deployment automation, operational observability, and validation mechanisms capable of supporting incremental system evolution. These principles become particularly important when legacy and modern components must coexist during transition phases.
+Cloud-native modernization is not limited to container adoption or workload relocation. In migration contexts, it also requires reproducible infrastructure, explicit service boundaries, deployment automation, operational observability, and validation mechanisms capable of supporting incremental system evolution. These principles become particularly important when architectural changes affect production workflows, persistent data, and operational procedures.
 
-Modern cloud-native systems are typically designed around automation-oriented practices and managed services that simplify infrastructure operations and improve scalability. However, migrating a legacy platform toward such architectures requires careful consideration of operational continuity, compatibility constraints, and long-term maintainability.
+Modern cloud-native systems are typically designed around automation-oriented practices and managed services that simplify infrastructure operations and improve scalability. However, migrating a legacy platform toward such architectures requires careful consideration of production constraints, compatibility requirements, and long-term maintainability.
 
 \subsection{Incremental Delivery and Operability}
 A recurring principle in modernization literature is the preference for incremental delivery over full-system replacement. Incremental migration reduces operational risk, enables earlier feedback cycles, and allows validation activities to be performed progressively throughout the transition process.
 
-To be effective, incremental delivery requires infrastructure automation, environment consistency, reproducible deployment workflows, and testable interfaces between legacy and target components. In industrial systems, these practices are essential for preserving operational continuity while introducing architectural changes.
+To be effective, incremental delivery requires infrastructure automation, environment consistency, reproducible deployment workflows, and testable interfaces. In industrial systems, these practices make architectural changes observable, reversible, and easier to validate before they affect critical workflows.
 
 \subsection{Infrastructure as Code}
 Infrastructure as Code (IaC) is a key enabler for cloud-native modernization because it transforms infrastructure configuration into versioned and reproducible artifacts. Instead of relying on manual provisioning procedures, infrastructure resources are defined declaratively and managed through automated workflows.
@@ -26,7 +26,7 @@ Cloud migration is the process of moving applications, data, and infrastructure 
 
 Historically, many organizations operated software systems on self-managed infrastructures hosted in local data centers or virtualized environments. While these architectures provided direct control over resources, they also introduced significant operational complexity related to infrastructure maintenance, capacity planning, backup management, monitoring, and service availability.
 
-Cloud migration should therefore not be interpreted as simple workload relocation. In many cases, migration also requires architectural redesign decisions intended to improve scalability, maintainability, automation capabilities, and long-term operational efficiency.
+For this reason, cloud migration planning must evaluate not only where workloads will run, but also how infrastructure responsibilities, automation practices, reliability requirements, and operational governance will change in the target environment.
 
 Reference guidance highlights several recurring migration drivers and benefits \cite{awsCloudMigrationOverview}, including cost optimization, elastic scalability, managed operational services, improved infrastructure reliability, and access to modern distributed delivery models.
 
@@ -48,7 +48,7 @@ The migration preserved the core application architecture and business functiona
 
 At the same time, selected components required refactoring to support the migration objectives. These changes included the transition from Airtable to PostgreSQL, the introduction of Infrastructure as Code practices through Terraform, and adaptations to deployment and routing workflows required by the target cloud-native architecture.
 
-Consequently, the migration should not be viewed as a simple infrastructure relocation, but as a controlled modernization process combining replatforming and selective refactoring to improve scalability, maintainability, and operational sustainability.
+Consequently, the Outsight Cloud migration is best described as a hybrid strategy in which runtime modernization, data-layer redesign, and infrastructure automation addressed different limitations of the legacy platform.
 
 \subsection{System Coexistence in Incremental Migration}
 For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.
@@ -95,8 +95,8 @@ In industrial environments migration reliability often depends on validation pra
 \section{Positioning of This Thesis}
 This thesis addresses the above limitations through a decision-oriented migration case study focused on incremental architectural evolution under real industrial constraints.
 
-The contribution of the work is not limited to the description of a target AWS architecture. Instead, it analyzes the migration of a production platform from a legacy DigitalOcean-based environment toward a cloud-native architecture built on managed AWS services. The thesis also emphasizes the reasoning process that connects baseline system limitations, migration decisions, infrastructure automation, coexistence management, and validation workflows.
+The contribution of the work is not limited to the description of a target AWS architecture. Instead, it analyzes the migration of a production platform from a legacy DigitalOcean-based environment toward a cloud-native architecture built on managed AWS services. The thesis also emphasizes the reasoning process that connects baseline system limitations, migration decisions, infrastructure automation, data-layer transition planning, and validation workflows.
 
-Particular attention is given to Infrastructure as Code adoption, migration reproducibility, controlled coexistence between legacy and target systems, and validation-oriented migration practices designed to reduce technical and operational risk.
+Particular attention is given to Infrastructure as Code adoption, migration reproducibility, environment separation, and validation-oriented migration practices designed to reduce technical and operational risk.
 
 Although the work is centered on Outsight Cloud, the migration principles and engineering practices discussed throughout the thesis are applicable to broader legacy modernization scenarios involving progressive cloud-native adoption.

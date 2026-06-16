@@ -20,30 +20,24 @@ The engineering problem addressed in this work concerns the migration of Outsigh
 
 Although the original platform architecture supported fast development and iterative product evolution, over time it introduced technical and operational limitations that reduced architectural flexibility and increased maintenance complexity. In particular, the platform became strongly dependent on external services and platform-specific integrations, especially Airtable, which was deeply embedded in application workflows and operational processes. This dependency introduced several challenges. The absence of a fully relational data model limited consistency guarantees and complicated the management of relationships between entities. Operational procedures increasingly relied on manual or partially automated workflows, generating inefficiencies and increasing the risk of human error. In parallel, the original deployment model became progressively harder to scale and maintain as infrastructure requirements, integrations, and operational complexity continued to grow.
 
-To address these limitations, the company initiated a cloudification process aimed at redesigning the platform architecture and migrating services to AWS. The migration therefore involved not only replacing selected platform dependencies, but also transitioning from the legacy infrastructure to a cloud-native architecture built around AWS managed services, automated provisioning, and containerized workloads. The migration objective extended beyond simple workload relocation and required a broader architectural transformation involving redesign of the infrastructure, adoption of Infrastructure as Code practices, migration from Airtable to PostgreSQL, introduction of managed cloud services, modernization of deployment and operational workflows, and re-establishment of explicit architectural ownership over core data and infrastructure assets.
+To address these limitations, the company initiated a cloudification process aimed at redesigning the platform architecture and migrating services to AWS. The migration therefore involved replacing selected platform dependencies and transitioning from the legacy infrastructure to a cloud-native architecture built around AWS managed services, automated provisioning, and containerized workloads. In this context, the main engineering objective was to regain explicit architectural ownership over core data and infrastructure assets through Infrastructure as Code practices, the migration from Airtable to PostgreSQL, the introduction of managed cloud services, and the modernization of deployment and operational workflows.
 
-A central challenge of the migration was preserving service continuity while legacy and target components coexisted during transition phases. For this reason, the migration strategy was designed as an incremental process supported by validation workflows, reproducible infrastructure management, and controlled coexistence mechanisms capable of reducing technical and operational risk.
+A central challenge of the migration was defining an execution sequence that could reduce technical and operational risk before final cutover. For this reason, the migration strategy relied on validation workflows, reproducible infrastructure management, and controlled transition mechanisms.
 
 Beyond addressing the architectural limitations of the legacy platform, the migration initiative was driven by a set of concrete business and engineering objectives:
 
 \begin{itemize}
-    \item Reduce operational costs associated with infrastructure and third-party services, particularly those related to Airtable and the maintenance of self-managed environments.
+    \item Reduce operational costs by replacing Airtable and self-managed infrastructure with managed cloud services.
     
-    \item Improve system performance and responsiveness by reducing dependency on external APIs and introducing a relational database capable of supporting more efficient data access patterns.
+    \item Improve system performance and data access efficiency through the adoption of PostgreSQL as the primary relational datastore.
     
-    \item Reduce operational overhead through the adoption of managed cloud services and Infrastructure as Code practices, allowing infrastructure provisioning, deployment, and maintenance activities to become more automated and reproducible.
+    \item Reduce operational overhead by automating infrastructure provisioning, deployment, and maintenance through Infrastructure as Code practices.
     
-    \item Reduce dependency on vendor-specific platforms and services by re-establishing ownership of core data and infrastructure components.
-    
-    \item Re-establish explicit ownership of application data models and infrastructure definitions through PostgreSQL and Infrastructure as Code practices.
-    
-    \item Increase operational resilience by enabling controlled deployments, reproducible environments, and safer migration and rollback procedures.
+    \item Re-establish ownership of core data models and infrastructure definitions, reducing dependency on vendor-specific platforms.
     
     \item Minimize migration risk and service disruption through incremental coexistence, validation workflows, and controlled transition mechanisms.
     
-    \item Improve the long-term sustainability and evolvability of the platform by reducing technical debt, strengthening architectural ownership, and enabling future feature development on a more stable technological foundation.
-    
-    \item Establish a scalable and maintainable architectural foundation capable of supporting future growth while reducing dependency on legacy technologies and platform-specific integrations.
+    \item Establish a scalable and maintainable architectural foundation capable of supporting long-term platform evolution.
 \end{itemize}
 
 These objectives provide the basis for the evaluation presented in Chapter~7, where the impact of the migration is assessed through cost, performance, operational efficiency, resilience, and migration-risk analyses.

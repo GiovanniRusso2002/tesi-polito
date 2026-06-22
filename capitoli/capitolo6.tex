@@ -16,6 +16,15 @@ This sequencing made the implementation plan technically traceable: infrastructu
 
 The infrastructure migration was intentionally performed before the complete application and data cutover. This approach allowed AWS environments, networking components, load balancing, container execution services, and deployment workflows to be validated independently from the Airtable-to-PostgreSQL migration process.
 
+Figure~\ref{fig:migration-incremental-flow} summarizes this execution model by showing how the migration moved from the legacy baseline toward the target AWS cloud-native architecture through separate infrastructure, deployment, data-migration, and validation tracks.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{immagini/migration_incremental_flow_en.png}
+    \caption{Incremental execution flow from the legacy baseline to the target AWS cloud-native architecture}
+    \label{fig:migration-incremental-flow}
+\end{figure}
+
 \section{Infrastructure as Code and Environment Separation}
 \subsection{Infrastructure as Code (IaC)}
 Infrastructure as Code (IaC) is a software engineering approach in which infrastructure is provisioned and managed through code instead of manual configuration procedures \cite{awsIacWhitepaper}. The rationale comes from DevOps principles: infrastructure should be treated with the same rigor applied to application code, including versioning, reviewability, traceability, and repeatability.

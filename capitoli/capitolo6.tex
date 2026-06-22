@@ -22,6 +22,8 @@ Infrastructure as Code (IaC) is a software engineering approach in which infrast
 
 Under the IaC paradigm, infrastructure definitions are declarative artifacts stored in version control systems. This replaces fragile practices based on manual console operations, ad-hoc scripts, or outdated runbooks. As highlighted by AWS guidance, declarative infrastructure improves consistency and reliability in environment creation and updates \cite{awsIacWhitepaper}.
 
+Morris identifies three mutually reinforcing core practices for IaC: defining everything as code, continuously testing and delivering all work in progress, and building small loosely coupled pieces~\cite{morris2021iac}. Code defined as declarative artifacts is reusable, consistent, and transparent: everyone can see how infrastructure is built, changes are auditable, and environments can be recreated deterministically.
+
 A key IaC characteristic is that engineers define the desired final state, while automation tooling computes and executes the required operations. This model provides:
 \begin{itemize}
     \item \textbf{Consistency:} reproducible environments across development, testing, and production.

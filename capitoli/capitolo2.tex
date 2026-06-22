@@ -6,17 +6,21 @@ This chapter provides the conceptual background required to frame the migration 
 \section{Cloud-Native Principles for Legacy Modernization}
 Cloud-native modernization is not limited to container adoption or workload relocation. In migration contexts, it also requires reproducible infrastructure, explicit service boundaries, deployment automation, operational observability, and validation mechanisms capable of supporting incremental system evolution. These principles become particularly important when architectural changes affect production workflows, persistent data, and operational procedures.
 
+In \emph{Building Microservices}, Newman frames modern service-oriented architectures around independently deployable services with explicit boundaries and hidden internal state~\cite{newman2021building}. This principle is relevant to legacy modernization because it separates external contracts from internal implementation details, reducing the risk that changes in one component propagate unexpectedly across the platform.
+
 Modern cloud-native systems are typically designed around automation-oriented practices and managed services that simplify infrastructure operations and improve scalability. However, migrating a legacy platform toward such architectures requires careful consideration of production constraints, compatibility requirements, and long-term maintainability.
 
 \subsection{Incremental Delivery and Operability}
 A recurring principle in modernization literature is the preference for incremental delivery over full-system replacement. Incremental migration reduces operational risk, enables earlier feedback cycles, and allows validation activities to be performed progressively throughout the transition process.
+
+Newman argues against big-bang rewrites, emphasizing that large simultaneous replacements tend to concentrate risk and delay feedback~\cite{newman2021building}. Decomposing migration work into smaller steps makes it possible to start from lower-risk components, build confidence progressively, and validate architectural changes before irreversible decisions are made.
 
 To be effective, incremental delivery requires infrastructure automation, environment consistency, reproducible deployment workflows, and testable interfaces. In industrial systems, these practices make architectural changes observable, reversible, and easier to validate before they affect critical workflows.
 
 \subsection{Infrastructure as Code}
 Infrastructure as Code (IaC) is a key enabler for cloud-native modernization because it transforms infrastructure configuration into versioned and reproducible artifacts. Instead of relying on manual provisioning procedures, infrastructure resources are defined declaratively and managed through automated workflows.
 
-This approach improves traceability, reproducibility, reviewability, and consistency across development and production environments. In migration projects, IaC also simplifies environment replication, deployment governance, and rollback management, reducing operational risks during infrastructure evolution.
+Newman identifies Infrastructure as Code as a core deployment principle because infrastructure configuration stored in source control allows environments to be recreated deterministically and shared across teams~\cite{newman2021building}. Morris further identifies three core practices for effective IaC adoption: defining everything as code, continuously testing and delivering all work in progress, and building small loosely coupled pieces that can be changed independently~\cite{morris2021iac}. Together, these practices improve traceability, reproducibility, reviewability, and consistency across development and production environments. In migration projects, IaC also simplifies environment replication, deployment governance, and rollback management, reducing operational risks during infrastructure evolution.
 
 \section{Migration Strategies and Patterns}
 Cloud migration projects can follow different strategies depending on system complexity, operational requirements, and modernization goals. Common approaches include rehosting, replatforming, refactoring, and selective rebuilding. In practice, enterprise migration projects often combine multiple strategies across subsystems according to their coupling level, criticality, migration effort, and risk exposure.
@@ -42,7 +46,7 @@ Cloud migration strategies are generally classified into three major categories~
 
 Migration programs are often organized into assessment, preparation, and migration phases~\cite{awsCloudMigrationOverview}. These phases support technical discovery, environment preparation, pilot execution, and incremental rollout activities.
 
-In practice, real-world migration projects often combine multiple strategies across different system components. The Outsight Cloud migration can be primarily classified as a replatforming effort complemented by selective refactoring activities.
+In practice, real-world migration projects often combine multiple strategies across different system components. Newman also stresses that decomposition and modernization choices should be driven by the desired outcome rather than by technical convenience alone~\cite{newman2021building}. The Outsight Cloud migration can be primarily classified as a replatforming effort complemented by selective refactoring activities.
 
 The migration preserved the core application architecture and business functionality while replacing key infrastructure and platform dependencies. Examples of replatforming include the transition from DigitalOcean-hosted workloads to AWS managed services and the adoption of ECS Fargate as the runtime environment.
 
@@ -52,6 +56,10 @@ Consequently, the Outsight Cloud migration is best described as a hybrid strateg
 
 \subsection{System Coexistence in Incremental Migration}
 For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.
+
+Newman describes the \emph{strangler fig pattern} as a technique for wrapping legacy systems incrementally and redirecting calls to new implementations without replacing the entire system at once~\cite{newman2021building}. He also discusses parallel-run approaches, where old and new implementations execute side by side and their results are compared before final cutover~\cite{newman2021building}.
+
+Morris further describes the \emph{expand and contract} pattern as a structured technique for changing live infrastructure without disrupting running services. The pattern involves first adding new resources alongside existing ones, migrating consumers incrementally, and only then removing the legacy components~\cite{morris2021iac}. This approach avoids the risks of big-bang replacements and keeps the system in a consistent, testable state throughout the transition.
 
 This coexistence model introduces additional engineering complexity, including contract compatibility, dual-backend validation, synchronization workflows, rollback capabilities, and progressive switchover mechanisms. As a consequence, migration validation becomes an integral part of the system architecture rather than a secondary operational activity.
 
@@ -90,7 +98,7 @@ As a consequence, migration projects require evaluation frameworks capable of co
 \subsection{Limited Evidence on Incremental Validation}
 Many migration case studies focus primarily on final target architectures while providing limited evidence regarding coexistence management and intermediate validation mechanisms.
 
-In industrial environments migration reliability often depends on validation practices such as dual-backend testing, data-consistency verification, environment-separated deployment workflows, and incremental rollout strategies. These aspects are essential for reducing migration risk during long transition phases.
+In industrial environments migration reliability often depends on validation practices such as dual-backend testing, data-consistency verification, environment-separated deployment workflows, and incremental rollout strategies. Morris emphasizes that continuously testing infrastructure changes as they are developed rather than waiting until the system is complete is essential for catching errors early and reducing the cost of correction~\cite{morris2021iac}. These aspects are essential for reducing migration risk during long transition phases.
 
 \section{Positioning of This Thesis}
 This thesis addresses the above limitations through a decision-oriented migration case study focused on incremental architectural evolution under real industrial constraints.

@@ -37,6 +37,8 @@ During the infrastructure design phase, Kubernetes-based solutions were evaluate
 
 However, adopting Kubernetes would have introduced additional operational complexity that was not justified by the requirements of Outsight Cloud at the time of the migration. Managing Kubernetes clusters requires expertise in cluster administration, networking, upgrades, monitoring, capacity planning, and security governance. These responsibilities would have increased both implementation effort and long-term operational overhead.
 
+This evaluation is consistent with Newman's caution against premature platform complexity: small service landscapes do not necessarily require Kubernetes-level orchestration, especially when the operational cost of cluster management would distract from migration goals~\cite{newman2021building}. For smaller-scale migrations, simpler managed container platforms can provide a better balance between deployment flexibility and operational effort.
+
 In contrast, Amazon ECS Fargate provides a managed container execution environment that eliminates the need to provision and maintain worker nodes. The service offers native integration with other AWS components, including Application Load Balancer, CloudWatch, IAM, and Auto Scaling, while preserving support for Docker-based workloads already used by the existing platform.
 
 From a migration perspective, ECS Fargate enabled a smoother transition from the legacy Docker Compose deployment model because applications could continue to be packaged as standard containers without requiring a complete redesign of the runtime environment.
@@ -170,3 +172,5 @@ Special attention was given to dual-backend coexistence during data-layer migrat
 Data replication and validation artifacts were also designed to provide measurable evidence regarding migration progress and consistency verification.
 
 As a consequence, coexistence was treated not as an informal transition phase, but as a structured engineering stage supported by automation, validation, and reproducible infrastructure management practices.
+
+This approach reflects Morris's principle of reducing the scope of each change as a fundamental risk management practice: smaller increments limit the blast radius of any failure and make it easier to detect, isolate, and correct problems before they propagate~\cite{morris2021iac}.

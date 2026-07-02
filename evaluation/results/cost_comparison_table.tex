@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Monthly cost comparison between the Legacy and AWS platforms.}
+  \label{tab:cost_comparison}
+  \footnotesize
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lp{3cm}rp{3.5cm}r}
+    \toprule
+    \textbf{Category} & \textbf{Legacy} & \textbf{EUR/mo} & \textbf{AWS} & \textbf{EUR/mo} \\
+    \midrule
+    Storage & DigitalOcean Spaces & 70 & Amazon S3 & 7.5 \\
+    Compute & DigitalOcean Droplets & 102 & ECS Fargate & 58.9 \\
+    Database / SaaS & Airtable (7 editors) & 294 & Amazon RDS & 48.2 \\
+    Load Balancer & \textendash{} & \textendash{} & Elastic LB (ALB) & 52.7 \\
+    Networking & \textendash{} & \textendash{} & VPC + Route 53 & 48.7 \\
+    Security & \textendash{} & \textendash{} & GuardDuty + Secrets Mgr & 4.9 \\
+    Governance & \textendash{} & \textendash{} & AWS Config & 3.9 \\
+    \midrule
+    \textbf{Total} & & \textbf{466} & & \textbf{224.8} \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}

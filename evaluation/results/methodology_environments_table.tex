@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Infrastructure comparison between the As-Is (Legacy) and To-Be (AWS)
+    benchmark targets. Both environments expose the same application over HTTPS.}
+  \label{tab:bench_environments}
+  \small
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lp{5cm}p{5.5cm}}
+    \toprule
+    \textbf{Aspect} & \textbf{As-Is} & \textbf{To-Be} \\
+    \midrule
+    Hosting platform & DigitalOcean Droplet & AWS ECS Fargate \\
+    Container orchestration & None & ECS with auto-scaling task definitions \\
+    CDN / edge caching & None & Amazon CloudFront \\
+    DNS resolver & Standard recursive DNS & Amazon Route\,53 \\
+    TLS termination & Nginx + Let's Encrypt & CloudFront + ACM certificate \\
+    Load balancer & Nginx reverse proxy & AWS Application Load Balancer \\
+    Deployment region & Amsterdam & Paris \\
+    Measured base URL & \texttt{legacy.cloud.outsight.ai} & \texttt{cloud.outsight.ai} \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}

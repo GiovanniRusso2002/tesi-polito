@@ -1,0 +1,52 @@
+{
+  "description": "Monthly AWS cost trend during and after migration",
+  "currency": "USD",
+  "months": [
+    {
+      "period": "2026-04",
+      "total_excl_tax_usd": 249.02,
+      "tax_usd": 49.75,
+      "note": "Migration in progress — EC2 instances still primary compute ($149.76)",
+      "top_services": {
+        "EC2 Compute": 149.76,
+        "ECS": 21.74,
+        "ELB": 20.72,
+        "VPC": 18.72,
+        "AWS Config": 18.21,
+        "CloudWatch": 12.42,
+        "RDS": 1.05
+      }
+    },
+    {
+      "period": "2026-05",
+      "total_excl_tax_usd": 447.36,
+      "tax_usd": 89.41,
+      "note": "Peak migration cost — EC2 still running, RDS and ECS both active, Config/CloudWatch setup spike",
+      "top_services": {
+        "EC2 Compute": 146.82,
+        "AWS Config": 67.54,
+        "CloudWatch": 58.24,
+        "RDS": 44.47,
+        "ECS": 44.07,
+        "ELB": 39.46,
+        "VPC": 35.42
+      }
+    },
+    {
+      "period": "2026-06",
+      "total_excl_tax_usd": 272.63,
+      "tax_usd": 54.53,
+      "note": "First stabilised month — EC2 decommissioned, ECS Fargate primary compute",
+      "top_services": {
+        "ECS": 57.18,
+        "RDS": 52.41,
+        "ELB": 51.55,
+        "VPC": 43.00,
+        "AWS Config": 21.87,
+        "CloudWatch": 16.50,
+        "EC2 Compute": 10.74,
+        "S3": 8.09
+      }
+    }
+  ]
+}

@@ -1,20 +1,20 @@
 \chapter{Migration Implementation}
 \label{chap:implementation}
 
-This chapter describes the implementation foundations that were already established to execute the migration strategy in a controlled and verifiable way.
+This chapter describes how the migration strategy was executed in practice, covering the infrastructure transition, data-layer migration, and validation workflows that together enabled the controlled move from the legacy baseline to the target AWS architecture.
 
 \section{Incremental Execution Plan}
-The migration was implemented incrementally, with explicit separation between foundation work and full functional cutover. The implementation sequence followed four tracks:
+The migration was implemented incrementally, structured around four tracks executed in a deliberate sequence:
 \begin{itemize}
-    \item establish cloud infrastructure foundations on AWS;
+    \item establish cloud infrastructure on AWS;
     \item formalize reproducible provisioning with Terraform;
-    \item introduce data migration tooling from Airtable to PostgreSQL;
-    \item implement validation pipelines to compare migrated data, application behavior, and deployment readiness before cutover.
+    \item migrate data from Airtable to PostgreSQL;
+    \item validate migrated data, application behavior, and deployment correctness before production switchover.
 \end{itemize}
 
-This sequencing made the implementation plan technically traceable: infrastructure readiness, provisioning reproducibility, data-transfer correctness, and application validation could be evaluated as separate workstreams before irreversible system decisions.
+This sequencing made the migration technically traceable: infrastructure readiness, provisioning reproducibility, data-transfer correctness, and application validation were evaluated as separate workstreams, reducing the risk of cascading failures across interdependent components.
 
-The infrastructure migration was intentionally performed before the complete application and data cutover. This approach allowed AWS environments, networking components, load balancing, container execution services, and deployment workflows to be validated independently from the Airtable-to-PostgreSQL migration process.
+The infrastructure migration was executed as a first step, allowing AWS environments, networking components, load balancing, container execution services, and deployment workflows to be validated independently before the Airtable-to-PostgreSQL data transition took place.
 
 Figure~\ref{fig:migration-incremental-flow} summarizes this execution model by showing how the migration moved from the legacy baseline toward the target AWS cloud-native architecture through separate infrastructure, deployment, data-migration, and validation tracks.
 
@@ -133,21 +133,11 @@ The final transition step consisted of progressively redirecting public access f
 The migration path from Airtable to PostgreSQL was implemented with schema and migration tooling designed to preserve compatibility constraints. The objective was not only data transfer, but controlled evolution toward explicit schema ownership.
 
 \subsection{Replication and Validation Scripts}
-Dedicated scripts were prepared to:
+Dedicated scripts were developed to:
 \begin{itemize}
     \item replicate data from Airtable into PostgreSQL;
     \item validate consistency through machine-readable reports;
-    \item support migration checkpoints before wider rollout.
+    \item verify migration correctness at each checkpoint before production switchover.
 \end{itemize}
 
-These artifacts transform data migration from a one-time operation into a repeatable verification workflow.
-
-\section{Implementation Scope and Current Status}
-At the current stage, the implemented work establishes the migration backbone:
-\begin{itemize}
-    \item AWS infrastructure provisioning and controlled transition from the legacy baseline;
-    \item environment governance and Terraform-driven deployment foundations;
-    \item data replication and validation tooling.
-\end{itemize}
-
-This scope is sufficient to evaluate migration feasibility and design quality, while leaving room for further functional expansion in subsequent project phases.
+These artifacts transformed data migration from a one-time operation into a repeatable and verifiable workflow, providing measurable confidence in the correctness of the transition before the final cutover.

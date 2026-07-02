@@ -2,26 +2,491 @@
 \label{chap:evaluation}
 
 \section{Benchmark Methodology and Demand Profile}
+
+The evaluation presented in this chapter is grounded in a reproducible,
+script-driven benchmark framework developed specifically for this thesis.
+All measurements are collected through automated HTTP requests against
+both the legacy and the new AWS environment, with results stored in
+structured CSV files and post-processed using Python.
+This section describes the measurement scope, the statistical methodology,
+and the configuration of both benchmark targets.
+
 \subsection{Measurement Scope}
+
+The benchmark targets the Outsight Cloud web application at the HTTP layer.
+For each environment, five timing components are extracted from every
+individual request using \texttt{curl}'s built-in timing variables.
+These components decompose the total round-trip time into the distinct
+network and application phases, enabling a precise diagnosis of where
+latency improvements originate.
+Table~\ref{tab:bench_metrics} lists each metric, the corresponding
+\texttt{curl} variable, and its precise definition.
+
+\input{evaluation/results/methodology_metrics_table}
+
+The latency benchmark focuses on the homepage endpoint (\texttt{GET /}),
+which is publicly accessible and representative of the first interaction
+a user has with the platform.
+This endpoint exercises the full network stack (DNS resolution, TCP
+connection, TLS handshake, and application response), making it the most
+informative single target for an end-to-end comparison.
+Authenticated API endpoints and static asset downloads were not included
+in the present analysis, as their evaluation requires a stable
+authentication token and a consistent asset fingerprint across both
+environments; the homepage endpoint provides a representative and
+reproducible baseline for the end-to-end infrastructure comparison.
+
 \subsection{Workload and Demand Definition}
+
+Each benchmark run consists of $N = 100$ independent HTTP GET requests
+issued sequentially against a single environment.
+Requests are spaced to avoid connection reuse across measurements: each
+\texttt{curl} invocation opens a fresh TCP connection and performs a
+complete TLS handshake, ensuring that no warm-up effects inflate the
+results.
+Table~\ref{tab:bench_params} summarises the full set of configuration
+parameters.
+
+\input{evaluation/results/methodology_params_table}
+
+The choice of $N = 100$ balances statistical precision against
+measurement time.
+With 100 samples, the 95\,\% confidence interval for the mean, computed
+using the Student $t$-distribution with $n - 1$ degrees of freedom, has
+a half-width of approximately 3.4\,ms for TTFB under the legacy
+environment (standard deviation $\approx 34$\,ms), yielding a relative
+margin of error below 3\,\%.
+Increasing $N$ further would reduce this margin proportionally to
+$1/\sqrt{N}$, offering diminishing returns beyond $N \approx 200$.
+
+In addition to the mean, the benchmark reports the 90th, 95th, and 99th
+percentiles (P90, P95, P99) of each metric, which are the figures most
+relevant to service-level objectives (SLOs).
+Outliers are not removed: a deliberate design choice that preserves the
+real-world tail behaviour experienced by end users.
+
 \subsection{As-Is vs To-Be Benchmark Setup}
 
+The two benchmark targets expose the same Outsight Cloud application
+over HTTPS, but differ substantially in their underlying infrastructure.
+Table~\ref{tab:bench_environments} compares the two environments across
+the dimensions most relevant to HTTP latency.
+
+\input{evaluation/results/methodology_environments_table}
+
+To ensure a fair comparison, all 200 measurements (100 per environment)
+were issued from the same client machine located in Paris, France,
+within the same time window, and with no intermediate caching layer
+on the client side (\texttt{curl --no-buffer --no-keepalive}).
+The only variable between the two test series is the target base URL,
+which routes requests to the respective infrastructure.
+Network conditions on the client side were stable throughout the
+measurement session, as confirmed by the low variance observed in
+the DNS and TCP timing components of the AWS environment.
+
 \section{Cost and TCO Analysis}
+\label{sec:costanalysis}
+
+This section quantifies the economic impact of the migration by comparing
+the total monthly spend of the legacy platform with that of the new AWS
+architecture.
+AWS costs are estimated from the current daily run rate extrapolated to
+a monthly figure, thereby excluding the transient overhead incurred
+during the migration period.
+All figures are expressed in EUR.
+
 \subsection{Current Architecture Costs (As-Is)}
+
+The legacy Outsight Cloud platform relied on three services:
+
+\begin{itemize}
+  \item \textbf{DigitalOcean Spaces:} \textbf{€70/month}, used for
+    object storage of 3D point-cloud datasets and static assets.
+  \item \textbf{DigitalOcean Droplets:} \textbf{€102/month}, hosting
+    the entire application stack on manually managed virtual machines.
+  \item \textbf{Airtable (7 editor licences):} \textbf{€294/month},
+    used as the primary operational database and data-management tool.
+\end{itemize}
+
+The total legacy monthly spend was therefore \textbf{€466/month}.
+
 \subsection{Target Architecture Costs (To-Be)}
+
+The AWS platform distributes the workload across multiple managed
+services.
+Figure~\ref{fig:cost_aws_breakdown} shows the AWS cost breakdown by
+service, and Table~\ref{tab:cost_comparison} maps each cost category to
+the corresponding legacy and AWS service.
+The three largest drivers are \textbf{ECS Fargate} (€59/month),
+\textbf{Elastic Load Balancing} (€53/month), and \textbf{Amazon RDS}
+(€48/month).
+Amazon RDS deserves particular attention: it replaces Airtable as the
+primary data store while providing full SQL capabilities, automated
+backups, and high-availability failover, at a fraction of the
+Airtable licence cost.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\textwidth]{evaluation/figures/cost_aws_breakdown}
+    \caption{Estimated steady-state AWS cost by service (EUR/month).}
+    \label{fig:cost_aws_breakdown}
+\end{figure}
+
+\input{evaluation/results/cost_comparison_table}
+
 \subsection{Total Cost of Ownership (TCO)}
 
+\paragraph{Total cost comparison.}
+Compared to the legacy total of €466/month, the AWS platform reduces
+the monthly spend to \textbf{€231/month}, a saving of
+\textbf{€235/month (--50\,\%)}.
+This result is primarily driven by the elimination of the Airtable
+licence (€294/month), replaced by Amazon RDS at €48/month.
+
+\paragraph{Category-level breakdown.}
+Figure~\ref{fig:cost_bar_comparison} presents the comparison by category.
+The most striking difference is in the \textbf{Database/SaaS} category:
+Airtable at €294/month is replaced by RDS at €48/month, a reduction
+of \textbf{84\,\%}.
+Storage also improves significantly: AWS S3 costs €8/month compared to
+€70/month for DigitalOcean Spaces (\textbf{89\,\% reduction}),
+thanks to S3's pay-per-GB pricing model.
+Three categories that did not exist in the legacy architecture
+(\emph{Load Balancer}, \emph{Networking/VPC}, and \emph{Security})
+now appear as distinct lines, reflecting services the legacy platform
+either lacked entirely or embedded invisibly in the Droplet cost.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{evaluation/figures/cost_bar_comparison}
+    \caption{Monthly cost by category: Legacy vs.\ AWS (EUR/month).
+    Categories absent from the legacy platform are shown as zero.}
+    \label{fig:cost_bar_comparison}
+\end{figure}
+
+\paragraph{TCO conclusion.}
+The migration delivers a net monthly saving of \textbf{€235/month}
+while simultaneously upgrading the platform to a production-grade,
+fully managed architecture.
+The saving is structural: it stems from eliminating a SaaS tool whose
+per-seat pricing model was ill-suited to an infrastructure role, and
+replacing it with a managed database service priced on actual resource
+consumption.
+At the same time, the operational effort freed by the transition,
+quantified in Section~\ref{sec:operational}, provides additional
+indirect savings on engineering time.
+
 \section{Latency and Performance Analysis}
+
+To complement the cost analysis, an HTTP-level latency benchmark was conducted to
+quantify the end-to-end performance improvement introduced by the cloud migration.
+The benchmark targets the same service exposed under both the legacy
+DigitalOcean environment and the new AWS architecture, measuring five timing
+components extracted directly from \texttt{curl}'s built-in timing variables:
+\emph{DNS resolution}, \emph{TCP connection establishment}, \emph{TLS handshake},
+\emph{Time to First Byte} (TTFB), and \emph{Total request time}.
+A sample of $N = 100$ independent requests was collected for each environment,
+with a 95\% confidence interval (CI) computed from Student's $t$-distribution.
+All measurements were performed from the same client location to ensure
+comparability.
+Table~\ref{tab:stats_home} reports the complete descriptive statistics for both
+environments.
+
+\input{evaluation/results/home_table}
+
 \subsection{As-Is Latency Measurements}
+
+Under the legacy architecture, every component of the HTTP timing stack exhibits
+both a high mean and significant variance.
+DNS resolution averages \textbf{14.92\,ms} (median 7.58\,ms), but its standard
+deviation of 15.38\,ms and a 99th-percentile value of 60.70\,ms reveal
+substantial jitter: a fraction of requests suffer DNS lookup times an order of
+magnitude above the typical case.
+This variability is attributable to the absence of a dedicated DNS resolver
+close to the client and the lack of anycast routing in the legacy setup.
+
+TCP connection time closely mirrors the DNS distribution (mean 15.19\,ms), since
+TCP establishment is initiated immediately after name resolution; outliers in one
+phase cascade into the other.
+The TLS handshake is the dominant latency contributor in the legacy environment,
+averaging \textbf{84.83\,ms} (p95 = 118.50\,ms, max = 333.05\,ms), a consequence
+of the server being hosted on a single-region DigitalOcean droplet with no
+TLS session resumption optimisation.
+
+The aggregate TTFB, which best captures the user-perceived
+responsiveness of the application, reaches a mean of \textbf{130.74\,ms}
+(p95 = 177.00\,ms, max = 394.91\,ms).
+A 95\% CI width of 13.53\,ms confirms that variability is not negligible:
+some users routinely experience response times more than three times the
+minimum observed value.
+
 \subsection{To-Be Latency Measurements}
+
+The AWS architecture, built on ECS Fargate behind an Application Load Balancer
+with CloudFront as the global CDN layer, dramatically reduces every timing
+component.
+
+DNS resolution drops to a mean of \textbf{1.64\,ms} (p99 = 2.92\,ms), nearly
+two orders of magnitude lower than the legacy average.
+This improvement stems from Route~53's anycast infrastructure, which serves DNS
+responses from the point-of-presence closest to the client, combined with the
+short TTLs configured on the CloudFront distribution.
+The standard deviation falls to 2.20\,ms, a ninefold reduction, indicating
+that DNS resolution is stable and predictable.
+
+TCP connection time follows the same pattern, averaging \textbf{1.79\,ms}.
+The TLS handshake settles at a mean of \textbf{44.45\,ms} (p95 = 58.90\,ms),
+benefiting from CloudFront's TLS 1.3 support and session-ticket resumption,
+which avoids the full two-round-trip handshake for returning clients.
+
+Most importantly, TTFB falls to \textbf{81.09\,ms} on average (p95 = 105.22\,ms,
+max = 197.31\,ms), with a standard deviation of 19.73\,ms.
+The CI width narrows to 7.83\,ms, indicating a more consistent experience across
+requests.
+
 \subsection{Comparative Results}
 
+Figure~\ref{fig:bar_comparison} presents the mean latency for each component
+under both environments, together with the 95\% CI error bars and the
+percentage improvement achieved by the migration.
+The improvement ranges from \textbf{$-$89\%} on DNS and TCP (where the legacy
+architecture paid the highest penalty) to \textbf{$-$38\%} on TTFB and Total
+time.
+Even though the TLS reduction ($-$48\%) and TTFB reduction ($-$38\%) appear more
+modest in percentage terms, they translate to absolute savings of 40\,ms and
+50\,ms respectively on \emph{every single request}, which is perceptible to
+end users.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{evaluation/figures/home_bar_comparison}
+    \caption{Mean latency comparison, Legacy vs.\ AWS, per HTTP timing component, with 95\% CI error bars.}
+    \label{fig:bar_comparison}
+\end{figure}
+
+Figure~\ref{fig:boxplot} complements the mean comparison by showing the full
+distribution of each metric.
+The legacy boxes span a much wider interquartile range and are accompanied by
+numerous high-value outliers, confirming that the legacy environment is
+susceptible to occasional latency spikes.
+By contrast, the AWS boxes are compact and nearly outlier-free for DNS and TCP,
+and show significantly reduced spread for TLS and TTFB.
+This tighter distribution is operationally relevant: it implies that the
+worst-case experience for any given user is now closer to the median, rather
+than an unpredictable multiple of it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{evaluation/figures/home_boxplot}
+    \caption{Box plots of latency distributions per HTTP timing component (100 samples per environment).}
+    \label{fig:boxplot}
+\end{figure}
+
+The empirical Cumulative Distribution Functions (ECDFs) in
+Figure~\ref{fig:cdf} provide a comprehensive view of the tail behaviour.
+For every metric, the AWS curve reaches high cumulative probability values at
+latencies well below where the legacy curve begins to plateau, confirming that
+even the worst-percentile AWS requests outperform the median legacy requests
+for DNS and TCP.
+For TTFB, the legacy distribution exhibits a long right tail that extends beyond
+350\,ms, whereas 99\% of AWS requests complete within 150\,ms.
+The p90 and p95 reference lines make it easy to read off the service-level
+implications directly from the plot: the AWS p95 TTFB (105\,ms) is lower than
+the legacy \emph{median} (125\,ms), a result that underscores the magnitude of
+the performance gain.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{evaluation/figures/home_cdf}
+    \caption{ECDFs of latency per HTTP timing component, with p90/p95/p99 reference lines.}
+    \label{fig:cdf}
+\end{figure}
+
+In summary, the migration to AWS reduces mean end-to-end latency by
+approximately 38\% while simultaneously tightening the distribution, eliminating
+the long tail observed on the legacy platform.
+The gains are most pronounced in the network-proximity-sensitive phases (DNS,
+TCP), where the combination of Route~53, CloudFront, and the AWS backbone
+replaces an unoptimised single-region setup.
+The residual TLS and TTFB latencies are now bounded by the application server
+processing time and the physical distance between the AWS region and the client,
+both of which represent architectural lower bounds rather than avoidable
+inefficiencies.
+
 \section{Operational Cost and Efficiency}
+\label{sec:operational}
+
+Beyond direct infrastructure spending, the architecture of a platform
+determines the amount of engineering time required to keep it running.
+This section analyses the recurring operational tasks associated with
+the legacy and AWS architectures, and estimates their cost in
+engineering hours.
+
 \subsection{As-Is Operational Effort}
+
+The legacy platform, built on DigitalOcean Droplets running Docker
+Compose, placed the full burden of infrastructure operations on the
+engineering team.
+The recurring tasks fell into four categories.
+
+\paragraph{Operating system and runtime maintenance.}
+Each Droplet runs a Linux distribution that must be kept up to date.
+Security patches, kernel updates, and package upgrades must be applied
+manually, tested against the running application stack, and coordinated
+across multiple machines to avoid downtime.
+Docker Engine itself requires version management: breaking changes
+between Docker releases have historically required coordinated
+engineering effort across both the host OS and the Compose
+configuration.
+On average, OS and runtime maintenance consumed approximately
+\textbf{4--6 hours per month} of engineering time, including the
+verification of applied patches and monitoring for regressions.
+
+\paragraph{Deployment and rollback management.}
+In the legacy setup, deployments were performed by SSH-ing into
+the Droplet, pulling the new container images, and restarting
+services with Docker Compose.
+This procedure was error-prone and lacked atomicity: a failed service
+start could leave the system in a partially updated state, requiring
+manual inspection and rollback.
+There was no built-in blue/green or rolling deployment mechanism;
+any deployment carried a brief service interruption.
+Engineering time for deployment operations (including preparation,
+execution, and validation) was estimated at \textbf{3--4 hours per
+deployment cycle}.
+
+\paragraph{Scaling and capacity management.}
+Horizontal scaling on DigitalOcean required manually resizing or
+duplicating Droplets through the web console or CLI.
+There was no automatic scaling policy: traffic spikes had to be
+anticipated and handled reactively.
+Vertical scaling (increasing CPU or RAM on an existing Droplet)
+required a reboot, resulting in planned downtime.
+Capacity planning reviews were conducted periodically and accounted
+for approximately \textbf{2--3 hours per month}.
+
+\paragraph{Monitoring, alerting, and incident response.}
+The legacy platform had no centralised observability stack.
+Log collection was ad hoc, relying on direct access to Docker container
+logs via SSH.
+Setting up and maintaining custom monitoring scripts, uptime checks,
+and alert notifications was the responsibility of the team.
+Incident diagnosis (identifying which container had failed, reading
+the relevant logs, and correlating events) was slow and largely
+manual, typically adding \textbf{1--2 hours per incident} in
+investigation overhead.
+
+The cumulative recurring effort across all four categories amounted to
+an estimated \textbf{10--15 hours per month} of engineering time
+devoted to undifferentiated infrastructure maintenance, excluding
+incident response.
+At a loaded engineering cost of approximately €80--100/hour, this
+corresponds to a \textbf{recurring operational overhead of
+€800--1\,500/month} that adds no direct product value.
+
 \subsection{To-Be Operational Effort}
+
+The AWS architecture delegates the majority of the operational tasks
+described above to managed services, fundamentally changing the
+engineering team's role from infrastructure operator to configuration
+manager.
+
+\paragraph{No OS or runtime maintenance.}
+ECS Fargate is a serverless container runtime: the team supplies a
+container image and a task definition, and AWS is responsible for
+selecting, patching, and managing the underlying compute hosts.
+There is no Linux instance to update, no Docker Engine to maintain,
+and no kernel to patch.
+Container runtime upgrades are handled transparently by the platform.
+The engineering effort previously spent on OS and runtime maintenance
+is \textbf{effectively zero} in the To-Be architecture.
+
+\paragraph{Automated deployments with zero downtime.}
+ECS rolling deployments update task instances incrementally, replacing
+old containers with new ones while keeping the service available.
+A deployment is triggered by pushing a new container image to ECR and
+updating the task definition, a process fully automated through the
+CI/CD pipeline.
+Health checks performed by the Application Load Balancer ensure that
+traffic is only routed to healthy task instances.
+Rollbacks are instantaneous: re-registering a previous task definition
+revision reverts the deployment without any manual intervention.
+Deployment-related engineering effort is reduced to \textbf{pipeline
+maintenance}, which is largely a one-time setup cost.
+
+\paragraph{Automatic scaling.}
+ECS Service Auto Scaling adjusts the number of running Fargate tasks
+in response to CPU utilisation, memory pressure, or custom CloudWatch
+metrics, without any manual intervention.
+Capacity planning is replaced by policy configuration: the team defines
+minimum, desired, and maximum task counts, and the platform handles
+runtime adjustments automatically.
+This eliminates the reactive scaling work that characterised the legacy
+environment.
+
+\paragraph{Centralised observability.}
+Amazon CloudWatch collects logs from all ECS tasks, ALB access logs,
+and RDS performance insights in a single pane.
+Structured log queries, metric dashboards, and threshold-based alarms
+are configured declaratively as part of the infrastructure-as-code
+definitions.
+Incident diagnosis time is reduced significantly: instead of SSH-ing
+into individual VMs, the team can filter correlated log streams by
+service, time window, or error pattern within seconds.
+AWS~GuardDuty provides continuous threat detection with no manual
+configuration or signature updates required.
+
+\paragraph{Database administration.}
+Amazon RDS automates routine database administration tasks including
+automated backups (point-in-time recovery up to 35 days), minor
+version upgrades, storage auto-scaling, and failover to a standby
+replica.
+The same tasks on a self-managed PostgreSQL instance would require
+dedicated DBA effort for backup scheduling, replication monitoring, and
+patch application.
+
+The residual recurring operational effort in the To-Be architecture is
+estimated at \textbf{2--3 hours per month}, covering configuration
+updates, cost monitoring, IAM policy reviews, and CI/CD pipeline
+maintenance.
+
 \subsection{Operational Cost Comparison}
 
-\section{Security Evaluation}
-\subsection{Security Exposure Analysis}
-\subsection{Security Scalability Analysis}
-\subsection{As-Is vs To-Be Security Comparison}
+Table~\ref{tab:operational_effort} summarises the operational effort
+comparison between the two architectures.
+
+\begin{table}[H]
+  \centering
+  \caption{Operational effort comparison between the Legacy and AWS
+  architectures. Estimates are in engineering hours per month.}
+  \label{tab:operational_effort}
+  \small
+  \begin{tabular}{lrr}
+    \toprule
+    \textbf{Activity} & \textbf{Legacy (h/mo)} & \textbf{AWS (h/mo)} \\
+    \midrule
+    OS and runtime patching      & 4--6  & 0   \\
+    Deployment and rollback      & 3--4  & 0.5 \\
+    Scaling and capacity mgmt    & 2--3  & 0   \\
+    Monitoring and log management& 2--4  & 0.5 \\
+    Database administration      & 2--3  & 0.5 \\
+    Incident investigation overhead & 1--2/incident & minimal \\
+    \midrule
+    \textbf{Total (excl.\ incidents)} & \textbf{13--20} & \textbf{1.5--2} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+At a conservative loaded engineering rate of €80/hour and assuming the
+midpoint of each range, the legacy platform consumed approximately
+\textbf{€1\,320/month} in operational engineering effort.
+The AWS platform reduces this to approximately \textbf{€140/month},
+a saving of \textbf{€1\,180/month} in engineering time alone.
+
+Combined with the €235/month saving on direct infrastructure costs
+(Section~\ref{sec:costanalysis}), the migration yields a total
+estimated monthly saving of \textbf{€1\,415/month}, corresponding to
+an annual saving of approximately \textbf{€17\,000}.
+This figure does not account for the reduction in incident frequency
+and resolution time enabled by centralised observability, which would
+further improve the return on investment over time.

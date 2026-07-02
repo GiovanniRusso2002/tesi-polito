@@ -1,0 +1,33 @@
+{
+  "description": "AWS steady-state cost estimate derived from daily run rate (July 2, 2026). One-time monthly charges (S3 storage, Route 53 hosted zones) separated from recurring daily costs.",
+  "measurement_date": "2026-07-02",
+  "currency": "USD",
+  "usd_to_eur_rate": 0.92,
+  "daily_recurring": {
+    "Amazon Elastic Container Service":   2.1332,
+    "Amazon Elastic Load Balancing":      1.9078,
+    "Amazon Relational Database Service": 1.7465,
+    "Amazon Virtual Private Cloud":       1.6822,
+    "AWS Config":                         0.1410,
+    "AWS Secrets Manager":                0.1162,
+    "Amazon Elastic Compute Cloud":       0.1416,
+    "EC2 - Other":                        0.0689,
+    "Amazon GuardDuty":                   0.0611,
+    "Amazon Simple Storage Service":      0.0276
+  },
+  "monthly_fixed": {
+    "Amazon Simple Storage Service (storage)": 7.3280,
+    "Amazon Route 53 (hosted zones)":          2.5008
+  },
+  "daily_total_usd": 8.00,
+  "monthly_estimate_usd_excl_tax": 249.83,
+  "monthly_estimate_usd_incl_tax": 299.80,
+  "monthly_estimate_eur_excl_tax": 229.8,
+  "monthly_estimate_eur_incl_tax": 275.8,
+  "notes": [
+    "EC2 Compute ($0.14/day) is residual from decommissioning; expected to reach zero by end of July.",
+    "S3 daily usage charge ($0.03/day) on July 2 confirms the $7.33 on July 1 is the monthly storage billing.",
+    "Route 53 $2.50 corresponds to ~5 hosted zones at $0.50/zone/month.",
+    "VAT rate: 20% (French TVA, eu-west-3 region)."
+  ]
+}

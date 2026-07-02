@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+  \centering
+  \caption{HTTP timing metrics extracted from \texttt{curl} and their meaning.
+    All values are recorded in seconds by \texttt{curl} and converted to
+    milliseconds during post-processing.}
+  \label{tab:bench_metrics}
+  \small
+  \begin{tabular}{llp{7.5cm}}
+    \toprule
+    \textbf{Metric} & \textbf{\texttt{curl} variable} & \textbf{Description} \\
+    \midrule
+    DNS Lookup & \texttt{time\_namelookup} & Elapsed time from request start until DNS name resolution completes. \\
+    TCP Connect & \texttt{time\_connect} & Elapsed time from request start until the TCP three-way handshake completes. \\
+    TLS Handshake & \texttt{time\_appconnect} & Elapsed time from request start until the TLS/SSL handshake and key exchange complete. \\
+    TTFB & \texttt{time\_starttransfer} & Time to First Byte: from request start until the first response byte is received. \\
+    Total Time & \texttt{time\_total} & Total elapsed time of the complete HTTP transaction, including response body transfer. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

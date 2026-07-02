@@ -9,30 +9,40 @@ Rather than approaching migration as a simple infrastructure relocation exercise
 
 \section{Key Outcomes}
 
-The first outcome of this work is the definition of a structured decision framework capable of supporting migration activities under real industrial constraints. The analysis demonstrated that successful modernization initiatives require balancing technical quality, operational sustainability, implementation effort, and long-term maintainability.
+The evaluation presented in Chapter~\ref{chap:evaluation} provides quantitative evidence across three dimensions: direct infrastructure cost, end-to-end HTTP latency, and recurring operational effort.
 
-A second contribution is the design of a target AWS architecture based on managed services, Infrastructure as Code principles, and cloud-native operational practices. The resulting architecture replaces the previous virtual-machine-based deployment model with a managed container platform built around ECS Fargate, PostgreSQL, CloudFront, Application Load Balancers, and supporting AWS services.
+From a cost perspective (Section~\ref{sec:costanalysis}), the migration delivers a structural saving driven primarily by the replacement of Airtable with Amazon RDS, eliminating a per-seat SaaS pricing model that was architecturally ill-suited to a backend infrastructure role. The reduction in object storage costs further reinforces this outcome. These results directly confirm the first migration objective.
 
-The work also demonstrated the value of Infrastructure as Code as a foundational migration enabler. By adopting Terraform as the infrastructure management layer, infrastructure resources became reproducible, version-controlled, auditable, and easier to evolve across development and production environments.
+From an operational standpoint (Section~\ref{sec:operational}), the delegation of patching, scaling, deployment, and database administration to managed AWS services fundamentally reduces the engineering team's undifferentiated operational burden. The magnitude of this reduction, both in hours and in associated cost, confirms the third migration objective: Infrastructure as Code and managed services substantively lower operational overhead.
 
-Another important outcome concerns the migration strategy itself. Data replication tooling, validation scripts, and consistency checks were introduced to make migration progress measurable and verifiable while reducing operational risk.
+From a performance perspective, the HTTP-level benchmark shows consistent improvements across all measured timing components, with the most pronounced gains in the DNS and TCP phases, where the legacy architecture lacked anycast routing and a CDN layer. The tighter latency distribution achieved by the new architecture means that worst-case user experience is now closer to the median rather than an unpredictable multiple of it.
 
-The case study also shows that technical outcomes and operational outcomes were closely connected: the transition toward an AWS-native architecture required coordinated changes across infrastructure, deployment workflows, data management, and operational governance.
+Beyond the measured outcomes, two structural contributions address the remaining migration objectives. The adoption of Terraform as the infrastructure management layer established a reproducible, version-controlled, and auditable provisioning baseline, directly addressing the fourth objective of re-establishing ownership over infrastructure and data assets. The incremental migration design, supported by dual-backend coexistence, data replication tooling, validation scripts, and environment separation, addresses the fifth objective of minimizing migration risk and service disruption. The target architecture built on independently scalable managed services addresses the sixth objective of establishing a foundation capable of supporting long-term platform evolution.
 
-Finally, the artifacts produced throughout the project (architectural evaluations, Terraform configurations, migration tooling, and validation workflows) provide reusable practices that can support similar modernization initiatives in other industrial contexts.
+\section{Limitations and Open Questions}
+
+The evaluation covers infrastructure cost, HTTP-layer latency, and operational effort estimates. Two aspects of the measurement scope should be acknowledged explicitly.
+
+The latency benchmark targets the publicly accessible homepage endpoint, which provides a reproducible and infrastructure-representative baseline. Authenticated API endpoints and database-intensive workflows were not included in this analysis, as their evaluation requires a stable authentication token and a consistent asset fingerprint across both environments.
+
+The operational effort figures are based on engineering estimates rather than systematically recorded timesheet data. While these estimates are grounded in direct team experience with both environments, they represent informed approximations rather than precisely measured values.
 
 \section{Future Work}
 
-Although the migration foundations have been established, several activities remain as future developments.
+Several directions remain open for subsequent phases of the migration and for continued platform evolution.
 
-The first direction concerns the completion and monitoring of the full production migration process. Long-term operational metrics should be collected in order to evaluate system reliability, scalability, availability, and user experience after complete adoption of the target architecture.
+The first direction involves extending the benchmark coverage to authenticated API endpoints and database query performance, in order to complement the infrastructure-level measurements with application-layer evidence of the data-layer transition.
 
-A second area of future work involves the continued evolution of identity and access management. While the migration introduced modern authentication services, additional improvements could further standardize authorization models and strengthen integration across platform components.
+A second area involves load testing and scalability validation. The current evaluation characterizes steady-state latency under sequential requests; measuring system behavior under concurrent load would confirm whether ECS Fargate auto-scaling and RDS connection pooling perform as expected under realistic peak-demand conditions.
 
-Another important direction is the extension of observability and operational analytics capabilities. Enhanced monitoring, centralized logging, and performance analysis could provide deeper visibility into application behavior and support data-driven operational decisions.
+A third direction concerns the continued evolution of identity and access management. While the migration introduced Amazon Cognito as the authentication layer, additional improvements could further standardize authorization models and strengthen integration consistency across platform components.
 
-Future work may also investigate more advanced cloud-native capabilities, including automated scaling strategies, additional resilience mechanisms, and further optimization of infrastructure costs as platform usage grows.
+Another important direction is the extension of observability capabilities. Enhanced CloudWatch dashboards and performance baselines established after full cutover would provide the empirical foundation for data-driven operational decisions and regression detection.
 
-Finally, a comprehensive post-migration evaluation should be performed once the platform is fully operating on AWS. Such an assessment would enable a detailed comparison between the legacy architecture and the final cloud-native solution in terms of performance, operational effort, reliability, security, and total cost of ownership.
+Future work may also investigate more advanced cloud-native capabilities as platform usage grows, including refined auto-scaling policies, additional resilience mechanisms, and cost optimization strategies informed by actual production usage patterns.
 
-Overall, this thesis demonstrates that legacy-to-cloud-native migration is most effective when treated as a structured engineering process supported by explicit architectural decisions, reproducible infrastructure management, continuous validation, and controlled incremental evolution. The Outsight Cloud case study shows how modernization can be grounded in concrete engineering practices: declarative infrastructure, managed runtime services, relational data modeling, automated validation, and risk-aware rollout planning.
+Finally, the migration principles documented in this thesis---the decision framework, IaC-first provisioning, dual-backend validation, and incremental rollout planning---could be evaluated in other industrial contexts to assess their generalizability beyond the Outsight Cloud case study.
+
+\medskip
+
+Overall, this thesis demonstrates that legacy-to-cloud-native migration is most effective when treated as a structured engineering process supported by explicit architectural decisions, reproducible infrastructure management, continuous validation, and controlled incremental evolution. The Outsight Cloud case study shows how modernization can be grounded in concrete engineering practices: declarative infrastructure, managed runtime services, relational data modeling, automated validation, and risk-aware rollout planning. The quantitative evaluation confirms that the migration delivered measurable improvements across cost, latency, and operational overhead, validating the architectural decisions made throughout the modernization process.

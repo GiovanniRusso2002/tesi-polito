@@ -1,0 +1,35 @@
+{
+  "description": "AWS monthly costs for account 458244230438 (EngineeringSandboxAdmin) — June 2026, first stabilised month post-migration",
+  "currency": "USD",
+  "period": "2026-06-01 / 2026-07-01",
+  "estimated": false,
+  "usd_to_eur_rate": 0.92,
+  "services": [
+    {"service": "Amazon Elastic Container Service",       "cost_usd": 57.18,   "category": "Compute"},
+    {"service": "Amazon Elastic Load Balancing",          "cost_usd": 51.55,   "category": "Networking"},
+    {"service": "Amazon Relational Database Service",     "cost_usd": 52.41,   "category": "Database"},
+    {"service": "Amazon Virtual Private Cloud",           "cost_usd": 43.00,   "category": "Networking"},
+    {"service": "AWS Config",                             "cost_usd": 21.87,   "category": "Governance"},
+    {"service": "AmazonCloudWatch",                       "cost_usd": 16.50,   "category": "Observability"},
+    {"service": "Amazon Elastic Compute Cloud - Compute", "cost_usd": 10.74,   "category": "Compute (residual)"},
+    {"service": "Amazon Simple Storage Service",          "cost_usd": 8.09,    "category": "Storage"},
+    {"service": "EC2 - Other",                            "cost_usd": 2.64,    "category": "Compute (residual)"},
+    {"service": "Amazon Route 53",                        "cost_usd": 3.51,    "category": "Networking"},
+    {"service": "AWS Secrets Manager",                    "cost_usd": 3.35,    "category": "Security"},
+    {"service": "Amazon GuardDuty",                       "cost_usd": 1.58,    "category": "Security"},
+    {"service": "Amazon Cognito",                         "cost_usd": 0.20,    "category": "Auth"},
+    {"service": "Amazon EC2 Container Registry",          "cost_usd": 0.01,    "category": "Compute"},
+    {"service": "Amazon CloudFront",                      "cost_usd": 0.00,    "category": "Networking"},
+    {"service": "AWS Key Management Service",             "cost_usd": 0.00,    "category": "Security"},
+    {"service": "AWS Lambda",                             "cost_usd": 0.00,    "category": "Compute"},
+    {"service": "AWS Step Functions",                     "cost_usd": 0.00,    "category": "Compute"}
+  ],
+  "tax_usd": 54.53,
+  "notes": [
+    "EC2 Compute and EC2-Other are residual costs from VMs still being decommissioned post-migration.",
+    "VPC cost is dominated by NAT Gateway data processing and hourly charges.",
+    "AWS Config cost spike during May was due to initial rule deployment; June is stabilised.",
+    "Tax of $54.53 corresponds to French TVA (20%) applied to eu-west-3 region.",
+    "CloudFront cost is negligible because the distribution serves low traffic in the measurement period."
+  ]
+}

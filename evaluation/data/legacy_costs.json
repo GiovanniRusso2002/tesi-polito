@@ -1,0 +1,12 @@
+{
+  "description": "Monthly costs of the legacy Outsight Cloud platform (DigitalOcean + Airtable)",
+  "currency": "EUR",
+  "period": "monthly",
+  "items": [
+    {"service": "DigitalOcean Buckets (object storage)", "cost_eur": 70},
+    {"service": "DigitalOcean Droplets (compute)", "cost_eur": 102},
+    {"service": "Airtable (7 editor licences)", "cost_eur": 294}
+  ],
+  "total_eur": 466,
+  "notes": "Airtable cost depends on number of editor seats (7 at time of measurement) and is not directly comparable to AWS infrastructure costs."
+}

@@ -1,0 +1,88 @@
+\documentclass[12pt,a4paper,oneside,openany]{toptesi}
+
+% --- Language and encoding ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% --- Layout ---
+\usepackage{setspace}
+\onehalfspacing
+\raggedbottom
+
+% --- Math and symbols ---
+\usepackage{amsmath,amssymb}
+
+% --- Graphics ---
+\usepackage{graphicx}
+\usepackage{float}
+
+% --- Tables ---
+\usepackage{booktabs}
+
+% --- Code listings ---
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+
+% --- References and links ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black
+}
+\usepackage{bookmark}
+
+% --- Quotes ---
+\usepackage{csquotes}
+
+% --- Bibliography ---
+\usepackage[
+    backend=biber,
+    style=ieee
+]{biblatex}
+\addbibresource{bibliografia.bib}
+
+% --- Custom commands ---
+\input{stile/comandi}
+\AtBeginDocument{\english}
+
+\begin{document}
+
+% --- Front page ---
+\input{frontespizio}
+\cleardoublepage
+
+% --- Roman numbering ---
+\pagenumbering{roman}
+
+\input{abstract}
+
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+I would like to thank Outsight for the opportunity to carry out this internship, and my company and academic supervisors for their guidance and support throughout the project. I am also grateful to EURECOM and to Politecnico di Torino for the academic foundation that made this work possible, and to my family and friends for their constant support.
+
+\tableofcontents
+
+% --- Arabic numbering ---
+\pagenumbering{arabic}
+
+\input{capitoli/capitolo1}
+\input{capitoli/capitolo2}
+\input{capitoli/capitolo3}
+\input{capitoli/capitolo4}
+\input{capitoli/capitolo5}
+\input{capitoli/capitolo6}
+\input{capitoli/capitolo7}
+\input{capitoli/capitolo8}
+
+\printbibliography
+
+\end{document}

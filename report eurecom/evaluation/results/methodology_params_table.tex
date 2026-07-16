@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Benchmark configuration parameters used for all latency measurements.}
+  \label{tab:bench_params}
+  \small
+  \begin{tabular}{lp{8cm}}
+    \toprule
+    \textbf{Parameter} & \textbf{Value / Description} \\
+    \midrule
+    Sample size per environment & $N = 100$ independent requests \\
+    Request timeout & 30\,s (curl \texttt{--max-time}) \\
+    Retry policy & 1 automatic retry on transport error \\
+    HTTP method & GET \\
+    Protocol & HTTPS (TLS\,1.2 / 1.3) \\
+    Confidence level & 95\,\% (Student $t$-distribution) \\
+    Percentiles reported & P90, P95, P99 \\
+    Measurement tool & \texttt{curl} built-in timing variables \\
+    Output format & CSV (one row per request) \\
+    Client location & Fixed single location (Paris, FR) \\
+    \bottomrule
+  \end{tabular}
+\end{table}

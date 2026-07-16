@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Descriptive statistics for the Home endpoint benchmark ($N = 100$
+    requests per environment). All timing values in milliseconds (ms).}
+  \label{tab:stats_home}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llrrrrrrr}
+    \toprule
+    \textbf{Environment} & \textbf{Metric} & \textbf{Mean} & \textbf{Median} & \textbf{Std Dev} & \textbf{Max} & \textbf{P90} & \textbf{P95} & \textbf{P99} \\
+    \midrule
+    Legacy (DigitalOcean) & DNS Lookup     & 14.92  &   7.58  & 15.38 & 114.92 &  30.01 &  36.39 &  60.70 \\
+                          & TCP Connect    & 15.19  &   7.81  & 15.45 & 115.19 &  30.32 &  37.47 &  60.99 \\
+                          & TLS Handshake  & 84.83  &  81.40  & 31.20 & 333.05 & 104.09 & 118.50 & 169.66 \\
+                          & TTFB           & 130.74 & 124.85  & 34.08 & 394.91 & 156.69 & 177.00 & 211.58 \\
+                          & Total Time     & 130.83 & 124.94  & 34.09 & 395.02 & 156.80 & 177.13 & 211.71 \\
+    \midrule
+    AWS (ECS Fargate)     & DNS Lookup     &   1.64 &   1.15  &  2.20 &  22.51 &   2.43 &   2.49 &   2.92 \\
+                          & TCP Connect    &   1.79 &   1.27  &  2.23 &  22.74 &   2.67 &   2.78 &   3.25 \\
+                          & TLS Handshake  &  44.45 &  43.30  & 13.82 & 146.38 &  55.53 &  58.90 &  71.90 \\
+                          & TTFB           &  81.09 &  78.59  & 19.73 & 197.31 & 100.82 & 105.22 & 149.57 \\
+                          & Total Time     &  81.16 &  78.64  & 19.75 & 197.43 & 100.92 & 105.29 & 149.69 \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+  \centering
+  \caption{High-level monthly cost summary including Airtable.
+    AWS figures are steady-state estimates from the July\,2026 daily run rate.}
+  \label{tab:cost_summary}
+  \small
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrp{8cm}}
+    \toprule
+    \textbf{Scenario} & \textbf{EUR/month} & \textbf{Notes} \\
+    \midrule
+    Legacy (infra + Airtable) & 466 & DigitalOcean Spaces, Droplets + Airtable 7-editor licence \\
+    AWS (excl.\ VAT) & 225 & ECS, RDS, ALB, VPC, S3, GuardDuty, Config, Secrets Mgr \\
+    AWS (incl.\ VAT) & 276 & Including French TVA (20\%) applied to eu-west-3 \\
+    Monthly saving (Legacy $-$ AWS, excl.\ VAT) & 241 & Positive = AWS is cheaper \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}

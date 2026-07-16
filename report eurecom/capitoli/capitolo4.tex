@@ -1,0 +1,65 @@
+\chapter{Migration Methodology and Decision Framework}
+\label{chap:methodology}
+
+This chapter presents the migration methodology adopted for Outsight Cloud and the decision process that guided the selection of the target architecture and strategy, considering not only the technologies adopted but also the technical, operational, and economic factors involved.
+
+\section{Migration Goals and Success Criteria}
+Before defining the target architecture, a set of migration goals was identified to establish a structured decision framework. The first objective was to avoid disruptive replacement or prolonged service interruptions, which translated into concrete success criteria: staged rollout capability, rollback readiness, validation of critical workflows before cutover, and separation between development and production activities. Further objectives were reducing architectural coupling to legacy dependencies (particularly Airtable), improving scalability and maintainability through managed services and reproducible infrastructure, and ensuring deployment reproducibility and environment governance. In addition to technical goals, the process required explicit evaluation of operational sustainability and recurring costs, so architectural decisions had to balance technical quality, implementation complexity, and long-term maintainability.
+
+\section{Candidate Solutions Considered}
+The design process considered multiple alternatives for each architectural dimension, focusing on solutions able to balance migration risk, production stability, maintainability, and implementation effort rather than adopting a purely technology-driven approach.
+
+\subsection{Infrastructure and Runtime Options}
+\label{sec:runtime-options}
+Three infrastructure strategies were considered. The first preserved the existing deployment model while hardening operational workflows; this minimized short-term complexity but did not address scalability or governance concerns. The second migrated toward managed cloud services combined with IaC, introducing a structured cloud-native operational model while preserving incremental migration. The third adopted a fully orchestration-oriented redesign (e.g. Kubernetes) from the start, which provided strong scalability but significantly increased complexity and operational overhead during early transition.
+
+\subsection{Container Orchestration: Kubernetes vs ECS Fargate}
+\label{sec:k8s-ecs-comparison}
+Kubernetes is a portable, extensible open-source platform for managing containerized workloads through declarative configuration, providing scaling, failover, service discovery, load balancing, and controlled rollouts~\cite{kubernetesOverview}. However, adopting Kubernetes would have introduced operational complexity (cluster administration, networking, upgrades, monitoring, capacity planning, security) not justified by the requirements of Outsight Cloud at the time. This is consistent with Newman's caution against premature platform complexity: small service landscapes do not necessarily require Kubernetes-level orchestration when cluster-management cost would distract from migration goals~\cite{newman2021building}.
+
+In contrast, Amazon ECS Fargate provides a managed container execution environment that eliminates the need to provision and maintain worker nodes, with native integration with ALB, CloudWatch, IAM, and Auto Scaling while preserving support for Docker-based workloads. It therefore enabled a smoother transition from the legacy Docker Compose model, and offered the best balance between scalability and operational simplicity for an incremental migration. Kubernetes remains a viable option for future evolution.
+
+\subsection{Alternative Cloud Platforms Considered}
+Multiple cloud platform alternatives were evaluated on scalability, availability of managed services, IaC support, ecosystem maturity, operational complexity, and compatibility with the existing baseline. The main alternatives were AWS, Microsoft Azure, Google Cloud Platform (GCP), continuation on DigitalOcean, and self-managed on-premises infrastructure.
+
+\textbf{AWS} was the strongest candidate due to the maturity of its managed-service ecosystem and its fit with the migration objectives. Services such as ECS Fargate, RDS PostgreSQL, S3, Cognito, SES, and CloudFront natively supported the target model, with strong Terraform integration and operational scalability aligned with the company's cloudification strategy; existing operational knowledge was also partially AWS-aligned. \textbf{Azure} offered a broad enterprise ecosystem with equivalent services and strong governance capabilities, but introduced additional migration complexity because the existing direction was more closely aligned with AWS. \textbf{GCP} was considered mainly for its Kubernetes-native strengths but offered less alignment with the established architectural direction. \textbf{Continuation on DigitalOcean} would have minimized short-term effort but lacked the managed-service integration and automation of AWS. \textbf{On-premises} infrastructure offered direct control but significantly increased operational responsibilities, conflicting with the goal of reducing operational burden.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Comparative assessment of cloud provider alternatives for Outsight Cloud migration}
+\label{tab:cloud-provider-comparison}
+\begin{tabular}{|p{3.0cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|p{2.2cm}|}
+\hline
+\textbf{Criterion} & \textbf{AWS} & \textbf{Azure} & \textbf{GCP} & \textbf{On-prem} \\
+\hline
+Managed services fit & High & Medium & Medium & Low \\
+\hline
+IaC and automation & High & Medium & Medium & Low \\
+\hline
+Operational complexity & Low to medium & Medium & Medium & High \\
+\hline
+Ecosystem and maturity & Very high & High & High & Variable \\
+\hline
+Migration continuity with current baseline & High & Medium-low & Medium-low & Low \\
+\hline
+\end{tabular}
+\normalsize
+\end{table}
+
+\subsection{Data-Layer and Identity Options}
+\label{sec:data-layer-options}
+Given the limitations of the legacy datastore identified in Chapter~\ref{chap:baseline}, the evaluation focused on \emph{how} to reach the target relational model, not on whether to adopt PostgreSQL. An immediate cutover simplified the long-term architecture but introduced high migration risk; a long-term dual-backend without a clear endpoint was operationally safer but risked prolonging dependency concentration. The selected approach relied on progressive validation and controlled switchover, allowing data-transfer correctness, API behavior, and rollback readiness to be verified before the final transition.
+
+Identity modernization was evaluated similarly. Postponing IAM modernization was simpler but risked extending coupling to legacy authentication; a complete redesign from the start was architecturally cleaner but introduced excessive risk. The strategy therefore favored progressive IAM modernization based on compatibility-preserving changes and staged adoption of standards-based flows.
+
+\section{Technical and Economic Evaluation Criteria}
+Each candidate was evaluated against common criteria. Technical evaluation emphasized backward compatibility with existing workflows and service behaviors, security and readiness for standards-based IAM, deployment reproducibility (versioned definitions, automated provisioning, consistent environments), migration testability (incremental validation, rollback readiness, automated verification), and operational observability. Economic and operational evaluation considered recurring infrastructure costs, reduction of operational overhead and manual workflows, dependency concentration around high-cost external services, and maintainability and automation capabilities.
+
+\section{Selected Strategy and Rationale}
+The selected strategy was an incremental migration centered on managed AWS services, Infrastructure as Code, and independently verifiable migration steps. AWS-managed services were adopted for runtime execution, routing, storage, authentication, and observability, with ECS Fargate selected over Kubernetes (Section~\ref{sec:k8s-ecs-comparison}), and Terraform as the primary infrastructure control layer for reproducible provisioning and environment governance. For the data layer, the strategy applied the controlled transition model of Section~\ref{sec:data-layer-options}, building on the PostgreSQL target of Chapter~\ref{chap:baseline}.
+
+AWS was selected because it provided the most complete alignment with the technical and operational requirements: mature Terraform integration, strong scalability, managed services aligned with the target architecture (including RDS PostgreSQL), developer-friendly customizability (e.g. Lambda-based logic), and continuity with the company's cloudification strategy. The main acknowledged trade-off is that AWS can become expensive under specific scaling conditions, but for this project the balance between service quality, customization, and migration continuity remained favorable. The rationale was to make each architectural change independently verifiable, so modernization could proceed through controlled increments rather than a single high-risk event.
+
+\section{Risk Management and Coexistence Plan}
+Risk management was integrated directly into the migration strategy. Migration steps were designed to remain independently verifiable through validation workflows, data-consistency checks, and coexistence-oriented testing, with development and production environments managed separately. Special attention was given to dual-backend coexistence during data-layer migration, with validation workflows introduced to detect behavioral divergence early and support controlled switchover decisions. Coexistence was thus treated not as an informal transition phase but as a structured engineering stage. This reflects Morris's principle of reducing the scope of each change: smaller increments limit the blast radius of any failure and make problems easier to detect and correct~\cite{morris2021iac}.

@@ -1,0 +1,38 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+\section{Industrial Context and Legacy Constraints}
+Cloud computing has transformed the way software systems are designed, deployed, and maintained, offering scalable infrastructure, managed services, and automated deployment capabilities that are difficult to achieve with self-managed environments. As a consequence, many organizations are progressively modernizing legacy applications toward cloud-native architectures.
+
+Migrating an existing production platform to the cloud, however, is rarely straightforward. Legacy systems are typically the result of years of incremental development shaped by evolving business requirements, and over time they accumulate architectural dependencies and operational practices that complicate scalability, maintainability, and long-term evolution.
+
+This report analyzes the migration of Outsight Cloud (OC), a platform used to manage LiDAR-related workflows, simulations, organizations, sites, and associated resources. Before the migration, the platform relied on a virtual-machine-based infrastructure hosted on DigitalOcean Droplets and orchestrated through Docker Compose, integrating several external services, most notably Airtable for core data management. This architecture enabled rapid development during the early product lifecycle, but as usage and integrations expanded it began to show clear signs of architectural strain.
+
+\section{Problem Statement}
+The engineering problem addressed in this work concerns the migration of Outsight Cloud from a legacy architecture toward a cloud-native environment under real industrial and operational constraints.
+
+Over time, the platform became strongly dependent on external services, especially Airtable, which was deeply embedded in application workflows. The absence of a fully relational data model limited consistency guarantees and complicated the management of relationships between entities, while operational procedures increasingly relied on manual workflows that were error-prone and hard to scale. In parallel, the original deployment model became progressively harder to scale and maintain.
+
+To address these limitations, the company initiated a cloudification process aimed at redesigning the platform architecture and migrating toward a managed cloud environment. The selection of the target platform and strategy resulted from a structured evaluation of candidate solutions against technical, operational, and economic criteria. A central challenge was defining an execution sequence able to reduce technical and operational risk before final cutover, relying on validation workflows, reproducible infrastructure management, and controlled transition mechanisms. The migration was driven by a set of concrete objectives:
+
+\begin{itemize}
+    \item Reduce operational costs by replacing Airtable and self-managed infrastructure with managed cloud services.
+    \item Improve performance and data-access efficiency through PostgreSQL as the primary relational datastore.
+    \item Reduce operational overhead by automating provisioning, deployment, and maintenance through Infrastructure as Code.
+    \item Re-establish ownership of core data models and infrastructure definitions, reducing dependency on vendor-specific platforms.
+    \item Minimize migration risk and service disruption through incremental coexistence, validation, and controlled transition.
+    \item Establish a scalable and maintainable architectural foundation for long-term platform evolution.
+\end{itemize}
+
+\section{Report Structure}
+This report is organized as follows:
+
+\begin{itemize}
+    \item \textbf{Chapter~\ref{chap:background}} introduces the conceptual and related-work foundations on cloud-native modernization, migration patterns, and IAM evolution in legacy systems.
+    \item \textbf{Chapter~\ref{chap:baseline}} describes the case-study baseline (as-is architecture), including technical debt and cost-related migration drivers.
+    \item \textbf{Chapter~\ref{chap:methodology}} presents the migration methodology and decision framework, including candidate options and selection rationale.
+    \item \textbf{Chapter~\ref{chap:architecture}} defines the target architecture (to-be), its main components, and design trade-offs.
+    \item \textbf{Chapter~\ref{chap:implementation}} details the incremental migration implementation, with focus on IaC, data migration tooling, and the validation pipeline.
+    \item \textbf{Chapter~\ref{chap:evaluation}} discusses the evaluation approach and the evidence on migration cost, performance, and operational impact.
+    \item \textbf{Chapter~\ref{chap:conclusions}} concludes by summarizing contributions and outlining future work.
+\end{itemize}

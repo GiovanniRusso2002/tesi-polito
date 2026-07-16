@@ -1,0 +1,18 @@
+\thispagestyle{plain}
+\addcontentsline{toc}{chapter}{Abstract / Résumé}
+
+\begin{center}
+{\LARGE\bfseries Abstract / Résumé}
+\end{center}
+
+\vspace{0.4cm}
+
+\begin{spacing}{1.0}
+\small
+\noindent\textbf{Abstract}\\[0.15cm]
+This report investigates the migration of Outsight Cloud, a production platform for LiDAR-related workflows and assets, from a legacy service-oriented architecture toward a cloud-native environment on AWS. The original platform ran on DigitalOcean virtual machines orchestrated with Docker Compose, and relied on Airtable as its primary operational datastore, an arrangement that progressively introduced scalability, consistency, and operational-governance limitations. The work proposes and evaluates an incremental migration strategy based on Infrastructure as Code, managed cloud services, and controlled coexistence between legacy and target components. Particular attention is given to the transition from Airtable to PostgreSQL, the move from VM-based deployments to ECS Fargate, Terraform-driven provisioning, and validation mechanisms that reduce migration risk while preserving service continuity. The evaluation shows measurable improvements in infrastructure cost, end-to-end latency, and operational effort, illustrating how cloud-native modernization can be achieved incrementally in a real industrial context.
+
+\vspace{0.35cm}
+\noindent\textbf{Résumé}\\[0.15cm]
+Ce mémoire étudie la migration d'Outsight Cloud, une plateforme de production dédiée aux traitements et aux ressources liés au LiDAR, d'une architecture orientée services héritée vers un environnement cloud-native sur AWS. La plateforme initiale reposait sur des machines virtuelles DigitalOcean orchestrées avec Docker Compose et utilisait Airtable comme base de données opérationnelle principale, ce qui a progressivement engendré des limites de passage à l'échelle, de cohérence et de gouvernance opérationnelle. Le travail propose et évalue une stratégie de migration incrémentale fondée sur l'Infrastructure as Code, des services cloud managés et une coexistence contrôlée entre composants hérités et cibles. Une attention particulière est portée au passage d'Airtable à PostgreSQL, à la migration vers ECS Fargate, au provisionnement piloté par Terraform et aux mécanismes de validation réduisant le risque tout en préservant la continuité de service. L'évaluation démontre des gains mesurables en coût d'infrastructure, en latence et en effort opérationnel, illustrant une modernisation cloud-native progressive dans un contexte industriel réel.
+\end{spacing}

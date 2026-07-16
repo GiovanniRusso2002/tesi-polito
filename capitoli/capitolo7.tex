@@ -490,3 +490,41 @@ an annual saving of approximately \textbf{€17\,000}.
 This figure does not account for the reduction in incident frequency
 and resolution time enabled by centralised observability, which would
 further improve the return on investment over time.
+
+\subsection{External Validation of the Operational Estimates}
+\label{sec:operational-external-validation}
+
+The operational effort figures reported in Table~\ref{tab:operational_effort}
+are grounded in direct team experience with both environments and therefore
+represent informed engineering estimates rather than precisely measured
+timesheet data. To assess whether the \emph{magnitude} of the observed
+reduction is plausible, it is useful to compare it against independent
+industry evidence.
+
+A Total Economic Impact (TEI) study conducted by Forrester Consulting and
+commissioned by AWS quantifies the operational benefits of moving from
+legacy environments to AWS-managed cloud operations~\cite{forresterTeiCloudOps}.
+The study aggregates interviews with five enterprise decision-makers into a
+single composite organization and reports, among other findings,
+provisioning time savings of approximately \textbf{97.5\%} through
+templatized and automated environment creation, a \textbf{30\%} improvement
+in DevOps productivity enabled by deployment automation, and a
+\textbf{90\%} reduction in high-priority (P1/P2) incidents after the
+adoption of managed services and Infrastructure-as-Code practices.
+
+Although the Forrester study refers to a large enterprise and to a broad
+AWS Cloud Operations portfolio rather than to the specific ECS Fargate,
+RDS, and Terraform stack adopted in this work, the mechanisms responsible
+for the savings are the same ones that drive the reductions measured here:
+automated and reproducible provisioning, delegation of patching and scaling
+to managed services, and centralised observability. The order-of-magnitude
+reduction in operational effort estimated for Outsight Cloud, from 13--20 to
+1.5--2 engineering hours per month (roughly a 90\% decrease), is therefore
+consistent with these independently reported figures, which reinforces the
+credibility of the estimates despite their approximate nature.
+
+For transparency, it should be noted that the Forrester study is
+vendor-commissioned and based on a composite rather than an audited
+organization. Its figures are used here only as an external plausibility
+check on the direction and magnitude of the operational savings, and not as
+a direct measurement of the Outsight Cloud platform.

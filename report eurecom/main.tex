@@ -16,6 +16,7 @@
 % --- Graphics ---
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{pdfpages}
 
 % --- Tables ---
 \usepackage{booktabs}
@@ -63,6 +64,11 @@
 % --- Roman numbering ---
 \pagenumbering{roman}
 
+% --- Plagiarism declaration ---
+\phantomsection
+\addcontentsline{toc}{chapter}{Plagiarism Declaration}
+\includepdf[pages=-,pagecommand={}]{declaration.pdf}
+
 \input{abstract}
 
 \chapter*{Acknowledgements}
@@ -75,14 +81,19 @@ I would like to thank Outsight for the opportunity to carry out this internship,
 \pagenumbering{arabic}
 
 \input{capitoli/capitolo1}
+\input{capitoli/capitolo_azienda}
+\input{capitoli/capitolo_problematica}
+
+\part{Development (Technical Chapters)}
 \input{capitoli/capitolo2}
 \input{capitoli/capitolo3}
 \input{capitoli/capitolo4}
 \input{capitoli/capitolo5}
 \input{capitoli/capitolo6}
 \input{capitoli/capitolo7}
+
 \input{capitoli/capitolo8}
 
-\printbibliography
+\printbibliography[title={Bibliography / References}]
 
 \end{document}

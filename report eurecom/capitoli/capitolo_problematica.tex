@@ -1,0 +1,17 @@
+\chapter{Presentation of the Internship Topic}
+\label{chap:internship-topic}
+
+The engineering problem addressed in this work concerns the migration of Outsight Cloud from a legacy architecture toward a cloud-native environment under real industrial and operational constraints.
+
+Over time, the platform became strongly dependent on external services, especially Airtable, which was deeply embedded in application workflows. The absence of a fully relational data model limited consistency guarantees and complicated the management of relationships between entities, while operational procedures increasingly relied on manual workflows that were error-prone and hard to scale. In parallel, the original deployment model became progressively harder to scale and maintain.
+
+To address these limitations, the company initiated a cloudification process aimed at redesigning the platform architecture and migrating toward a managed cloud environment. The selection of the target platform and strategy resulted from a structured evaluation of candidate solutions against technical, operational, and economic criteria. A central challenge was defining an execution sequence able to reduce technical and operational risk before final cutover, relying on validation workflows, reproducible infrastructure management, and controlled transition mechanisms. The migration was driven by a set of concrete objectives:
+
+\begin{itemize}
+    \item Reduce operational costs by replacing Airtable and self-managed infrastructure with managed cloud services.
+    \item Improve performance and data-access efficiency through PostgreSQL as the primary relational datastore.
+    \item Reduce operational overhead by automating provisioning, deployment, and maintenance through Infrastructure as Code.
+    \item Re-establish ownership of core data models and infrastructure definitions, reducing dependency on vendor-specific platforms.
+    \item Minimize migration risk and service disruption through incremental coexistence, validation, and controlled transition.
+    \item Establish a scalable and maintainable architectural foundation for long-term platform evolution.
+\end{itemize}

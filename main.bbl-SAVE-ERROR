@@ -1,0 +1,276 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{newman2021building}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=b6be43602c2787d279f8522a7d9713db}{%
+           family={Newman},
+           familyi={N\bibinitperiod},
+           given={Sam},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {O'Reilly Media}%
+      }
+      \strng{namehash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{fullhash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{fullhashraw}{b6be43602c2787d279f8522a7d9713db}
+      \strng{bibnamehash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{authorbibnamehash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{authornamehash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{authorfullhash}{b6be43602c2787d279f8522a7d9713db}
+      \strng{authorfullhashraw}{b6be43602c2787d279f8522a7d9713db}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{title}{Building Microservices: Designing Fine-Grained Systems}
+      \field{year}{2021}
+    \endentry
+    \entry{morris2021iac}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=63fa37eb1278902f4d1c5aa6e2b44e9d}{%
+           family={Morris},
+           familyi={M\bibinitperiod},
+           given={Kief},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {O'Reilly Media}%
+      }
+      \strng{namehash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{fullhash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{fullhashraw}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{bibnamehash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{authorbibnamehash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{authornamehash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{authorfullhash}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \strng{authorfullhashraw}{63fa37eb1278902f4d1c5aa6e2b44e9d}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{title}{Infrastructure as Code: Dynamic Systems for the Cloud Age}
+      \field{year}{2021}
+    \endentry
+    \entry{awsCloudMigrationOverview}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=3eb2c1a57a8160029f036e3dcbf84bf1}{%
+           family={{Amazon Web Services}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{bibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorbibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authornamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \field{extraname}{1}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-17}
+      \field{title}{What is Cloud Migration?}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://aws.amazon.com/what-is/cloud-migration/
+      \endverb
+      \verb{url}
+      \verb https://aws.amazon.com/what-is/cloud-migration/
+      \endverb
+    \endentry
+    \entry{awsIamIntroduction}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=3eb2c1a57a8160029f036e3dcbf84bf1}{%
+           family={{Amazon Web Services}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{bibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorbibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authornamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-31}
+      \field{title}{What is IAM?}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html
+      \endverb
+      \verb{url}
+      \verb https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html
+      \endverb
+    \endentry
+    \entry{airtableBasics}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=f7769fd96a022a54fb7f615f19e1264e}{%
+           family={{Airtable}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{fullhash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{fullhashraw}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{bibnamehash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{authorbibnamehash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{authornamehash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{authorfullhash}{f7769fd96a022a54fb7f615f19e1264e}
+      \strng{authorfullhashraw}{f7769fd96a022a54fb7f615f19e1264e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-25}
+      \field{title}{Introduction to Airtable basics}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://support.airtable.com/docs/introduction-to-airtable-basics
+      \endverb
+      \verb{url}
+      \verb https://support.airtable.com/docs/introduction-to-airtable-basics
+      \endverb
+    \endentry
+    \entry{kubernetesOverview}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=aa383893d75216c822915104dee00710}{%
+           family={{The Kubernetes Authors}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{aa383893d75216c822915104dee00710}
+      \strng{fullhash}{aa383893d75216c822915104dee00710}
+      \strng{fullhashraw}{aa383893d75216c822915104dee00710}
+      \strng{bibnamehash}{aa383893d75216c822915104dee00710}
+      \strng{authorbibnamehash}{aa383893d75216c822915104dee00710}
+      \strng{authornamehash}{aa383893d75216c822915104dee00710}
+      \strng{authorfullhash}{aa383893d75216c822915104dee00710}
+      \strng{authorfullhashraw}{aa383893d75216c822915104dee00710}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-30}
+      \field{title}{Overview of Kubernetes}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://kubernetes.io/docs/concepts/overview/
+      \endverb
+      \verb{url}
+      \verb https://kubernetes.io/docs/concepts/overview/
+      \endverb
+    \endentry
+    \entry{awsIacWhitepaper}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=3eb2c1a57a8160029f036e3dcbf84bf1}{%
+           family={{Amazon Web Services}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{fullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{bibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorbibnamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authornamehash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhash}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \strng{authorfullhashraw}{3eb2c1a57a8160029f036e3dcbf84bf1}
+      \field{extraname}{3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-17}
+      \field{title}{Infrastructure as code}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://docs.aws.amazon.com/whitepapers/latest/introduction-devops-aws/infrastructure-as-code.html
+      \endverb
+      \verb{url}
+      \verb https://docs.aws.amazon.com/whitepapers/latest/introduction-devops-aws/infrastructure-as-code.html
+      \endverb
+    \endentry
+    \entry{hashicorpTerraformIntro}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=1129ea7ef173c0128f37020fea647cec}{%
+           family={{HashiCorp}},
+           familyi={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{fullhash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{fullhashraw}{1129ea7ef173c0128f37020fea647cec}
+      \strng{bibnamehash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{authorbibnamehash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{authornamehash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{authorfullhash}{1129ea7ef173c0128f37020fea647cec}
+      \strng{authorfullhashraw}{1129ea7ef173c0128f37020fea647cec}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Accessed: 2026-05-17}
+      \field{title}{What is Terraform?}
+      \field{year}{2026}
+      \verb{urlraw}
+      \verb https://developer.hashicorp.com/terraform/intro
+      \endverb
+      \verb{url}
+      \verb https://developer.hashicorp.com/terraform/intro
+      \endverb
+    \endentry
+    \entry{forresterTeiCloudOps}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=ec5cf4d09a415cc6c72648a457f15566}{%
+           family={{Forrester Consulting}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Forrester Research}%
+      }
+      \strng{namehash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{fullhash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{fullhashraw}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{bibnamehash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{authorbibnamehash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{authornamehash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{authorfullhash}{ec5cf4d09a415cc6c72648a457f15566}
+      \strng{authorfullhashraw}{ec5cf4d09a415cc6c72648a457f15566}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{5}
+      \field{title}{The Total Economic Impact of {AWS} Cloud Operations: Cost Savings and Business Benefits Enabled by Operating on {AWS}}
+      \field{type}{Total Economic Impact Study commissioned by AWS}
+      \field{year}{2022}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

@@ -62,13 +62,9 @@ The existing operational knowledge inside the company was also already partially
 
 Equivalent services for most components used in this project were available, including Azure Virtual Machines, Azure Kubernetes Service (AKS), Azure SQL Database, and Azure Blob Storage.
 
-Although Azure presented strong enterprise integration capabilities, especially in Microsoft-oriented ecosystems, and was considered stronger from a governance perspective, it introduced additional migration complexity because the existing operational direction and cloudification path were already more closely aligned with AWS-based infrastructure models.
-
 \textbf{Google Cloud Platform (GCP).} Google Cloud Platform was considered primarily because of its strengths in containerized workloads and Kubernetes-native operations.
 
 Relevant services included Google Kubernetes Engine (GKE), Cloud SQL, Compute Engine, and Cloud Storage. GCP also provides strong capabilities in analytics and large-scale distributed infrastructure management.
-
-However, compared to AWS, GCP offered less alignment with the operational and architectural direction already established inside the project. For this reason, AWS was considered a more suitable choice for the migration requirements of Outsight Cloud.
 
 \textbf{Continuation on DigitalOcean.}
 Another alternative consisted of preserving the existing infrastructure provider and progressively improving the deployment model without changing cloud platform. This approach would have minimized migration effort in the short term and leveraged existing operational knowledge. However, it would not have provided the same level of managed-service integration, infrastructure automation, and cloud-native capabilities offered by AWS. As a consequence, it was considered less suitable for supporting the long-term modernization objectives of the platform.
@@ -104,7 +100,7 @@ Migration continuity with current baseline & High & Medium-low & Medium-low & Lo
 
 \subsection{Data-Layer Migration Options}
 \label{sec:data-layer-options}
-Given the limitations of the legacy datastore identified in Chapter~\ref{chap:baseline}, the evaluation focused on \emph{how} to reach the target relational model, not on whether to adopt PostgreSQL.
+The limitations of the legacy datastore described in Chapter~\ref{chap:baseline} shifted the evaluation away from the question of whether PostgreSQL should be adopted and toward the more practical question of \emph{how} to transition toward the target relational model.
 
 A first possibility was an immediate cutover strategy. Although this approach simplified long-term architecture, it introduced high migration risk and limited rollback flexibility.
 

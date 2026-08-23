@@ -4,7 +4,7 @@
 This chapter provides the conceptual background required to frame the migration problem and positions the thesis with respect to related work.
 
 \section{Cloud-Native Principles for Legacy Modernization}
-Cloud-native modernization is not limited to container adoption or workload relocation. In migration contexts, it also requires reproducible infrastructure, explicit service boundaries, deployment automation, operational observability, and validation mechanisms capable of supporting incremental system evolution. These principles become particularly important when architectural changes affect production workflows, persistent data, and operational procedures.
+Cloud-native modernization represents a broader approach to evolving software systems, combining architectural changes with new practices for managing and operating applications. In the context of legacy migration, the goal is to establish a more structured and sustainable foundation that can support the progressive evolution of the system. This involves improving how infrastructure, application components, and operational processes are defined, deployed, and managed throughout the migration. These principles become particularly important when architectural changes affect production workflows, persistent data, and operational procedures.
 
 In \emph{Building Microservices}, Newman frames modern service-oriented architectures around independently deployable services with explicit boundaries and hidden internal state~\cite{newman2021building}. This principle is relevant to legacy modernization because it separates external contracts from internal implementation details, reducing the risk that changes in one component propagate unexpectedly across the platform.
 
@@ -52,8 +52,6 @@ The migration preserved the core application architecture and business functiona
 
 At the same time, selected components required refactoring to support the migration objectives. These changes included the transition from Airtable to PostgreSQL, the introduction of Infrastructure as Code practices through Terraform, and adaptations to deployment and routing workflows required by the target cloud-native architecture.
 
-Consequently, the Outsight Cloud migration is best described as a hybrid strategy in which runtime modernization, data-layer redesign, and infrastructure automation addressed different limitations of the legacy platform.
-
 \subsection{System Coexistence in Incremental Migration}
 For production systems that cannot tolerate service interruption, coexistence between legacy and target components becomes a critical architectural requirement. During migration phases, both systems frequently need to operate simultaneously while compatibility and behavioral consistency are progressively validated.
 
@@ -61,7 +59,7 @@ Newman describes the \emph{strangler fig pattern} as a technique for wrapping le
 
 Morris further describes the \emph{expand and contract} pattern as a structured technique for changing live infrastructure without disrupting running services. The pattern involves first adding new resources alongside existing ones, migrating consumers incrementally, and only then removing the legacy components~\cite{morris2021iac}. This approach avoids the risks of big-bang replacements and keeps the system in a consistent, testable state throughout the transition.
 
-This coexistence model introduces additional engineering complexity, including contract compatibility, dual-backend validation, synchronization workflows, rollback capabilities, and progressive switchover mechanisms. As a consequence, migration validation becomes an integral part of the system architecture rather than a secondary operational activity.
+This coexistence model introduces additional engineering complexity, including contract compatibility, dual-backend validation, synchronization workflows, rollback capabilities, and progressive switchover mechanisms.
 
 \subsection{Decision-Driven Migration}
 Related work frequently describes migration patterns from a purely technological perspective, focusing primarily on target architectures and adopted cloud services. In industrial contexts, however, migration decisions must also consider operational constraints, organizational impact, recurring costs, maintainability, and migration risk.

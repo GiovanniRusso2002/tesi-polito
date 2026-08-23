@@ -66,7 +66,7 @@ resource "aws_ecs_service" "backend" {
 }
 \end{lstlisting}
 
-Listing~\ref{lst:terraform-ecs} shows a simplified Terraform resource definition used to deploy a backend container as an ECS Fargate service. Through declarative configuration files, containerized workloads previously orchestrated through Docker Compose could be provisioned reproducibly in AWS while preserving the same packaging model.
+Listing~\ref{lst:terraform-ecs} shows a simplified Terraform resource definition used to deploy a backend container as an ECS Fargate service.
 
 \subsection{Terraform Workflow: Write, Plan, Apply}
 The Terraform workflow follows three phases \cite{hashicorpTerraformIntro}:
@@ -102,10 +102,10 @@ This separation was particularly important during the migration from the legacy 
 
 \section{Infrastructure Migration Execution}
 \label{sec:infra-migration-exec}
-While Chapters~\ref{chap:baseline} and~\ref{chap:architecture} describe respectively the legacy platform and the target AWS design, this section documents how the transition to AWS was executed in practice. The objective was to replace the previous Docker Compose and Traefik deployment model with a reproducible cloud-native foundation without forcing a simultaneous application and data cutover.
+The preceding chapters described the legacy platform and the target AWS design, while this section focuses on the concrete execution of the migration itself. The objective was to replace the previous Docker Compose and Traefik deployment model with a reproducible cloud-native foundation without forcing a simultaneous application and data cutover.
 
 \subsection{Target Environment Definition and Terraform Provisioning}
-The first implementation step consisted of translating the target architecture into an Infrastructure as Code baseline using Terraform. Rather than manually configuring AWS resources through the console, the migration team defined a declarative stack covering the core components required to host Outsight Cloud in AWS.
+The first implementation step consisted of translating the target architecture into an Infrastructure as Code baseline using Terraform. Rather than manually configuring AWS resources through the console, the platform architecture was defined as a declarative stack covering the core components required to host Outsight Cloud in AWS.
 
 The initial Terraform implementation provisioned the main building blocks of the target platform, including ECS Fargate services for the frontend and backend containers, an Application Load Balancer for public routing, Route~53 records for DNS management, ACM certificates for HTTPS, CloudWatch log groups for centralized logging, and S3 together with CloudFront for simulation file storage and delivery. This stack established the first operational AWS environment capable of replacing the legacy hosting model.
 

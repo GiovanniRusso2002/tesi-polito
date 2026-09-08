@@ -58,7 +58,10 @@
 
 % --- Front page ---
 \input{frontespizio}
-\cleardoublepage
+\clearpage
+\thispagestyle{empty}
+\null
+\clearpage
 
 % --- Roman numbering ---
 \pagenumbering{roman}
@@ -78,15 +81,37 @@ Finally, I am deeply grateful to my family and friends for their unwavering supp
 \listoftables
 
 % --- Arabic numbering ---
-\pagenumbering{arabic}
+\mainmatter
+\makeatletter
+\@openrightfalse
+\makeatother
+\clearpage
+\thispagestyle{empty}
+\null
+\clearpage
+\newcommand{\chapterblank}{%
+  \clearpage
+  \ifodd\value{page}
+    \thispagestyle{empty}
+    \null
+    \clearpage
+  \fi
+}
 
 \input{capitoli/capitolo1}
+\chapterblank
 \input{capitoli/capitolo2}
+\chapterblank
 \input{capitoli/capitolo3}
+\chapterblank
 \input{capitoli/capitolo4}
+\chapterblank
 \input{capitoli/capitolo5}
+\chapterblank
 \input{capitoli/capitolo6}
+\chapterblank
 \input{capitoli/capitolo7}
+\chapterblank
 \input{capitoli/capitolo8}
 
 \printbibliography
